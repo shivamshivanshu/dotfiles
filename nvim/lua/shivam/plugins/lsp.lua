@@ -8,6 +8,7 @@ return {
 	},
 	{
 		"mason-org/mason-lspconfig.nvim",
+		version = "1.32.0",  -- last v1 release
 		opts = {},
 		dependencies = {
 			{
