@@ -46,7 +46,7 @@ return {
 				map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
 			end
 
-			local servers = { "pyright", "lua_ls", "clangd" }
+			local servers = { "lua_ls", "clangd" }
 
 			for _, server in ipairs(servers) do
 				lspconfig[server].setup({
