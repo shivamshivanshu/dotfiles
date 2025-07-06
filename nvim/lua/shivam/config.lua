@@ -58,7 +58,8 @@ vim.o.termguicolors = true
 -- Use system clipboard
 vim.opt.clipboard = "unnamedplus"
 
-
+-- Enable relative line number
+vim.o.relativenumber = true
 
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd('TextYankPost', {
