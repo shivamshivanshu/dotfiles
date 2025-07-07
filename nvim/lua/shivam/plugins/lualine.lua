@@ -5,7 +5,15 @@ return {
 		require("lualine").setup({
 			options = {
 				theme = "gruvbox"
-			}
+			},
+			sections = {
+				lualine_c = {
+					{
+						'filename',
+						path = 1, -- 0 = filename, 1 = relative path, 2 = absolute path
+					},
+				},
+			},
 		})
 	end
 }
