@@ -1,47 +1,88 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-set -e  # Exit on any error
+usage() {
+  cat <<EOF
+Usage: $0 <manual|auto> [package-manager]
 
-DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"  # Get absolute path to dotfiles directory
+Modes:
+  manual                  List packages
+  auto <pkg-manager>      Install via given manager
+EOF
+  exit 1
+}
 
-echo "Dotfiles directory: $DOTFILES_DIR"
+# Help
+[[ "${1:-}" =~ ^(-h|--help)$ ]] && usage
 
-# === Install TPM (Tmux Plugin Manager) ===
-TPM_PATH="$HOME/.tmux/plugins/tpm"
-if [ ! -d "$TPM_PATH" ]; then
-  echo "📦 Installing TPM..."
-  git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
-else
-  echo "TPM already installed at $TPM_PATH"
-fi
+# Args
+MODE="${1:-}"; shift
+case "$MODE" in
+  manual) ;;
+  auto)
+    PKG_MANAGER="${1:-}" && shift
+    [[ -z "$PKG_MANAGER" ]] && { echo "Error: auto needs a package manager"; usage; }
+    ;;
+  *) usage ;;
+esac
 
-# === Link Neovim config ===
-NVIM_SOURCE="$DOTFILES_DIR/nvim"
-NVIM_TARGET="$HOME/.config/nvim"
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-echo "Linking Neovim config..."
-mkdir -p "$HOME/.config"
+PACKAGES=(git-delta neovim git tmux)
+BIN=(delta nvim git tmux)
 
-if [ -e "$NVIM_TARGET" ] || [ -L "$NVIM_TARGET" ]; then
-  echo "Removing existing Neovim config at $NVIM_TARGET"
-  rm -rf "$NVIM_TARGET"
-fi
+install_package() {
+  local pm="$1" pkg="$2"
+  case "$pm" in
+    brew)   brew install "$pkg" ;;
+    apt)    sudo apt update && sudo apt install -y "$pkg" ;;
+    dnf)    sudo dnf install -y "$pkg" ;;
+    pacman) sudo pacman -Sy "$pkg" --noconfirm ;;
+    yay)    yay -S --noconfirm "$pkg" ;;
+    *)
+      echo "Unsupported manager: $pm; please install $pkg manually."
+      return 1
+      ;;
+  esac
+}
 
-ln -s "$NVIM_SOURCE" "$NVIM_TARGET"
-echo "Linked $NVIM_SOURCE → $NVIM_TARGET"
+install_packages() {
+  echo "Mode: $MODE"
+  for i in "${!PACKAGES[@]}"; do
+    pkg="${PACKAGES[i]}"
+    bin="${BIN[i]}"
+    echo "→ $bin"
+    if [[ "$MODE" == auto ]]; then
+      if ! command -v "$bin" &>/dev/null; then
+        install_package "$PKG_MANAGER" "$pkg"
+      else
+        echo "   $bin already installed"
+      fi
+    fi
+  done
+}
 
-# === Link tmux config ===
-TMUX_CONF_SOURCE="$DOTFILES_DIR/tmux/.tmux.conf"
-TMUX_CONF_TARGET="$HOME/.tmux.conf"
+install_tpm() {
+  local p="$HOME/.tmux/plugins/tpm"
+  [[ -d "$p" ]] && { echo "TPM already present"; return; }
+  echo "Installing TPM..."
+  git clone https://github.com/tmux-plugins/tpm "$p"
+}
 
-echo "Linking tmux config..."
-if [ -e "$TMUX_CONF_TARGET" ] || [ -L "$TMUX_CONF_TARGET" ]; then
-  echo "Removing existing tmux config at $TMUX_CONF_TARGET"
-  rm -f "$TMUX_CONF_TARGET"
-fi
+link() {
+  local src="$1" dst="$2" desc="$3"
+  echo "Linking $desc..."
+  [[ -e "$dst" || -L "$dst" ]] && rm -rf "$dst"
+  ln -s "$src" "$dst"
+  echo "  $src → $dst"
+}
 
-ln -s "$TMUX_CONF_SOURCE" "$TMUX_CONF_TARGET"
-echo "Linked $TMUX_CONF_SOURCE → $TMUX_CONF_TARGET"
+# === Main ===
+install_packages
+install_tpm
 
-echo ""
-echo "Dotfiles setup complete!"
+link "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"      "Neovim config"
+link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"        "tmux config"
+link "$DOTFILES_DIR/git/.gitconfig"   "$HOME/.gitconfig"        "Git config"
+
+echo "🎉 Dotfiles setup complete!"
