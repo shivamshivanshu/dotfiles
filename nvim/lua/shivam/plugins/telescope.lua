@@ -43,6 +43,7 @@ return {
 		map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 		map('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 		map('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+		map('n', '<leader>sc', builtin.lsp_document_symbols, { desc = '[L]SP [S]ymbols in current buffer' })
 
 		-- Slightly advanced example of overriding default behavior and theme
 		map('n', '<leader>/', function()
