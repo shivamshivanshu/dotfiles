@@ -1,0 +1,87 @@
+[core]
+    pager = delta
+    editor = nvim
+    autocrlf = input
+    excludesfile = ~/.gitignore_global
+
+[init]
+    defaultBranch = main
+
+[merge]
+    conflictstyle = diff3
+    tool = nvimdiff
+
+[mergetool]
+    prompt = false
+    keepBackup = false
+
+[mergetool "nvimdiff"]
+    cmd = "nvim -d $LOCAL $REMOTE $MERGED -c 'wincmd w'"
+
+[delta]
+    features = "side-by-side line-numbers decorations"
+    side-by-side = true
+    line-numbers = true
+    navigate = true
+    syntax-theme = "Monokai Extended"
+    plus-style = "syntax #003800"
+    minus-style = "syntax #3f0001"
+    file-style = bold yellow
+    hunk-header-style = syntax bold underline
+    whitespace-error-style = 22 reverse
+
+[pager]
+    diff = delta
+    log = delta
+    show = delta
+    reflog = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[diff]
+    tool = delta
+    colorMoved = default
+
+[difftool "delta"]
+    cmd = "delta \"$LOCAL\" \"$REMOTE\""
+
+[log]
+    decorate = short
+
+[alias]
+    a = add .
+    c = checkout
+    b = branch
+    d = diff
+    s = status
+    l = log --oneline --graph --decorate
+    u = reset HEAD --
+    ri = rebase -i
+    cc = commit
+    sw = switch
+    po = push origin HEAD:refs/for/main
+    pr = pull --rebase
+    pow = push origin HEAD:refs/for/main%wip
+    can = commit --amend --no-edit
+
+
+
+[status]
+    showUntrackedFiles = all
+
+[color]
+    ui = auto
+
+[push]
+    default = simple
+
+[fetch]
+    prune = true
+
+[rebase]
+    autosquash = true
+    autoStash = true
+
+[user]
+    name = Shivam Shivanshu
