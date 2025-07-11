@@ -28,8 +28,8 @@ esac
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-PACKAGES=(git-delta neovim git tmux)
-BIN=(delta nvim git tmux)
+PACKAGES=(git-delta neovim git tmux ripgrep exa)
+BIN=(delta nvim git tmux rg exa)
 
 install_package() {
   local pm="$1" pkg="$2"
