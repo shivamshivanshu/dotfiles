@@ -45,6 +45,17 @@ return {
 				map("n", "<leader>f", function() lsp.format({ async = true }) end, "Format Buffer")
 				map("n", "[d", vim.diagnostic.goto_prev, "Prev Diagnostic")
 				map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
+				map("x", "<leader>f", function()
+					local s_start = vim.api.nvim_buf_get_mark(0, "<")
+					local s_end   = vim.api.nvim_buf_get_mark(0, ">")
+					vim.lsp.buf.format({
+						async = true,
+						range = {
+							start = { s_start[1] - 1, s_start[2] },
+							["end"] = { s_end[1] - 1, s_end[2] },
+						},
+					})
+				end, "Format Selection")
 
 				if client.server_capabilities.inlayHintProvider then
 					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
