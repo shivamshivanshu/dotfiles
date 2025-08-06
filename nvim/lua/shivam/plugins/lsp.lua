@@ -26,6 +26,9 @@ return {
 	},
 	{
 		"neovim/nvim-lspconfig",
+		dependencies = {
+			"hrsh7th/cmp-nvim-lsp",
+		},
 		config = function()
 			local lspconfig = require("lspconfig")
 
@@ -45,6 +48,7 @@ return {
 				map("n", "<leader>f", function() lsp.format({ async = true }) end, "Format Buffer")
 				map("n", "[d", vim.diagnostic.goto_prev, "Prev Diagnostic")
 				map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
+
 				map("x", "<leader>f", function()
 					local s_start = vim.api.nvim_buf_get_mark(0, "<")
 					local s_end   = vim.api.nvim_buf_get_mark(0, ">")
@@ -56,7 +60,6 @@ return {
 						},
 					})
 				end, "Format Selection")
-
 				if client.server_capabilities.inlayHintProvider then
 					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 				end
