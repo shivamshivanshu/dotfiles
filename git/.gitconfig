@@ -64,6 +64,7 @@
     pr = pull --rebase
     pow = push origin HEAD:refs/for/main%wip
     can = commit --amend --no-edit
+    wip = commit -m "wip"
 
 
 
