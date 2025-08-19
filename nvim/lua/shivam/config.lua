@@ -61,6 +61,16 @@ vim.opt.clipboard = "unnamedplus"
 -- Enable Relative Linenumber
 vim.opt.relativenumber = true
 
+-- Indentation settings
+vim.opt.autoindent = true      -- Copy indent from current line when starting a new one
+vim.opt.smartindent = true     -- Smart autoindenting for code
+
+-- Tab and indentation width
+vim.opt.tabstop = 4            -- Display width of a tab character
+vim.opt.shiftwidth = 4         -- Spaces used for each step of autoindent
+vim.opt.softtabstop = 4        -- Spaces a <Tab> counts for while editing
+vim.opt.expandtab = true       -- Convert tabs to spaces
+
 
 
 -- Highlight text when yanking
