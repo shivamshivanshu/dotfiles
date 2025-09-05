@@ -32,6 +32,46 @@ return {
 		-- See `:help telescope.builtin`
 		local builtin = require 'telescope.builtin'
 		local map = vim.keymap.set
+				local function oil_dir()
+			local ok, oil = pcall(require, 'oil')
+			if ok and vim.bo.filetype == 'oil' then
+				return oil.get_current_dir(0) -- absolute dir for current Oil buffer
+			end
+		end
+
+		-- Format titles for the picker window
+		local function titled_opts(kind, dir)
+			local short = vim.fn.fnamemodify(dir, ':~') -- ~/… instead of full path
+			return {
+				cwd = dir,
+				prompt_title = string.format('%s in %s', kind, short),
+				results_title = short, -- shown above results window
+				-- Optional: make entries shorter/nicer
+				path_display = { 'smart' },
+			}
+		end
+
+		local function oil_find_files()
+			local dir = oil_dir()
+			local opts = dir and titled_opts('Files', dir) or {}
+			require('telescope.builtin').find_files(opts)
+		end
+
+		local function oil_live_grep()
+			local dir = oil_dir()
+			local opts = dir and titled_opts('Grep', dir) or {}
+			require('telescope.builtin').live_grep(opts)
+		end
+
+		local function oil_grep_string()
+			local dir = oil_dir()
+			local opts = dir and titled_opts('Grep word', dir) or {}
+			require('telescope.builtin').grep_string(opts)
+		end
+
+		map('n', '<leader>of', oil_find_files, { desc = '[S]earch Files ([O]il dir if in Oil)' })
+		map('n', '<leader>og', oil_live_grep, { desc = '[S]earch by [G]rep (Oil dir if in Oil)' })
+		map('n', '<leader>ow', oil_grep_string, { desc = '[S]earch [W]ord (Oil dir if in Oil)' })
 
 		map('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
 		map('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
