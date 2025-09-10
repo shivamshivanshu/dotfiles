@@ -24,29 +24,54 @@ map("n", "<leader>j", "<C-w>j")
 map("n", "<leader>k", "<C-w>k")
 map("n", "<leader>l", "<C-w>l")
 
--- Copy cwd to clipboard
-vim.keymap.set("n", "<leader>cp", function()
-  local path = nil
-
-  -- Try oil.nvim first
-  local oil_ok, oil = pcall(require, "oil")
-  if oil_ok and oil.get_current_dir and vim.bo.filetype == "oil" then
-    path = oil.get_current_dir()
-  else
-    -- Otherwise use the buffer's file path
-    local buf_path = vim.fn.expand("%:p")
-    if buf_path ~= "" then
-      path = buf_path
+-- Helper: fetch current path (dir in oil.nvim, file in regular buffers)
+local function get_current_path()
+  local ok, oil = pcall(require, "oil")
+  if ok and oil.get_current_dir and vim.bo.filetype == "oil" then
+    local dir = oil.get_current_dir()
+    if dir and dir ~= "" then
+      return dir
     end
   end
+  local buf = vim.fn.expand("%:p")
+  if buf ~= "" then
+    return buf
+  end
+  return nil
+end
 
+-- Helper: copy path with an optional modifier (":p" absolute, ":." relative)
+local function copy_path(mod, label)
+  local path = get_current_path()
   if not path then
-    print("No valid path to copy")
+    local msg = "No valid path to copy"
+    if vim.notify then
+      vim.notify(msg, vim.log.levels.WARN)
+    else
+      print(msg)
+    end
     return
   end
 
-  -- Copy to system clipboard
-  vim.fn.setreg("+", path)
-  print("Copied: " .. path)
-end, { desc = "Copy file/dir path to clipboard" })
+  local out = mod and vim.fn.fnamemodify(path, mod) or path
+  vim.fn.setreg("+", out)
+
+  local msg = string.format("Copied%s: %s", label and (" (" .. label .. ")") or "", out)
+  if vim.notify then
+    vim.notify(msg)
+  else
+    print(msg)
+  end
+end
+
+-- <leader>cp → copy absolute path
+vim.keymap.set("n", "<leader>cp", function()
+  copy_path(":p", "absolute")
+end, { desc = "Copy absolute file/dir path to clipboard" })
+
+-- <leader>cr → copy path relative to current working directory
+vim.keymap.set("n", "<leader>cr", function()
+  copy_path(":.", "relative")
+end, { desc = "Copy relative file/dir path to clipboard" })
+
 
