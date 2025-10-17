@@ -26,17 +26,12 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
-			local lspconfig = require("lspconfig")
-
-			-- Common on_attach function for all LSPs
 			local on_attach = function(client, bufnr)
 				local map = function(mode, lhs, rhs, desc)
 					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
 				end
-
 				local lsp = vim.lsp.buf
 
-				-- LSP keymaps
 				map("n", "gd", lsp.definition, "Go to Definition")
 				map("n", "K", lsp.hover, "Hover Info")
 				map("n", "gi", lsp.implementation, "Go to Implementation")
@@ -67,30 +62,29 @@ return {
 
 			-- Enhance capabilities for nvim-cmp
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			local cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-			if cmp_ok then
+			local ok_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+			if ok_cmp then
 				capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 			end
 
-			-- Lua LSP
-			lspconfig.lua_ls.setup({
+			vim.lsp.config("*", {
 				on_attach = on_attach,
 				capabilities = capabilities,
+			})
+
+			vim.lsp.config("lua_ls", {
 				settings = {
-					Lua = { diagnostics = { globals = { "vim" } } },
+					Lua = {
+						diagnostics = { globals = { "vim" } },
+						workspace = { checkThirdParty = false },
+					},
 				},
 			})
 
-			-- CMake LSP
-			lspconfig.cmake.setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
+			vim.lsp.config("cmake", {
 			})
 
-			-- Clangd (C/C++)
-			lspconfig.clangd.setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
+			vim.lsp.config("clangd", {
 				init_options = {
 					clangdFileStatus = true,
 					inlayHints = {
@@ -101,10 +95,7 @@ return {
 				},
 			})
 
-			-- Pyright (Python)
-			lspconfig.pyright.setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
+			vim.lsp.config("pyright", {
 				settings = {
 					python = {
 						analysis = {
@@ -114,6 +105,11 @@ return {
 					},
 				},
 			})
+
+			local servers = { "lua_ls", "cmake", "clangd", "pyright" }
+			for _, name in ipairs(servers) do
+				vim.lsp.enable(name)
+			end
 		end,
 	},
 }
