@@ -1,7 +1,5 @@
 return {
 	'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
-	config = function()
-		require("guess-indent").setup({})
-	end
-
+	event = { "BufReadPre", "BufNewFile" }, -- Load when opening a file
+	opts = {},
 }
