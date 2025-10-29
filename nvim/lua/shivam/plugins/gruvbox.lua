@@ -1,5 +1,6 @@
 return {
 	"ellisonleao/gruvbox.nvim",
+	lazy = false, -- Must load immediately for colorscheme
 	priority = 1000,
 	config = function()
 		require("gruvbox").setup({
