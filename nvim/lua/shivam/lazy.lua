@@ -15,6 +15,24 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Load plugins from lua/shivam/plugins/*.lua
 require("lazy").setup("shivam.plugins", {
+	defaults = {
+		lazy = true, -- Make all plugins lazy by default
+	},
+	performance = {
+		cache = {
+			enabled = true,
+		},
+		rtp = {
+			disabled_plugins = {
+				"gzip",
+				"tarPlugin",
+				"tohtml",
+				"tutor",
+				"zipPlugin",
+				"netrwPlugin", -- Using oil.nvim instead
+			},
+		},
+	},
 	change_detection = {
 		notify = false,
 	},
