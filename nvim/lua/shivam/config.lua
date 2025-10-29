@@ -46,12 +46,6 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- Decrease update time
-vim.o.updatetime = 250
-
--- Decrease mapped sequence wait time
-vim.o.timeoutlen = 1500
-
 -- Enable terminal gui
 vim.o.termguicolors = true
 
@@ -60,6 +54,7 @@ vim.opt.clipboard = "unnamedplus"
 
 -- Enable Relative Linenumber
 vim.opt.relativenumber = true
+
 
 -- Indentation settings
 vim.opt.autoindent = true      -- Copy indent from current line when starting a new one
@@ -71,7 +66,10 @@ vim.opt.shiftwidth = 4         -- Spaces used for each step of autoindent
 vim.opt.softtabstop = 4        -- Spaces a <Tab> counts for while editing
 vim.opt.expandtab = true       -- Convert tabs to spaces
 
-
+-- Performance optimizations
+vim.opt.lazyredraw = false -- Don't set to true, causes issues in Neovim 0.10+
+vim.opt.synmaxcol = 240 -- Don't syntax highlight long lines
+vim.opt.redrawtime = 1500 -- Time in ms for redrawing display
 
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd('TextYankPost', {
