@@ -1,7 +1,7 @@
 local map = vim.keymap.set
 
 -- General
-map("n", "-", vim.cmd.Ex) -- File explorer view
+-- Note: "-" is mapped to Oil in plugins/oil.lua
 map("n", "<Esc>", "<cmd>nohlsearch<CR>") -- Clear search highlight
 
 -- Terminal Mode
@@ -73,5 +73,3 @@ end, { desc = "Copy absolute file/dir path to clipboard" })
 vim.keymap.set("n", "<leader>cr", function()
   copy_path(":.", "relative")
 end, { desc = "Copy relative file/dir path to clipboard" })
-
-
