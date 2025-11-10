@@ -1,6 +1,6 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter", -- Load only when entering insert mode
+	event = { "InsertEnter", "CmdlineEnter" }, -- Load only when entering insert mode or cmd mode
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
 		"hrsh7th/cmp-buffer", -- buffer completions
