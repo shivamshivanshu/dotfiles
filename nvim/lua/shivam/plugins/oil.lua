@@ -10,6 +10,7 @@ return {
 			show_hidden = true,
 		},
 		columns = {
+			"icon",
 			"permissions",
 			"size",
 			"mtime",
