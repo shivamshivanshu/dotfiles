@@ -67,3 +67,14 @@ end, { desc = "Copy absolute file/dir path to clipboard" })
 vim.keymap.set("n", "<leader>cr", function()
   copy_path(":.", "relative")
 end, { desc = "Copy relative file/dir path to clipboard" })
+
+-- Formatting
+map({"n", "x"}, "<leader>f", function()
+	local ok, conform = pcall(require, "conform")
+	if ok then
+		conform.format({ async = true, lsp_fallback = true })
+	else
+		vim.lsp.buf.format({ async = true })
+	end
+end, { desc = "Format" })
+
