@@ -45,26 +45,6 @@ return {
 				map("n", "[d", vim.diagnostic.goto_prev, "Prev Diagnostic")
 				map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
 
-				-- Format using conform.nvim (fallback to LSP if conform not available)
-				map("n", "<leader>f", function()
-					local ok, conform = pcall(require, "conform")
-					if ok then
-						conform.format({ async = true, lsp_fallback = true })
-					else
-						vim.lsp.buf.format({ async = true })
-					end
-				end, "Format Buffer")
-
-				-- Format visual selection using conform
-				map("x", "<leader>f", function()
-					local ok, conform = pcall(require, "conform")
-					if ok then
-						conform.format({ async = true, lsp_fallback = true })
-					else
-						vim.lsp.buf.format({ async = true })
-					end
-				end, "Format Selection")
-
 				-- Enable virtual text inlay hints if supported
 				if client.server_capabilities.inlayHintProvider then
 					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
