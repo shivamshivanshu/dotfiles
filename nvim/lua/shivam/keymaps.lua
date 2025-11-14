@@ -18,12 +18,6 @@ map("x", "<leader>p", [["_dP]])
 map({ "n", "v" }, "<leader>y", [["+y]])
 map("n", "<leader>Y", [["+Y]])
 
--- Move around Neovim panels
-map("n", "<leader>h", "<C-w>h")
-map("n", "<leader>j", "<C-w>j")
-map("n", "<leader>k", "<C-w>k")
-map("n", "<leader>l", "<C-w>l")
-
 -- Helper: fetch current path (dir in oil.nvim, file in regular buffers)
 local function get_current_path()
   local ok, oil = pcall(require, "oil")
