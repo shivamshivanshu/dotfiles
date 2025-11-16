@@ -18,6 +18,12 @@ map("x", "<leader>p", [["_dP]])
 map({ "n", "v" }, "<leader>y", [["+y]])
 map("n", "<leader>Y", [["+Y]])
 
+-- Window navigation (nvim splits only, <C-hjkl> used by tmux-navigator)
+map("n", "<leader>wh", "<C-w>h", { desc = "Move to left window" })
+map("n", "<leader>wj", "<C-w>j", { desc = "Move to bottom window" })
+map("n", "<leader>wk", "<C-w>k", { desc = "Move to top window" })
+map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
+
 -- Helper: fetch current path (dir in oil.nvim, file in regular buffers)
 local function get_current_path()
   local ok, oil = pcall(require, "oil")
