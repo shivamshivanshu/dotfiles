@@ -84,3 +84,6 @@ map({"n", "x"}, "<leader>f", function()
 	end
 end, { desc = "Format" })
 
+
+-- Epoch converter
+require("shivam.keybinds.epoch-converter").setup()
