@@ -59,6 +59,7 @@
     u = reset HEAD --
     ri = rebase -i
     cc = commit
+    cp = cherry-pick
     sw = switch
     po = push origin HEAD:refs/for/main
     pr = pull --rebase
