@@ -71,6 +71,18 @@ vim.opt.lazyredraw = false -- Don't set to true, causes issues in Neovim 0.10+
 vim.opt.synmaxcol = 240 -- Don't syntax highlight long lines
 vim.opt.redrawtime = 1500 -- Time in ms for redrawing display
 
+-- Session options for tmux-resurrect
+vim.opt.sessionoptions = {
+	"buffers",    -- Save all buffers
+	"curdir",     -- Save current directory
+	"tabpages",   -- Save all tab pages
+	"winsize",    -- Save window sizes
+	"help",       -- Save help windows
+	"globals",    -- Save global variables
+	"skiprtp",    -- Exclude runtime path from session
+	"folds",      -- Save folds
+}
+
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd('TextYankPost', {
 	desc = 'Highlight when yanking (copying) text',
