@@ -22,6 +22,7 @@ config.font = wezterm.font("JetBrains Mono")
 config.font_size = 14.0
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = { left = 8, right = 8, top = 6, bottom = 6 }
+config.term = "xterm-256color"
 
 -- Performance & Scrollback ----------------------------------------------------
 config.scrollback_lines = 10000
