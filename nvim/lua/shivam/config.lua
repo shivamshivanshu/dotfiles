@@ -7,7 +7,7 @@ vim.o.number = true
 vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
-vim.o.showmode = true
+vim.o.showmode = false
 
 -- Enable break indent
 vim.o.breakindent = true

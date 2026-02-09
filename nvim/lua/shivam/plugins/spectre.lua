@@ -3,10 +3,10 @@ return {
 	dependencies = { "nvim-lua/plenary.nvim" },
 	event = "VeryLazy", -- Load after startup for instant access
 	keys = {
-		{ "<leader>r", '<cmd>lua require("spectre").toggle()<CR>', desc = "Open Spectre (Search & Replace)" },
-		{ "<leader>rw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', desc = "Replace current word" },
-		{ "<leader>rw", '<esc><cmd>lua require("spectre").open_visual()<CR>', mode = "v", desc = "Replace selection" },
-		{ "<leader>rf", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', desc = "Replace in current file" },
+		{ "<leader>h", '<cmd>lua require("spectre").toggle()<CR>', desc = "Open Spectre (Search & Replace)" },
+		{ "<leader>hw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', desc = "Replace current word" },
+		{ "<leader>hw", '<esc><cmd>lua require("spectre").open_visual()<CR>', mode = "v", desc = "Replace selection" },
+		{ "<leader>hf", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', desc = "Replace in current file" },
 	},
 	opts = {
 		color_devicons = true,
@@ -29,12 +29,12 @@ return {
 				desc = "show options",
 			},
 			["run_current_replace"] = {
-				map = "<leader>rc",
+				map = "<leader>hc",
 				cmd = "<cmd>lua require('spectre').replace_current_line()<CR>",
 				desc = "replace current",
 			},
 			["run_replace"] = {
-				map = "<leader>ra",
+				map = "<leader>ha",
 				cmd = "<cmd>lua require('spectre').replace()<CR>",
 				desc = "replace all",
 			},

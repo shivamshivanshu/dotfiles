@@ -46,8 +46,8 @@ return {
 				map("n", "gi", lsp.implementation, "Go to Implementation")
 				map("n", "<leader>rn", lsp.rename, "Rename Symbol")
 				map("n", "<leader>ca", lsp.code_action, "Code Action")
-				map("n", "[d", vim.diagnostic.goto_prev, "Prev Diagnostic")
-				map("n", "]d", vim.diagnostic.goto_next, "Next Diagnostic")
+				map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev Diagnostic")
+				map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next Diagnostic")
 
 				if client.server_capabilities.inlayHintProvider then
 					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
@@ -61,7 +61,7 @@ return {
 			end
 
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "clangd", "cmake", "pyright" },
+				ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "marksman" },
 				automatic_installation = true,
 			})
 
@@ -117,7 +117,15 @@ return {
 				capabilities = capabilities,
 			}
 
-			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake" })
+			vim.lsp.config.marksman = {
+				cmd = { "marksman", "server" },
+				filetypes = { "markdown", "markdown.mdx" },
+				root_markers = { ".marksman.toml", ".git" },
+				on_attach = on_attach,
+				capabilities = capabilities,
+			}
+
+			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "marksman" })
 		end,
 	},
 }
