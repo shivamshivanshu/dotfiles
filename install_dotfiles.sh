@@ -3,11 +3,12 @@ set -euo pipefail
 
 usage() {
   cat <<EOF
-Usage: $0 <manual|auto> [package-manager]
+Usage: $0 <manual|auto|link> [package-manager]
 
 Modes:
   manual                  List packages
   auto <pkg-manager>      Install via given manager
+  link                    Only create symlinks (skip package install)
 EOF
   exit 1
 }
@@ -18,7 +19,7 @@ EOF
 # Args
 MODE="${1:-}"; shift
 case "$MODE" in
-  manual) ;;
+  manual|link) ;;
   auto)
     PKG_MANAGER="${1:-}" && shift
     [[ -z "$PKG_MANAGER" ]] && { echo "Error: auto needs a package manager"; usage; }
@@ -84,8 +85,10 @@ link() {
 }
 
 # === Main ===
-install_packages
-install_tpm
+if [[ "$MODE" != "link" ]]; then
+  install_packages
+  install_tpm
+fi
 
 link "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"           "Neovim config"
 link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"            "tmux config"
