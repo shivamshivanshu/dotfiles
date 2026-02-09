@@ -4,16 +4,14 @@ if [[ ! "$PATH" == *"$HOME/.local/bin"* ]]; then
 fi
 export PATH
 
-# oh-my-zsh
-export ZSH="$HOME/.config/oh-my-zsh"
-if [[ -d "$ZSH" ]]; then
-  ZSH_THEME="robbyrussell"
-  plugins=(git sudo)
-  DISABLE_MAGIC_FUNCTIONS="true"
-  ZSH_DISABLE_COMPFIX="true"
-  DISABLE_AUTO_UPDATE="true"
-  source "$ZSH/oh-my-zsh.sh"
-fi
+# prompt (robbyrussell-style)
+autoload -Uz compinit && compinit -C
+autoload -Uz vcs_info
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats ' %F{blue}git:(%F{red}%b%F{blue})%f'
+zstyle ':vcs_info:git:*' actionformats ' %F{blue}git:(%F{red}%b|%a%F{blue})%f'
+setopt PROMPT_SUBST
+PROMPT='%(?.%B%F{green}➜%f%b .%B%F{red}➜%f%b ) %F{cyan}%c%f${vcs_info_msg_0_} '
 
 # source modular configs
 if [[ -d ~/.zshrc.d ]]; then

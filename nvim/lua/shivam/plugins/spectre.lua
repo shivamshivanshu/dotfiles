@@ -1,7 +1,6 @@
 return {
 	"nvim-pack/nvim-spectre",
 	dependencies = { "nvim-lua/plenary.nvim" },
-	event = "VeryLazy", -- Load after startup for instant access
 	keys = {
 		{ "<leader>h", '<cmd>lua require("spectre").toggle()<CR>', desc = "Open Spectre (Search & Replace)" },
 		{ "<leader>hw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', desc = "Replace current word" },

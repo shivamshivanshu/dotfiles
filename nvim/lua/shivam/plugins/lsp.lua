@@ -17,7 +17,7 @@ return {
 				"clang-format", -- C/C++ formatter
 				"prettier", -- JS/TS/JSON/YAML/HTML/CSS formatter
 			},
-			auto_update = true,
+			auto_update = false,
 		},
 	},
 	{
