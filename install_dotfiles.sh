@@ -69,22 +69,23 @@ install_tpm() {
   git clone https://github.com/tmux-plugins/tpm "$p"
 }
 
+confirm() {
+  local prompt="$1"
+  read -rp "$prompt [y/N] " answer
+  [[ "$answer" =~ ^[Yy]$ ]]
+}
+
 link() {
   local src="$1" dst="$2" desc="$3"
-  echo "Linking $desc..."
+  confirm "Link $desc ($src → $dst)?" || { echo "  Skipped"; return; }
   [[ -e "$dst" || -L "$dst" ]] && rm -rf "$dst"
   ln -s "$src" "$dst"
-  echo "  $src → $dst"
+  echo "  Linked"
 }
 
 # === Main ===
-install_omz() {
-  "$DOTFILES_DIR/zsh/install_omz.sh"
-}
-
 install_packages
 install_tpm
-install_omz
 
 link "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"           "Neovim config"
 link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"            "tmux config"
@@ -92,15 +93,8 @@ link "$DOTFILES_DIR/git/.gitconfig"   "$HOME/.gitconfig"            "Git config"
 link "$DOTFILES_DIR/alacritty"        "$HOME/.config/alacritty"     "Alacritty config"
 link "$DOTFILES_DIR/wezterm"          "$HOME/.config/wezterm"       "Wezterm config"
 link "$DOTFILES_DIR/bash/.bashrc"     "$HOME/.bashrc"               "Bash config"
-mkdir -p "$HOME/.bashrc.d"
-link "$DOTFILES_DIR/bash/.bashrc.d/alias.sh"  "$HOME/.bashrc.d/alias.sh"  "Bash aliases"
-link "$DOTFILES_DIR/bash/.bashrc.d/fzf.sh"    "$HOME/.bashrc.d/fzf.sh"    "fzf shell integration"
-link "$DOTFILES_DIR/bash/.bashrc.d/zoxide.sh"  "$HOME/.bashrc.d/zoxide.sh"  "zoxide shell integration"
-link "$DOTFILES_DIR/zsh/.zshrc.user"           "$HOME/.zshrc.user"          "Zsh user config"
-mkdir -p "$HOME/.zshrc.d"
-link "$DOTFILES_DIR/zsh/.zshrc.d/alias.zsh"    "$HOME/.zshrc.d/alias.zsh"   "Zsh aliases"
-link "$DOTFILES_DIR/zsh/.zshrc.d/fzf.zsh"      "$HOME/.zshrc.d/fzf.zsh"     "Zsh fzf integration"
-link "$DOTFILES_DIR/zsh/.zshrc.d/history.zsh"   "$HOME/.zshrc.d/history.zsh" "Zsh history config"
-link "$DOTFILES_DIR/zsh/.zshrc.d/zoxide.zsh"    "$HOME/.zshrc.d/zoxide.zsh"  "Zsh zoxide integration"
+link "$DOTFILES_DIR/bash/.bashrc.d"   "$HOME/.bashrc.d"             "Bash modular configs"
+link "$DOTFILES_DIR/zsh/.zshrc.user"  "$HOME/.zshrc.user"           "Zsh user config"
+link "$DOTFILES_DIR/zsh/.zshrc.d"     "$HOME/.zshrc.d"              "Zsh modular configs"
 
-echo "🎉 Dotfiles setup complete!"
+echo "Dotfiles setup complete!"
