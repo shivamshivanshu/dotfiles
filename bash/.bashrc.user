@@ -5,8 +5,8 @@ fi
 export PATH
 
 # source modular configs
-if [[ -d ~/.zshrc.d ]]; then
-  for rc in ~/.zshrc.d/*(N); do
+if [[ -d ~/.bashrc.d ]]; then
+  for rc in ~/.bashrc.d/*; do
     [[ -f "$rc" ]] && source "$rc"
   done
   unset rc

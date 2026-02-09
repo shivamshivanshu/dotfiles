@@ -95,7 +95,7 @@ link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"            "tmux config
 link "$DOTFILES_DIR/git/.gitconfig"   "$HOME/.gitconfig"            "Git config"
 link "$DOTFILES_DIR/alacritty"        "$HOME/.config/alacritty"     "Alacritty config"
 link "$DOTFILES_DIR/wezterm"          "$HOME/.config/wezterm"       "Wezterm config"
-link "$DOTFILES_DIR/bash/.bashrc"     "$HOME/.bashrc"               "Bash config"
+link "$DOTFILES_DIR/bash/.bashrc.user" "$HOME/.bashrc.user"          "Bash user config"
 link "$DOTFILES_DIR/bash/.bashrc.d"   "$HOME/.bashrc.d"             "Bash modular configs"
 link "$DOTFILES_DIR/zsh/.zshrc.user"  "$HOME/.zshrc.user"           "Zsh user config"
 link "$DOTFILES_DIR/zsh/.zshrc.d"     "$HOME/.zshrc.d"              "Zsh modular configs"
