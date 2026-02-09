@@ -186,8 +186,8 @@ Leader: `Space`
 | `gsi` | Toggle *italic* |
 | `gsc` | Toggle `code` |
 | `gss` | Toggle ~~strikethrough~~ |
-| `ds` + key | Delete surrounding (`dsb` = remove bold) |
-| `cs` + old + new | Change surrounding (`csbi` = bold → italic) |
+| `gsd` + key | Delete surrounding (`gsdb` = remove bold) |
+| `gsc` + old + new | Change surrounding (`gscbi` = bold → italic) |
 | `gl` | Add link |
 | `gx` | Follow link |
 | `]]` / `[[` | Next / prev heading |
