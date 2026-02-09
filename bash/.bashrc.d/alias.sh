@@ -1,3 +1,4 @@
 # Unix specific alias
-alias l="ls -al"
+alias l="eza -al"
+alias ls="eza"
 alias vim="nvim"

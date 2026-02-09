@@ -2,7 +2,6 @@
     pager = delta
     editor = nvim
     autocrlf = input
-    excludesfile = ~/.gitignore_global
 
 [init]
     defaultBranch = main
@@ -85,7 +84,3 @@
 [rebase]
     autosquash = true
     autoStash = true
-
-[user]
-	name = Shivam Shivanshu
-	email = shivam.shivanshu@imc.com

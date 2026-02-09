@@ -28,8 +28,8 @@ esac
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-PACKAGES=(git-delta neovim git tmux ripgrep exa)
-BIN=(delta nvim git tmux rg exa)
+PACKAGES=(git-delta neovim git tmux ripgrep eza)
+BIN=(delta nvim git tmux rg eza)
 
 install_package() {
   local pm="$1" pkg="$2"
@@ -81,8 +81,13 @@ link() {
 install_packages
 install_tpm
 
-link "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"      "Neovim config"
-link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"        "tmux config"
-link "$DOTFILES_DIR/git/.gitconfig"   "$HOME/.gitconfig"        "Git config"
+link "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"           "Neovim config"
+link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"            "tmux config"
+link "$DOTFILES_DIR/git/.gitconfig"   "$HOME/.gitconfig"            "Git config"
+link "$DOTFILES_DIR/alacritty"        "$HOME/.config/alacritty"     "Alacritty config"
+link "$DOTFILES_DIR/wezterm"          "$HOME/.config/wezterm"       "Wezterm config"
+link "$DOTFILES_DIR/bash/.bashrc"     "$HOME/.bashrc"               "Bash config"
+mkdir -p "$HOME/.bashrc.d"
+link "$DOTFILES_DIR/bash/.bashrc.d/alias.sh" "$HOME/.bashrc.d/alias.sh" "Bash aliases"
 
 echo "🎉 Dotfiles setup complete!"
