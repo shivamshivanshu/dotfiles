@@ -1,0 +1,24 @@
+# paths
+if [[ ! "$PATH" == *"$HOME/.local/bin"* ]]; then
+  PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# oh-my-zsh
+export ZSH="$HOME/.config/oh-my-zsh"
+if [[ -d "$ZSH" ]]; then
+  ZSH_THEME="robbyrussell"
+  plugins=(git z sudo)
+  DISABLE_MAGIC_FUNCTIONS="true"
+  ZSH_DISABLE_COMPFIX="true"
+  DISABLE_AUTO_UPDATE="true"
+  source "$ZSH/oh-my-zsh.sh"
+fi
+
+# source modular configs
+if [[ -d ~/.zshrc.d ]]; then
+  for rc in ~/.zshrc.d/*(N); do
+    [[ -f "$rc" ]] && source "$rc"
+  done
+  unset rc
+fi

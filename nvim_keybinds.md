@@ -129,6 +129,29 @@ Leader: `Space`
 | `grc` | Expand to scope |
 | `grm` | Shrink selection |
 
+## Surround
+
+| Keys | Mode | Action |
+|------|------|--------|
+| `ys{motion}{char}` | n | Add surround |
+| `ds{char}` | n | Delete surround |
+| `cs{old}{new}` | n | Change surround |
+| `S{char}` | x | Surround selection |
+
+## Flash
+
+| Keys | Mode | Action |
+|------|------|--------|
+| `s` | n, x, o | Flash jump |
+| `S` | n, x, o | Flash treesitter select |
+| `r` | o | Remote flash |
+
+## Undotree
+
+| Keys | Action |
+|------|--------|
+| `<leader>u` | Toggle undo tree |
+
 ## Comments
 
 | Keys | Action |
