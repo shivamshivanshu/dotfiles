@@ -1,6 +1,6 @@
 [window]
 padding = { x = 8, y = 8 }
-decorations = "Buttonless"     # Options: Full | None | Transparent | Buttonless
+decorations = "Full"     # Options: Full | None | Transparent | Buttonless
 opacity = 1.0
 blur = true
 
@@ -24,14 +24,6 @@ thickness = 0.15
 
 [selection]
 save_to_clipboard = true
-
-[keyboard]
-bindings = [
-  { key = "V", mods = "Control|Shift", action = "Paste" },
-  { key = "C", mods = "Control|Shift", action = "Copy" },
-  { key = "Equals", mods = "Control", action = "IncreaseFontSize" },
-  { key = "Minus", mods = "Control", action = "DecreaseFontSize" },
-]
 
 # -----------------------------
 #       Gruvbox Dark Theme
@@ -68,3 +60,28 @@ magenta = "#d3869b"
 cyan    = "#8ec07c"
 white   = "#ebdbb2"
 
+
+[[keyboard.bindings]]
+key = "V"
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = "C"
+mods = "Control|Shift"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = "Equals"
+mods = "Control"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Control"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001b\r"
