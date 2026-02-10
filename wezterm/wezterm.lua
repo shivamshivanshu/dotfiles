@@ -18,7 +18,7 @@ config.color_schemes = {
 config.color_scheme = "gruvbox_material_dark_hard"
 
 -- Basics ----------------------------------------------------------------------
-config.font = wezterm.font("JetBrains Mono")
+config.font = wezterm.font("JetBrainsMono Nerd Font")
 config.font_size = 14.0
 config.hide_tab_bar_if_only_one_tab = true
 config.window_padding = { left = 8, right = 8, top = 6, bottom = 6 }
