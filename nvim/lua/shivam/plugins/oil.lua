@@ -14,6 +14,13 @@ return {
 			"permissions",
 			"size",
 			"mtime",
-		}
+		},
+		keymaps = {
+			-- Disable C-h/j/k/l for vim-tmux-navigator compatibility
+			["<C-h>"] = false,
+			["<C-j>"] = false,
+			["<C-k>"] = false,
+			["<C-l>"] = false,
+		},
 	},
 }
