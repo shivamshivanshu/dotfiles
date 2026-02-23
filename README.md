@@ -93,16 +93,6 @@ Leader: `Space`
 | `<leader>ca` | Code action |
 | `[d` / `]d` | Prev / next diagnostic |
 
-### Git (Fugitive)
-
-| Keys | Action |
-|------|--------|
-| `<leader>gs` | Git status |
-| `<leader>gc` | Git commit |
-| `<leader>gP` | Git push |
-| `<leader>gl` | Git pull --rebase |
-| `<leader>gb` | Git blame |
-
 ### Git Hunks (Gitsigns)
 
 | Keys | Action |

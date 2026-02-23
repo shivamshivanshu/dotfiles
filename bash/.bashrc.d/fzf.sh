@@ -1,4 +1,12 @@
-command -v fzf &>/dev/null && eval "$(fzf --bash)"
+if command -v fzf &>/dev/null; then
+  _fzf_cache="$HOME/.cache/fzf-init.bash"
+  if [[ ! -f "$_fzf_cache" ]] || [[ "$(command -v fzf)" -nt "$_fzf_cache" ]]; then
+    mkdir -p "$HOME/.cache"
+    fzf --bash > "$_fzf_cache"
+  fi
+  source "$_fzf_cache"
+  unset _fzf_cache
+fi
 
 export FZF_DEFAULT_OPTS=" \
   --color=bg+:#3c3836,bg:#282828,spinner:#fb4934,hl:#928374 \

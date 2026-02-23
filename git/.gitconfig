@@ -63,6 +63,7 @@
     sh = show HEAD
     po = push origin HEAD:refs/for/main
     pr = pull --rebase
+    wt = worktree
     pow = push origin HEAD:refs/for/main%wip
     can = commit --amend --no-edit
     wip = commit -m "wip"

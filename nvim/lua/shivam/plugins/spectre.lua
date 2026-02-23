@@ -9,7 +9,7 @@ return {
 	},
 	opts = {
 		color_devicons = true,
-		open_cmd = "vnew",
+		open_cmd = "new",
 		live_update = false,
 		mapping = {
 			["toggle_line"] = {
