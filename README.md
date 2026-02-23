@@ -145,14 +145,6 @@ Leader: `Space`
 | `cs{old}{new}` | n | Change surround |
 | `S{char}` | x | Surround selection |
 
-### Flash
-
-| Keys | Mode | Action |
-|------|------|--------|
-| `s` | n, x, o | Flash jump |
-| `S` | n, x, o | Flash treesitter select |
-| `r` | o | Remote flash |
-
 ### Undotree
 
 | Keys | Action |
