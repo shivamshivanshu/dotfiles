@@ -1,11 +1,8 @@
 return {
 	{
 		"williamboman/mason.nvim",
-		lazy = false, -- Load immediately for LSP setup
+		lazy = false,
 		opts = {},
-		config = function()
-			require("mason").setup()
-		end,
 	},
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -13,16 +10,21 @@ return {
 		dependencies = { "williamboman/mason.nvim" },
 		opts = {
 			ensure_installed = {
-				"stylua", -- Lua formatter
-				"clang-format", -- C/C++ formatter
-				"prettier", -- JS/TS/JSON/YAML/HTML/CSS formatter
+				"stylua",
+				"clang-format",
+				"prettier",
 			},
 			auto_update = false,
 		},
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
+		lazy = false,
 		dependencies = { "williamboman/mason.nvim" },
+		opts = {
+			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "marksman" },
+			automatic_installation = true,
+		},
 	},
 	{
 		"neovim/nvim-lspconfig",
@@ -33,26 +35,28 @@ return {
 			"williamboman/mason-lspconfig.nvim",
 		},
 		config = function()
-			local on_attach = function(client, bufnr)
-				vim.notify(string.format("LSP attached: %s", client.name), vim.log.levels.INFO)
+			vim.api.nvim_create_autocmd("LspAttach", {
+				callback = function(args)
+					local client = vim.lsp.get_client_by_id(args.data.client_id)
+					if not client then return end
 
-				local map = function(mode, lhs, rhs, desc)
-					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-				end
-				local lsp = vim.lsp.buf
+					local map = function(mode, lhs, rhs, desc)
+						vim.keymap.set(mode, lhs, rhs, { buffer = args.buf, desc = desc })
+					end
 
-				map("n", "gd", lsp.definition, "Go to Definition")
-				map("n", "K", lsp.hover, "Hover Info")
-				map("n", "gi", lsp.implementation, "Go to Implementation")
-				map("n", "<leader>rn", lsp.rename, "Rename Symbol")
-				map("n", "<leader>ca", lsp.code_action, "Code Action")
-				map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev Diagnostic")
-				map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next Diagnostic")
+					map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
+					map("n", "K", vim.lsp.buf.hover, "Hover Info")
+					map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
+					map("n", "<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+					map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
+					map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev Diagnostic")
+					map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next Diagnostic")
 
-				if client.server_capabilities.inlayHintProvider then
-					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-				end
-			end
+					if client.server_capabilities.inlayHintProvider then
+						vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+					end
+				end,
+			})
 
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			local ok_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
@@ -60,26 +64,19 @@ return {
 				capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 			end
 
-			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "marksman" },
-				automatic_installation = true,
-			})
+			vim.lsp.config("*", { capabilities = capabilities })
 
-			vim.lsp.config.lua_ls = {
-				cmd = { "lua-language-server" },
-				filetypes = { "lua" },
+			vim.lsp.config("lua_ls", {
 				root_markers = { ".luarc.json", ".luacheckrc", ".stylua.toml", "stylua.toml", ".git" },
-				on_attach = on_attach,
-				capabilities = capabilities,
 				settings = {
 					Lua = {
 						diagnostics = { globals = { "vim" } },
 						workspace = { checkThirdParty = false },
 					},
 				},
-			}
+			})
 
-			vim.lsp.config.clangd = {
+			vim.lsp.config("clangd", {
 				cmd = {
 					"clangd",
 					"--background-index",
@@ -87,18 +84,11 @@ return {
 					"--header-insertion=iwyu",
 					"--completion-style=detailed",
 				},
-				filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
 				root_markers = { ".clangd", ".clang-tidy", ".clang-format", "compile_commands.json", ".git" },
-				on_attach = on_attach,
-				capabilities = capabilities,
-			}
+			})
 
-			vim.lsp.config.pyright = {
-				cmd = { "pyright-langserver", "--stdio" },
-				filetypes = { "python" },
+			vim.lsp.config("pyright", {
 				root_markers = { "pyrightconfig.json", "pyproject.toml", "setup.py", "requirements.txt", ".git" },
-				on_attach = on_attach,
-				capabilities = capabilities,
 				settings = {
 					python = {
 						analysis = {
@@ -107,23 +97,15 @@ return {
 						},
 					},
 				},
-			}
+			})
 
-			vim.lsp.config.cmake = {
-				cmd = { "cmake-language-server" },
-				filetypes = { "cmake" },
+			vim.lsp.config("cmake", {
 				root_markers = { "CMakePresets.json", "CTestConfig.cmake", ".git", "build", "cmake" },
-				on_attach = on_attach,
-				capabilities = capabilities,
-			}
+			})
 
-			vim.lsp.config.marksman = {
-				cmd = { "marksman", "server" },
-				filetypes = { "markdown", "markdown.mdx" },
+			vim.lsp.config("marksman", {
 				root_markers = { ".marksman.toml", ".git" },
-				on_attach = on_attach,
-				capabilities = capabilities,
-			}
+			})
 
 			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "marksman" })
 		end,
