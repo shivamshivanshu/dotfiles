@@ -47,6 +47,7 @@ return {
 					map("n", "gd", vim.lsp.buf.definition, "Go to Definition")
 					map("n", "K", vim.lsp.buf.hover, "Hover Info")
 					map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
+					map("n", "grr", vim.lsp.buf.references, "References")
 					map("n", "<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
 					map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
 					map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev Diagnostic")

@@ -3,6 +3,8 @@ local map = vim.keymap.set
 -- General
 -- Note: "-" is mapped to Oil in plugins/oil.lua
 map("n", "<Esc>", "<cmd>nohlsearch<CR>") -- Clear search highlight
+map("n", "<C-d>", "<C-d>zz")
+map("n", "<C-u>", "<C-u>zz")
 
 -- Terminal Mode
 map("n", "<leader>t", "<cmd>terminal<CR>", { desc = "Open vim terminal" }) -- Exit terminal mode. May not work with emulators
