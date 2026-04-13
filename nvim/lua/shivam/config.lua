@@ -58,7 +58,6 @@ vim.opt.relativenumber = true
 
 -- Indentation settings
 vim.opt.autoindent = true      -- Copy indent from current line when starting a new one
-vim.opt.smartindent = true     -- Smart autoindenting for code
 
 -- Tab and indentation width
 vim.opt.tabstop = 4            -- Display width of a tab character
