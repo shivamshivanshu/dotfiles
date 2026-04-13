@@ -20,7 +20,7 @@ config.color_scheme = "gruvbox_dark"
 -- Basics ----------------------------------------------------------------------
 config.font = wezterm.font("JetBrainsMono Nerd Font")
 config.font_size = 12.5
-config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = false
 config.window_padding = { left = 8, right = 8, top = 6, bottom = 6 }
 config.term = "xterm-256color"
 
