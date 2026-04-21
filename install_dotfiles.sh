@@ -6,40 +6,62 @@ usage() {
 Usage: $0 <manual|auto|link> [package-manager]
 
 Modes:
-  manual                  List packages
-  auto <pkg-manager>      Install via given manager
-  link                    Only create symlinks (skip package install)
+  manual                  List packages (no install, no symlinks)
+  auto <pkg-manager>      Install packages and symlink via GNU Stow
+  link                    Only create symlinks via GNU Stow (skip package install)
+
+Supported package managers: brew, apt, dnf, pacman, yay
 EOF
   exit 1
 }
 
-# Help
 [[ "${1:-}" =~ ^(-h|--help)$ ]] && usage
 
-# Args
-MODE="${1:-}"; shift
+MODE="${1:-}"
+[[ $# -gt 0 ]] && shift
 case "$MODE" in
   manual|link) ;;
   auto)
-    PKG_MANAGER="${1:-}" && shift
+    PKG_MANAGER="${1:-}"
     [[ -z "$PKG_MANAGER" ]] && { echo "Error: auto needs a package manager"; usage; }
+    shift
     ;;
   *) usage ;;
 esac
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-PACKAGES=(git-delta neovim git tmux ripgrep eza fzf bat zoxide)
-BIN=(delta nvim git tmux rg eza fzf bat zoxide)
+declare -A PACKAGES=(
+  [delta]=git-delta
+  [nvim]=neovim
+  [git]=git
+  [tmux]=tmux
+  [rg]=ripgrep
+  [eza]=eza
+  [fzf]=fzf
+  [bat]=bat
+  [zoxide]=zoxide
+  [stow]=stow
+)
+
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh)
+
+refresh_pkg_index() {
+  local pm="$1"
+  case "$pm" in
+    apt)    sudo apt update ;;
+    pacman) sudo pacman -Sy ;;
+  esac
+}
 
 install_package() {
   local pm="$1" pkg="$2"
   case "$pm" in
     brew)   brew install "$pkg" ;;
-    apt)    sudo apt update && sudo apt install -y "$pkg" ;;
+    apt)    sudo apt install -y "$pkg" ;;
     dnf)    sudo dnf install -y "$pkg" ;;
-    pacman) sudo pacman -Sy "$pkg" --noconfirm ;;
-    yay)    yay -S --noconfirm "$pkg" ;;
+    pacman) sudo pacman -S --needed --noconfirm "$pkg" ;;
+    yay)    yay -S --needed --noconfirm "$pkg" ;;
     *)
       echo "Unsupported manager: $pm; please install $pkg manually."
       return 1
@@ -49,55 +71,59 @@ install_package() {
 
 install_packages() {
   echo "Mode: $MODE"
-  for i in "${!PACKAGES[@]}"; do
-    pkg="${PACKAGES[i]}"
-    bin="${BIN[i]}"
-    echo "→ $bin"
+  if [[ "$MODE" == auto ]]; then
+    refresh_pkg_index "$PKG_MANAGER"
+  fi
+  for bin in "${!PACKAGES[@]}"; do
+    local pkg="${PACKAGES[$bin]}"
+    echo "→ $bin ($pkg)"
     if [[ "$MODE" == auto ]]; then
-      if ! command -v "$bin" &>/dev/null; then
-        install_package "$PKG_MANAGER" "$pkg"
+      if command -v "$bin" &>/dev/null; then
+        echo "   already installed"
       else
-        echo "   $bin already installed"
+        install_package "$PKG_MANAGER" "$pkg"
       fi
     fi
   done
 }
 
 install_tpm() {
-  local p="$HOME/.tmux/plugins/tpm"
-  [[ -d "$p" ]] && { echo "TPM already present"; return; }
-  echo "Installing TPM..."
-  git clone https://github.com/tmux-plugins/tpm "$p"
+  local tpm_dir="$HOME/.tmux/plugins/tpm"
+  if [[ -d "$tpm_dir" ]]; then
+    echo "TPM already present"
+  else
+    echo "Installing TPM..."
+    git clone https://github.com/tmux-plugins/tpm "$tpm_dir"
+  fi
+  if [[ -x "$tpm_dir/bin/install_plugins" ]]; then
+    "$tpm_dir/bin/install_plugins" || echo "TPM plugin install failed (run tmux and press prefix+I)"
+  fi
 }
 
-confirm() {
-  local prompt="$1"
-  read -rp "$prompt [y/N] " answer
-  [[ "$answer" =~ ^[Yy]$ ]]
-}
-
-link() {
-  local src="$1" dst="$2" desc="$3"
-  confirm "Link $desc ($src → $dst)?" || { echo "  Skipped"; return; }
-  [[ -e "$dst" || -L "$dst" ]] && rm -rf "$dst"
-  ln -s "$src" "$dst"
-  echo "  Linked"
+stow_packages() {
+  if ! command -v stow &>/dev/null; then
+    echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto <pkg-mgr>')." >&2
+    exit 1
+  fi
+  mkdir -p "$HOME/.config"
+  cd "$DOTFILES_DIR"
+  for pkg in "${STOW_PACKAGES[@]}"; do
+    echo "→ stow $pkg"
+    stow --restow --target="$HOME" --dir="$DOTFILES_DIR" "$pkg"
+  done
 }
 
 # === Main ===
 if [[ "$MODE" != "link" ]]; then
   install_packages
-  install_tpm
 fi
 
-link "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"           "Neovim config"
-link "$DOTFILES_DIR/tmux/.tmux.conf"  "$HOME/.tmux.conf"            "tmux config"
-link "$DOTFILES_DIR/git/.gitconfig"   "$HOME/.gitconfig"            "Git config"
-link "$DOTFILES_DIR/alacritty"        "$HOME/.config/alacritty"     "Alacritty config"
-link "$DOTFILES_DIR/wezterm"          "$HOME/.config/wezterm"       "Wezterm config"
-link "$DOTFILES_DIR/bash/.bashrc.user" "$HOME/.bashrc.user"          "Bash user config"
-link "$DOTFILES_DIR/bash/.bashrc.d"   "$HOME/.bashrc.d"             "Bash modular configs"
-link "$DOTFILES_DIR/zsh/.zshrc.user"  "$HOME/.zshrc.user"           "Zsh user config"
-link "$DOTFILES_DIR/zsh/.zshrc.d"     "$HOME/.zshrc.d"              "Zsh modular configs"
+if [[ "$MODE" != "manual" ]]; then
+  stow_packages
+fi
+
+if [[ "$MODE" == "auto" ]]; then
+  install_tpm
+fi
 
 echo "Dotfiles setup complete!"

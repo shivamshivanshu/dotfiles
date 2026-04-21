@@ -1,3 +1,49 @@
+## Dotfiles
+
+Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level
+directory is a Stow package whose internal tree mirrors where files land in
+`$HOME`.
+
+### Layout
+
+```
+nvim/.config/nvim/...            → ~/.config/nvim/...
+alacritty/.config/alacritty/...  → ~/.config/alacritty/...
+wezterm/.config/wezterm/...      → ~/.config/wezterm/...
+tmux/.tmux.conf                  → ~/.tmux.conf
+git/.gitconfig                   → ~/.gitconfig
+bash/.bashrc.user                → ~/.bashrc.user
+bash/.bashrc.d/                  → ~/.bashrc.d/
+zsh/.zshrc.user                  → ~/.zshrc.user
+zsh/.zshrc.d/                    → ~/.zshrc.d/
+```
+
+### Install
+
+```bash
+# Install packages (including stow itself) and symlink
+./install_dotfiles.sh auto dnf         # or apt / pacman / yay / brew
+
+# Only create symlinks (packages already installed)
+./install_dotfiles.sh link
+
+# Just list what would be installed
+./install_dotfiles.sh manual
+```
+
+### Managing symlinks manually
+
+```bash
+stow -t ~ nvim tmux git                # install
+stow -Rt ~ nvim                        # restow (after adding files)
+stow -Dt ~ nvim                        # uninstall
+stow -nvt ~ nvim                       # dry-run + verbose
+```
+
+If Stow complains that a target already exists as a real file, either back it
+up and remove it, or use `stow --adopt` to absorb it into the repo (review the
+diff afterwards).
+
 ## NVIM
 
 ### Installation
