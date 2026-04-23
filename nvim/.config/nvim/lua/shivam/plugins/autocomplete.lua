@@ -4,14 +4,14 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
 		"hrsh7th/cmp-buffer", -- buffer completions
-		"hrsh7th/cmp-path",   -- filesystem paths
+		"hrsh7th/cmp-path", -- filesystem paths
 		"saadparwaiz1/cmp_luasnip", -- snippet completions
-		"L3MON4D3/LuaSnip",   -- snippet engine
+		"L3MON4D3/LuaSnip", -- snippet engine
 		"rafamadriz/friendly-snippets",
 		"hrsh7th/cmp-cmdline",
 	},
 	config = function()
-		local cmp     = require("cmp")
+		local cmp = require("cmp")
 		local luasnip = require("luasnip")
 
 		-- Load VSCode-style snippets
@@ -25,8 +25,8 @@ return {
 			},
 			mapping = cmp.mapping.preset.insert({
 				["<C-Space>"] = cmp.mapping.complete(),
-				["<CR>"]      = cmp.mapping.confirm({ select = true }),
-				["<C-n>"]     = cmp.mapping(function(fallback)
+				["<CR>"] = cmp.mapping.confirm({ select = true }),
+				["<C-n>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_next_item()
 					elseif luasnip.expand_or_jumpable() then
@@ -35,7 +35,7 @@ return {
 						fallback()
 					end
 				end, { "i", "s" }),
-				["<C-p>"]     = cmp.mapping(function(fallback)
+				["<C-p>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
 						cmp.select_prev_item()
 					elseif luasnip.jumpable(-1) then
@@ -67,5 +67,5 @@ return {
 				{ name = "cmdline" },
 			}),
 		})
-	end
+	end,
 }

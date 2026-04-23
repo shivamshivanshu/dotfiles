@@ -30,7 +30,15 @@ local function epoch_to_readable(epoch_str)
 
 	local result = string.format("%s.%09d", date_str, remainder)
 	last_result = result
-	print(string.format("Epoch %s → %s (granularity: %s, offset: %+.1fh)", epoch_str, result, M.config.granularity, M.config.timezone_offset))
+	print(
+		string.format(
+			"Epoch %s → %s (granularity: %s, offset: %+.1fh)",
+			epoch_str,
+			result,
+			M.config.granularity,
+			M.config.timezone_offset
+		)
+	)
 	return result
 end
 
@@ -60,7 +68,15 @@ local function readable_to_epoch(date_str)
 
 	local result = string.format("%d", epoch)
 	last_result = result
-	print(string.format("Date %s → %s (granularity: %s, offset: %+.1fh)", date_str, result, M.config.granularity, M.config.timezone_offset))
+	print(
+		string.format(
+			"Date %s → %s (granularity: %s, offset: %+.1fh)",
+			date_str,
+			result,
+			M.config.granularity,
+			M.config.timezone_offset
+		)
+	)
 	return result
 end
 
@@ -123,8 +139,18 @@ function M.setup()
 		end
 	end, { nargs = 1, desc = "Set epoch granularity (ns/us/ms/s)" })
 
-	vim.keymap.set("x", "<leader>ec", ":<C-u>lua require('shivam.keybinds.epoch-converter')._convert_selection()<CR>", { desc = "Epoch convert (selection)" })
-	vim.keymap.set("x", "<leader>ee", ":<C-u>lua require('shivam.keybinds.epoch-converter')._convert_and_copy()<CR>", { desc = "Epoch convert and copy (selection)" })
+	vim.keymap.set(
+		"x",
+		"<leader>ec",
+		":<C-u>lua require('shivam.keybinds.epoch-converter')._convert_selection()<CR>",
+		{ desc = "Epoch convert (selection)" }
+	)
+	vim.keymap.set(
+		"x",
+		"<leader>ee",
+		":<C-u>lua require('shivam.keybinds.epoch-converter')._convert_and_copy()<CR>",
+		{ desc = "Epoch convert and copy (selection)" }
+	)
 	vim.keymap.set("n", "<leader>ey", function()
 		if last_result then
 			vim.fn.setreg("+", last_result)

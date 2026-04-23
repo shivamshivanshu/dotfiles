@@ -119,6 +119,7 @@ Leader: `Space`
 | `<leader>sk` | Keymaps |
 | `<leader>ss` | LSP symbols |
 | `<leader>sr` | Resume last search |
+| `<leader>sR` | Pick from picker history (multiple previous searches) |
 | `<leader>s.` | Recent files |
 | `<leader>sn` | Neovim config files |
 | `<leader>so` | Files (Oil dir aware) |

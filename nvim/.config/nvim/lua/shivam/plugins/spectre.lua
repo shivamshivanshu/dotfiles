@@ -3,9 +3,17 @@ return {
 	dependencies = { "nvim-lua/plenary.nvim" },
 	keys = {
 		{ "<leader>h", '<cmd>lua require("spectre").toggle()<CR>', desc = "Open Spectre (Search & Replace)" },
-		{ "<leader>hw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', desc = "Replace current word" },
+		{
+			"<leader>hw",
+			'<cmd>lua require("spectre").open_visual({select_word=true})<CR>',
+			desc = "Replace current word",
+		},
 		{ "<leader>hw", '<esc><cmd>lua require("spectre").open_visual()<CR>', mode = "v", desc = "Replace selection" },
-		{ "<leader>hf", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', desc = "Replace in current file" },
+		{
+			"<leader>hf",
+			'<cmd>lua require("spectre").open_file_search({select_word=true})<CR>',
+			desc = "Replace in current file",
+		},
 	},
 	opts = {
 		color_devicons = true,

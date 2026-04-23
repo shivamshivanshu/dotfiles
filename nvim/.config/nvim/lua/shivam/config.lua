@@ -4,7 +4,7 @@
 vim.o.number = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
-vim.o.mouse = 'a'
+vim.o.mouse = "a"
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -20,7 +20,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = "yes"
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -33,7 +33,7 @@ vim.o.splitright = true
 vim.o.splitbelow = true
 
 vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
@@ -55,15 +55,14 @@ vim.opt.clipboard = "unnamedplus"
 -- Enable Relative Linenumber
 vim.opt.relativenumber = true
 
-
 -- Indentation settings
-vim.opt.autoindent = true      -- Copy indent from current line when starting a new one
+vim.opt.autoindent = true -- Copy indent from current line when starting a new one
 
 -- Tab and indentation width
-vim.opt.tabstop = 4            -- Display width of a tab character
-vim.opt.shiftwidth = 4         -- Spaces used for each step of autoindent
-vim.opt.softtabstop = 4        -- Spaces a <Tab> counts for while editing
-vim.opt.expandtab = true       -- Convert tabs to spaces
+vim.opt.tabstop = 4 -- Display width of a tab character
+vim.opt.shiftwidth = 4 -- Spaces used for each step of autoindent
+vim.opt.softtabstop = 4 -- Spaces a <Tab> counts for while editing
+vim.opt.expandtab = true -- Convert tabs to spaces
 
 -- Performance optimizations
 vim.opt.lazyredraw = false -- Don't set to true, causes issues in Neovim 0.10+
@@ -72,20 +71,20 @@ vim.opt.redrawtime = 1500 -- Time in ms for redrawing display
 
 -- Session options for tmux-resurrect
 vim.opt.sessionoptions = {
-	"buffers",    -- Save all buffers
-	"curdir",     -- Save current directory
-	"tabpages",   -- Save all tab pages
-	"winsize",    -- Save window sizes
-	"help",       -- Save help windows
-	"globals",    -- Save global variables
-	"skiprtp",    -- Exclude runtime path from session
-	"folds",      -- Save folds
+	"buffers", -- Save all buffers
+	"curdir", -- Save current directory
+	"tabpages", -- Save all tab pages
+	"winsize", -- Save window sizes
+	"help", -- Save help windows
+	"globals", -- Save global variables
+	"skiprtp", -- Exclude runtime path from session
+	"folds", -- Save folds
 }
 
 -- Highlight text when yanking
-vim.api.nvim_create_autocmd('TextYankPost', {
-	desc = 'Highlight when yanking (copying) text',
-	group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
 	callback = function()
 		vim.highlight.on_yank({
 			higroup = "IncSearch", -- One of IncSearch, Visual, Search

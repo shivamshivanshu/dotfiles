@@ -11,5 +11,5 @@ return {
 		map("n", "<leader>gu", gitsigns.reset_hunk, { desc = "Reset Git hunk" })
 		map("n", "]c", gitsigns.next_hunk, { desc = "Next Git hunk" })
 		map("n", "[c", gitsigns.prev_hunk, { desc = "Previous Git hunk" })
-	end
+	end,
 }

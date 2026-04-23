@@ -11,7 +11,7 @@ map("n", "<leader>t", "<cmd>terminal<CR>", { desc = "Open vim terminal" }) -- Ex
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }) -- Exit terminal mode. May not work with emulators
 
 -- Persistance Copy
-local modes = {"n", "x"} -- normal and visual modes
+local modes = { "n", "x" } -- normal and visual modes
 map(modes, "gy", [["ay]], { desc = "Yank to register a" })
 map(modes, "gp", [["ap]], { desc = "Paste from register a" })
 
@@ -28,56 +28,56 @@ map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 
 -- Helper: fetch current path (dir in oil.nvim, file in regular buffers)
 local function get_current_path()
-  local ok, oil = pcall(require, "oil")
-  if ok and oil.get_current_dir and vim.bo.filetype == "oil" then
-    local dir = oil.get_current_dir()
-    if dir and dir ~= "" then
-      return dir
-    end
-  end
-  local buf = vim.fn.expand("%:p")
-  if buf ~= "" then
-    return buf
-  end
-  return nil
+	local ok, oil = pcall(require, "oil")
+	if ok and oil.get_current_dir and vim.bo.filetype == "oil" then
+		local dir = oil.get_current_dir()
+		if dir and dir ~= "" then
+			return dir
+		end
+	end
+	local buf = vim.fn.expand("%:p")
+	if buf ~= "" then
+		return buf
+	end
+	return nil
 end
 
 -- Helper: copy path with an optional modifier (":p" absolute, ":." relative)
 local function copy_path(mod, label)
-  local path = get_current_path()
-  if not path then
-    local msg = "No valid path to copy"
-    if vim.notify then
-      vim.notify(msg, vim.log.levels.WARN)
-    else
-      print(msg)
-    end
-    return
-  end
+	local path = get_current_path()
+	if not path then
+		local msg = "No valid path to copy"
+		if vim.notify then
+			vim.notify(msg, vim.log.levels.WARN)
+		else
+			print(msg)
+		end
+		return
+	end
 
-  local out = mod and vim.fn.fnamemodify(path, mod) or path
-  vim.fn.setreg("+", out)
+	local out = mod and vim.fn.fnamemodify(path, mod) or path
+	vim.fn.setreg("+", out)
 
-  local msg = string.format("Copied%s: %s", label and (" (" .. label .. ")") or "", out)
-  if vim.notify then
-    vim.notify(msg)
-  else
-    print(msg)
-  end
+	local msg = string.format("Copied%s: %s", label and (" (" .. label .. ")") or "", out)
+	if vim.notify then
+		vim.notify(msg)
+	else
+		print(msg)
+	end
 end
 
 -- <leader>cp → copy absolute path
 vim.keymap.set("n", "<leader>cp", function()
-  copy_path(":p", "absolute")
+	copy_path(":p", "absolute")
 end, { desc = "Copy absolute file/dir path to clipboard" })
 
 -- <leader>cr → copy path relative to current working directory
 vim.keymap.set("n", "<leader>cr", function()
-  copy_path(":.", "relative")
+	copy_path(":.", "relative")
 end, { desc = "Copy relative file/dir path to clipboard" })
 
 -- Formatting
-map({"n", "x"}, "<leader>f", function()
+map({ "n", "x" }, "<leader>f", function()
 	local ok, conform = pcall(require, "conform")
 	if ok then
 		conform.format({ async = true, lsp_fallback = true })
@@ -85,7 +85,6 @@ map({"n", "x"}, "<leader>f", function()
 		vim.lsp.buf.format({ async = true })
 	end
 end, { desc = "Format" })
-
 
 -- Epoch converter
 require("shivam.keybinds.epoch-converter").setup()

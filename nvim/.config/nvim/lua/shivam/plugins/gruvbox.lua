@@ -4,7 +4,7 @@ return {
 	priority = 1000,
 	config = function()
 		require("gruvbox").setup({
-			contrast = "hard",      -- or "soft", "medium"
+			contrast = "hard", -- or "soft", "medium"
 			italic = {
 				strings = true,
 				comments = true,
@@ -16,7 +16,7 @@ return {
 		vim.cmd.colorscheme("gruvbox")
 
 		-- Set all virtual text to bright yellow for visibility
-		local vtext_color = "#fabd2f"  -- bright yellow
+		local vtext_color = "#fabd2f" -- bright yellow
 		local groups = {
 			"GitSignsCurrentLineBlame",
 			"DiagnosticVirtualTextError",

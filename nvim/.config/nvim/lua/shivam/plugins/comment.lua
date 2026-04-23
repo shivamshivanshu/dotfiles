@@ -1,5 +1,5 @@
 return {
-	'numToStr/Comment.nvim',
+	"numToStr/Comment.nvim",
 	event = { "BufReadPost", "BufNewFile" },
 	keys = {
 		{ "gc", mode = { "n", "v" }, desc = "Comment toggle linewise" },

@@ -38,7 +38,9 @@ return {
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(args)
 					local client = vim.lsp.get_client_by_id(args.data.client_id)
-					if not client then return end
+					if not client then
+						return
+					end
 
 					local map = function(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { buffer = args.buf, desc = desc })
@@ -50,8 +52,12 @@ return {
 					map("n", "grr", vim.lsp.buf.references, "References")
 					map("n", "<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
 					map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
-					map("n", "[d", function() vim.diagnostic.jump({ count = -1 }) end, "Prev Diagnostic")
-					map("n", "]d", function() vim.diagnostic.jump({ count = 1 }) end, "Next Diagnostic")
+					map("n", "[d", function()
+						vim.diagnostic.jump({ count = -1 })
+					end, "Prev Diagnostic")
+					map("n", "]d", function()
+						vim.diagnostic.jump({ count = 1 })
+					end, "Next Diagnostic")
 
 					if client.server_capabilities.inlayHintProvider then
 						vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
