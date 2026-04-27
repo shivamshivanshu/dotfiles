@@ -45,7 +45,6 @@ PACKAGES=(
   "bat:bat"
   "zoxide:zoxide"
   "stow:stow"
-  "tree-sitter:tree-sitter-cli"
 )
 
 STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh)
