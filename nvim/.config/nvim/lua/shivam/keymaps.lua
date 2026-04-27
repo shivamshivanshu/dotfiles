@@ -46,24 +46,13 @@ end
 local function copy_path(mod, label)
 	local path = get_current_path()
 	if not path then
-		local msg = "No valid path to copy"
-		if vim.notify then
-			vim.notify(msg, vim.log.levels.WARN)
-		else
-			print(msg)
-		end
+		vim.notify("No valid path to copy", vim.log.levels.WARN)
 		return
 	end
 
 	local out = mod and vim.fn.fnamemodify(path, mod) or path
 	vim.fn.setreg("+", out)
-
-	local msg = string.format("Copied%s: %s", label and (" (" .. label .. ")") or "", out)
-	if vim.notify then
-		vim.notify(msg)
-	else
-		print(msg)
-	end
+	vim.notify(string.format("Copied%s: %s", label and (" (" .. label .. ")") or "", out))
 end
 
 -- <leader>cp → copy absolute path

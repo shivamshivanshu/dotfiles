@@ -86,11 +86,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
 	callback = function()
-		vim.highlight.on_yank({
-			higroup = "IncSearch", -- One of IncSearch, Visual, Search
-			timeout = 150, -- Duration in ms
-			on_macro = false, -- Don't run while yanking inside macro
-			on_visual = true, -- Highlight visually selected test
+		vim.hl.on_yank({
+			higroup = "IncSearch",
+			timeout = 150,
+			on_macro = false,
+			on_visual = true,
 		})
 	end,
 })

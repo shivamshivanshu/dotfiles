@@ -7,7 +7,8 @@ Usage: $0 <manual|auto|link> [package-manager]
 
 Modes:
   manual                  List packages (no install, no symlinks)
-  auto <pkg-manager>      Install packages and symlink via GNU Stow
+  auto [pkg-manager]      Install packages and symlink via GNU Stow
+                          (pkg-manager auto-detected if omitted)
   link                    Only create symlinks via GNU Stow (skip package install)
 
 Supported package managers: brew, apt, dnf, pacman, yay
@@ -19,32 +20,56 @@ EOF
 
 MODE="${1:-}"
 [[ $# -gt 0 ]] && shift
+
+PKG_MANAGER=""
 case "$MODE" in
   manual|link) ;;
   auto)
     PKG_MANAGER="${1:-}"
-    [[ -z "$PKG_MANAGER" ]] && { echo "Error: auto needs a package manager"; usage; }
-    shift
+    [[ $# -gt 0 ]] && shift
     ;;
   *) usage ;;
 esac
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-declare -A PACKAGES=(
-  [delta]=git-delta
-  [nvim]=neovim
-  [git]=git
-  [tmux]=tmux
-  [rg]=ripgrep
-  [eza]=eza
-  [fzf]=fzf
-  [bat]=bat
-  [zoxide]=zoxide
-  [stow]=stow
+# Each entry is "binary:package-name" — kept as parallel list for bash 3.2 compat (macOS).
+PACKAGES=(
+  "delta:git-delta"
+  "nvim:neovim"
+  "git:git"
+  "tmux:tmux"
+  "rg:ripgrep"
+  "eza:eza"
+  "fzf:fzf"
+  "bat:bat"
+  "zoxide:zoxide"
+  "stow:stow"
+  "tree-sitter:tree-sitter-cli"
 )
 
 STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh)
+
+detect_pkg_manager() {
+  case "$(uname -s)" in
+    Darwin)
+      command -v brew &>/dev/null && { echo "brew"; return; }
+      echo "Error: Homebrew not found on macOS. Install from https://brew.sh" >&2
+      exit 1
+      ;;
+    Linux)
+      for pm in apt dnf pacman yay; do
+        command -v "$pm" &>/dev/null && { echo "$pm"; return; }
+      done
+      echo "Error: no supported package manager found (tried apt, dnf, pacman, yay)" >&2
+      exit 1
+      ;;
+    *)
+      echo "Error: unsupported OS: $(uname -s)" >&2
+      exit 1
+      ;;
+  esac
+}
 
 refresh_pkg_index() {
   local pm="$1"
@@ -72,10 +97,12 @@ install_package() {
 install_packages() {
   echo "Mode: $MODE"
   if [[ "$MODE" == auto ]]; then
+    echo "Package manager: $PKG_MANAGER"
     refresh_pkg_index "$PKG_MANAGER"
   fi
-  for bin in "${!PACKAGES[@]}"; do
-    local pkg="${PACKAGES[$bin]}"
+  for entry in "${PACKAGES[@]}"; do
+    local bin="${entry%%:*}"
+    local pkg="${entry#*:}"
     echo "→ $bin ($pkg)"
     if [[ "$MODE" == auto ]]; then
       if command -v "$bin" &>/dev/null; then
@@ -102,7 +129,7 @@ install_tpm() {
 
 stow_packages() {
   if ! command -v stow &>/dev/null; then
-    echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto <pkg-mgr>')." >&2
+    echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto')." >&2
     exit 1
   fi
   mkdir -p "$HOME/.config"
@@ -114,6 +141,10 @@ stow_packages() {
 }
 
 # === Main ===
+if [[ "$MODE" == auto && -z "$PKG_MANAGER" ]]; then
+  PKG_MANAGER="$(detect_pkg_manager)"
+fi
+
 if [[ "$MODE" != "link" ]]; then
   install_packages
 fi
