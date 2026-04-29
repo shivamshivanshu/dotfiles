@@ -3,8 +3,6 @@ local parsers = {
 	"json", "markdown", "markdown_inline", "yaml", "vim", "vimdoc",
 }
 
-local no_indent = { c = true, cpp = true }
-
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -16,12 +14,7 @@ return {
 		init = function()
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function(ev)
-					if not pcall(vim.treesitter.start, ev.buf) then
-						return
-					end
-					if not no_indent[vim.bo[ev.buf].filetype] then
-						vim.bo[ev.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-					end
+					pcall(vim.treesitter.start, ev.buf)
 				end,
 			})
 		end,
