@@ -1,6 +1,23 @@
 local parsers = {
-	"lua", "python", "bash", "c", "cpp",
-	"json", "markdown", "markdown_inline", "yaml", "vim", "vimdoc",
+	"lua",
+	"python",
+	"bash",
+	"c",
+	"cpp",
+	"json",
+	"markdown",
+	"markdown_inline",
+	"yaml",
+	"vim",
+	"vimdoc",
+	"starlark",
+	"java",
+	"make",
+	"cmake",
+	"html",
+	"css",
+	"javascript",
+	"typescript",
 }
 
 return {
@@ -22,7 +39,7 @@ return {
 			if vim.fn.executable("tree-sitter") == 0 then
 				vim.schedule(function()
 					vim.notify(
-						"tree-sitter CLI not found; parsers not installed. Install via: brew install tree-sitter-cli",
+						"tree-sitter CLI not found; parsers not installed.\nInstall via: cargo install tree-sitter-cli (or 'brew install tree-sitter' on macOS)",
 						vim.log.levels.WARN
 					)
 				end)
@@ -31,10 +48,14 @@ return {
 
 			local installed = require("nvim-treesitter.config").get_installed()
 			local to_install = vim.iter(parsers)
-				:filter(function(p) return not vim.tbl_contains(installed, p) end)
+				:filter(function(p)
+					return not vim.tbl_contains(installed, p)
+				end)
 				:totable()
 			if #to_install > 0 then
-				require("nvim-treesitter").install(to_install)
+				vim.schedule(function()
+					require("nvim-treesitter").install(to_install)
+				end)
 			end
 		end,
 	},
@@ -69,7 +90,11 @@ return {
 				end, { desc = desc }
 			end
 			vim.keymap.set({ "n", "x", "o" }, "]m", mv(move.goto_next_start, "@function.outer", "Next function start"))
-			vim.keymap.set({ "n", "x", "o" }, "[m", mv(move.goto_previous_start, "@function.outer", "Prev function start"))
+			vim.keymap.set(
+				{ "n", "x", "o" },
+				"[m",
+				mv(move.goto_previous_start, "@function.outer", "Prev function start")
+			)
 			vim.keymap.set({ "n", "x", "o" }, "]M", mv(move.goto_next_end, "@function.outer", "Next function end"))
 			vim.keymap.set({ "n", "x", "o" }, "[M", mv(move.goto_previous_end, "@function.outer", "Prev function end"))
 			vim.keymap.set({ "n", "x", "o" }, "]]", mv(move.goto_next_start, "@class.outer", "Next class start"))
@@ -80,10 +105,12 @@ return {
 			vim.keymap.set({ "n", "x", "o" }, "[a", mv(move.goto_previous_start, "@parameter.inner", "Prev parameter"))
 
 			local swap = require("nvim-treesitter-textobjects.swap")
-			vim.keymap.set("n", "<leader>a", function() swap.swap_next("@parameter.inner") end,
-				{ desc = "Swap with next parameter" })
-			vim.keymap.set("n", "<leader>A", function() swap.swap_previous("@parameter.inner") end,
-				{ desc = "Swap with previous parameter" })
+			vim.keymap.set("n", "<leader>a", function()
+				swap.swap_next("@parameter.inner")
+			end, { desc = "Swap with next parameter" })
+			vim.keymap.set("n", "<leader>A", function()
+				swap.swap_previous("@parameter.inner")
+			end, { desc = "Swap with previous parameter" })
 		end,
 	},
 }

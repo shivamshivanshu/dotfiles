@@ -49,7 +49,7 @@
     decorate = short
 
 [alias]
-    a = add .
+    a = add
     c = checkout
     b = branch
     d = diff

@@ -23,7 +23,6 @@ return {
 		dependencies = { "williamboman/mason.nvim" },
 		opts = {
 			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "marksman" },
-			automatic_installation = true,
 		},
 	},
 	{

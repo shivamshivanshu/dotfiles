@@ -1,7 +1,7 @@
 # paths
-if [[ ! "$PATH" == *"$HOME/.local/bin"* ]]; then
-  PATH="$HOME/.local/bin:$HOME/bin:$HOME/.cargo/bin:$PATH"
-fi
+for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
+  [[ -d "$d" && ":$PATH:" != *":$d:"* ]] && PATH="$d:$PATH"
+done
 export PATH
 
 # source modular configs
