@@ -44,6 +44,46 @@ If Stow complains that a target already exists as a real file, either back it
 up and remove it, or use `stow --adopt` to absorb it into the repo (review the
 diff afterwards).
 
+## Shell
+
+zsh and bash both source modular config from `.{z,b}shrc.d/`. Order-dependent
+setup (prompt, fzf, zoxide, autosuggestions, atuin) lives in a single
+`config.{zsh,sh}`; aliases and history options stay separate.
+
+### Tools
+
+| Tool | Purpose | zsh | bash |
+|------|---------|-----|------|
+| [atuin](https://github.com/atuinsh/atuin) | SQLite-backed history with fuzzy search | ✓ | — |
+| [fzf](https://github.com/junegunn/fzf) | Fuzzy file / cd picker | ✓ | ✓ |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart `cd` (`z <pattern>`, `zi` for picker) | ✓ | ✓ |
+| zsh-autosuggestions | Inline command suggestions | ✓ | — |
+
+### Keybinds (zsh)
+
+| Keys | Action |
+|------|--------|
+| `Ctrl+R` | atuin history search |
+| `Ctrl+T` | fzf file picker |
+| `Alt+C` | fzf `cd` to subdir |
+| `→` / `Ctrl+F` | accept inline autosuggestion |
+| `↑` | classic up-arrow line recall (atuin's up-arrow is disabled) |
+
+### Keybinds (bash)
+
+| Keys | Action |
+|------|--------|
+| `Ctrl+R` | fzf history search |
+| `Ctrl+T` | fzf file picker |
+| `Alt+C` | fzf `cd` to subdir |
+
+### Refresh atuin's local history
+
+```bash
+atuin import zsh    # one-time import of existing zsh history
+atuin sync          # only if you've registered for sync (off by default)
+```
+
 ## NVIM
 
 ### Installation

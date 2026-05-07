@@ -139,6 +139,19 @@ install_zsh_plugins() {
   fi
 }
 
+install_atuin() {
+  if command -v atuin &>/dev/null; then
+    echo "→ atuin already installed"
+    return
+  fi
+  if ! command -v cargo &>/dev/null; then
+    echo "→ cargo not found; skipping atuin install (run: cargo install atuin --root ~/.local --locked)"
+    return
+  fi
+  echo "→ installing atuin via cargo (may take several minutes)..."
+  cargo install atuin --root "$HOME/.local" --locked
+}
+
 stow_packages() {
   if ! command -v stow &>/dev/null; then
     echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto')." >&2
@@ -168,6 +181,7 @@ fi
 if [[ "$MODE" == "auto" ]]; then
   install_tpm
   install_zsh_plugins
+  install_atuin
 fi
 
 echo "Dotfiles setup complete!"

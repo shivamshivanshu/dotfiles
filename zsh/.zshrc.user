@@ -4,6 +4,9 @@ for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
 done
 export PATH
 
+# Early init that .zshrc.d/* files depend on
+autoload -Uz compinit && compinit -C
+
 # source modular configs
 if [[ -d ~/.zshrc.d ]]; then
   for rc in ~/.zshrc.d/*(N); do
