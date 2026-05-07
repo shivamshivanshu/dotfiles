@@ -12,7 +12,7 @@ return {
 		keymap = {
 			preset = "default",
 			["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
-			["<CR>"] = { "accept", "fallback" },
+			["<CR>"] = { "select_and_accept", "fallback" },
 			["<C-n>"] = { "select_next", "snippet_forward", "fallback" },
 			["<C-p>"] = { "select_prev", "snippet_backward", "fallback" },
 		},
@@ -23,6 +23,9 @@ return {
 		cmdline = {
 			enabled = true,
 			keymap = { preset = "cmdline" },
+			completion = {
+				menu = { auto_show = true },
+			},
 		},
 		fuzzy = {
 			implementation = "prefer_rust",
