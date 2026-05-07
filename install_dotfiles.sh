@@ -126,6 +126,19 @@ install_tpm() {
   fi
 }
 
+install_zsh_plugins() {
+  local plugin_dir="$HOME/.zsh"
+  mkdir -p "$plugin_dir"
+  local repo="zsh-users/zsh-autosuggestions"
+  local name="${repo##*/}"
+  if [[ -d "$plugin_dir/$name" ]]; then
+    echo "→ zsh plugin $name already cloned"
+  else
+    echo "→ cloning $repo"
+    git clone --depth 1 "https://github.com/$repo" "$plugin_dir/$name"
+  fi
+}
+
 stow_packages() {
   if ! command -v stow &>/dev/null; then
     echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto')." >&2
@@ -154,6 +167,7 @@ fi
 
 if [[ "$MODE" == "auto" ]]; then
   install_tpm
+  install_zsh_plugins
 fi
 
 echo "Dotfiles setup complete!"
