@@ -56,6 +56,7 @@
     s = status
     l = log --oneline --graph --decorate
     u = reset HEAD --
+    aa = add .
     ri = rebase -i
     cc = commit
     cp = cherry-pick
