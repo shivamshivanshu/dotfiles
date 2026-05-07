@@ -35,16 +35,22 @@ DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Each entry is "binary:package-name" — kept as parallel list for bash 3.2 compat (macOS).
 PACKAGES=(
-  "delta:git-delta"
   "nvim:neovim"
   "git:git"
   "tmux:tmux"
+  "fzf:fzf"
+  "stow:stow"
+)
+
+CARGO_PACKAGES=(
+  "atuin:atuin"
+  "tree-sitter:tree-sitter-cli"
+  "delta:git-delta"
   "rg:ripgrep"
   "eza:eza"
-  "fzf:fzf"
   "bat:bat"
   "zoxide:zoxide"
-  "stow:stow"
+  "cargo-install-update:cargo-update"
 )
 
 STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh)
@@ -139,17 +145,22 @@ install_zsh_plugins() {
   fi
 }
 
-install_atuin() {
-  if command -v atuin &>/dev/null; then
-    echo "→ atuin already installed"
-    return
-  fi
-  if ! command -v cargo &>/dev/null; then
-    echo "→ cargo not found; skipping atuin install (run: cargo install atuin --root ~/.local --locked)"
-    return
-  fi
-  echo "→ installing atuin via cargo (may take several minutes)..."
-  cargo install atuin --root "$HOME/.local" --locked
+install_cargo_packages() {
+  for entry in "${CARGO_PACKAGES[@]}"; do
+    local bin="${entry%%:*}"
+    local crate="${entry#*:}"
+    echo "→ $bin (cargo: $crate)"
+    if [[ "$MODE" == auto ]]; then
+      if command -v "$bin" &>/dev/null; then
+        echo "   already installed"
+      elif ! command -v cargo &>/dev/null; then
+        echo "   cargo not found; skipping (install via: cargo install $crate --root ~/.local --locked)"
+      else
+        echo "   installing via cargo (may take several minutes)..."
+        cargo install "$crate" --root "$HOME/.local" --locked
+      fi
+    fi
+  done
 }
 
 stow_packages() {
@@ -172,6 +183,7 @@ fi
 
 if [[ "$MODE" != "link" ]]; then
   install_packages
+  install_cargo_packages
 fi
 
 if [[ "$MODE" != "manual" ]]; then
@@ -181,7 +193,6 @@ fi
 if [[ "$MODE" == "auto" ]]; then
   install_tpm
   install_zsh_plugins
-  install_atuin
 fi
 
 echo "Dotfiles setup complete!"
