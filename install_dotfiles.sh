@@ -145,7 +145,25 @@ install_zsh_plugins() {
   fi
 }
 
+ensure_cargo() {
+  if command -v cargo &>/dev/null; then
+    return
+  fi
+  if [[ "$MODE" == auto ]]; then
+    echo "→ cargo not found; bootstrapping rustup..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --no-modify-path
+    [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+    command -v cargo &>/dev/null || { echo "Error: rustup install failed; cargo still not found" >&2; exit 1; }
+  else
+    echo "Error: cargo not found. CARGO_PACKAGES require cargo (rustup provides it)." >&2
+    echo "       Run '$0 auto' to bootstrap rustup, or install manually:" >&2
+    echo "       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh" >&2
+    exit 1
+  fi
+}
+
 install_cargo_packages() {
+  ensure_cargo
   for entry in "${CARGO_PACKAGES[@]}"; do
     local bin="${entry%%:*}"
     local crate="${entry#*:}"
@@ -153,8 +171,6 @@ install_cargo_packages() {
     if [[ "$MODE" == auto ]]; then
       if command -v "$bin" &>/dev/null; then
         echo "   already installed"
-      elif ! command -v cargo &>/dev/null; then
-        echo "   cargo not found; skipping (install via: cargo install $crate --root ~/.local --locked)"
       else
         echo "   installing via cargo (may take several minutes)..."
         cargo install "$crate" --root "$HOME/.local" --locked
