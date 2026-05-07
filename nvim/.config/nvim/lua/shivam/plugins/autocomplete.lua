@@ -25,7 +25,7 @@ return {
 			keymap = { preset = "cmdline" },
 		},
 		fuzzy = {
-			implementation = "lua",
+			implementation = "prefer_rust",
 		},
 	},
 	config = function(_, opts)
