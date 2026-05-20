@@ -252,7 +252,8 @@ VS Code-style search panel with separate fields for Search, Replacement, Files F
 
 | Keys | Action |
 |------|--------|
-| `<leader>h` | Open grug-far |
+| `<leader>h` | Open grug-far (horizontal split) |
+| `<leader>H` | Open grug-far (vertical split) |
 | `<leader>hw` | Replace word / selection |
 | `<leader>hf` | Replace in current file |
 | `<leader>ha` | Replace all (inside grug-far) |

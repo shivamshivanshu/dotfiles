@@ -2,11 +2,27 @@ return {
 	"MagicDuck/grug-far.nvim",
 	cmd = { "GrugFar", "GrugFarWithin" },
 	keys = {
-		{ "<leader>h", "<cmd>GrugFar<cr>", desc = "Search & Replace (grug-far)" },
+		{
+			"<leader>h",
+			function()
+				require("grug-far").open({ windowCreationCommand = "split" })
+			end,
+			desc = "Search & Replace (horizontal)",
+		},
+		{
+			"<leader>H",
+			function()
+				require("grug-far").open({ windowCreationCommand = "vsplit" })
+			end,
+			desc = "Search & Replace (vertical)",
+		},
 		{
 			"<leader>hw",
 			function()
-				require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+				require("grug-far").open({
+					windowCreationCommand = "split",
+					prefills = { search = vim.fn.expand("<cword>") },
+				})
 			end,
 			desc = "Replace current word",
 		},
@@ -14,7 +30,10 @@ return {
 		{
 			"<leader>hf",
 			function()
-				require("grug-far").open({ prefills = { paths = vim.fn.expand("%") } })
+				require("grug-far").open({
+					windowCreationCommand = "split",
+					prefills = { paths = vim.fn.expand("%") },
+				})
 			end,
 			desc = "Replace in current file",
 		},
@@ -22,7 +41,7 @@ return {
 	opts = {
 		engine = "ripgrep",
 		transient = true,
-		windowCreationCommand = "vsplit",
+		windowCreationCommand = "split",
 		keymaps = {
 			replace = { n = "<leader>ha" },
 			qflist = { n = "<leader>hq" },
