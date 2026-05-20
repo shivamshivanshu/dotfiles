@@ -245,15 +245,21 @@ Leader: `Space`
 | `gc` | Toggle linewise comment |
 | `gb` | Toggle blockwise comment |
 
-### Search & Replace (Spectre)
+### Search & Replace (grug-far)
+
+VS Code-style search panel with separate fields for Search, Replacement, Files Filter
+(supports globs like `cuttlefish/**/*.cpp`, `!**/test/**`), and Flags.
 
 | Keys | Action |
 |------|--------|
-| `<leader>h` | Open Spectre |
+| `<leader>h` | Open grug-far |
 | `<leader>hw` | Replace word / selection |
 | `<leader>hf` | Replace in current file |
-| `<leader>hc` | Replace current line (inside Spectre) |
-| `<leader>ha` | Replace all (inside Spectre) |
+| `<leader>ha` | Replace all (inside grug-far) |
+| `<leader>hq` | Send results to quickfix |
+| `<leader>hs` | Sync edits back to result locations |
+| `<leader>hr` | Refresh search |
+| `<leader>ht` | Open search history |
 
 ### Completion (nvim-cmp)
 
