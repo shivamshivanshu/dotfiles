@@ -14,7 +14,18 @@ return {
 		{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 	},
 	config = function()
+		local function refresh_picker(prompt_bufnr)
+			local picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+			picker:refresh(picker.finder, { reset_prompt = false })
+		end
+
 		require("telescope").setup({
+			defaults = {
+				mappings = {
+					i = { ["<C-r>"] = refresh_picker },
+					n = { ["<C-r>"] = refresh_picker },
+				},
+			},
 			extensions = {
 				["ui-select"] = {
 					require("telescope.themes").get_dropdown(),
@@ -30,46 +41,46 @@ return {
 		local builtin = require("telescope.builtin")
 		local map = vim.keymap.set
 
-		local function oil_dir()
+		local function current_dir()
 			local ok, oil = pcall(require, "oil")
 			if ok and vim.bo.filetype == "oil" then
-				return oil.get_current_dir(0) -- absolute dir for current Oil buffer
+				return oil.get_current_dir(0)
 			end
+			local bufname = vim.api.nvim_buf_get_name(0)
+			if bufname ~= "" then
+				return vim.fn.fnamemodify(bufname, ":h")
+			end
+			return vim.fn.getcwd()
 		end
 
-		-- Format titles for the picker window
 		local function titled_opts(kind, dir)
-			local short = vim.fn.fnamemodify(dir, ":~") -- ~/… instead of full path
+			local short = vim.fn.fnamemodify(dir, ":~")
 			return {
 				cwd = dir,
 				prompt_title = string.format("%s in %s", kind, short),
-				results_title = short, -- shown above results window
-				-- Optional: make entries shorter/nicer
+				results_title = short,
 				path_display = { "smart" },
 			}
 		end
 
-		local function oil_find_files()
-			local dir = oil_dir()
-			local opts = dir and titled_opts("Files", dir) or {}
-			require("telescope.builtin").find_files(opts)
+		local function dir_find_files()
+			local dir = current_dir()
+			require("telescope.builtin").find_files(titled_opts("Files", dir))
 		end
 
-		local function oil_live_grep()
-			local dir = oil_dir()
-			local opts = dir and titled_opts("Grep", dir) or {}
-			require("telescope.builtin").live_grep(opts)
+		local function dir_live_grep()
+			local dir = current_dir()
+			require("telescope.builtin").live_grep(titled_opts("Grep", dir))
 		end
 
-		local function oil_grep_string()
-			local dir = oil_dir()
-			local opts = dir and titled_opts("Grep word", dir) or {}
-			require("telescope.builtin").grep_string(opts)
+		local function dir_grep_string()
+			local dir = current_dir()
+			require("telescope.builtin").grep_string(titled_opts("Grep word", dir))
 		end
 
-		map("n", "<leader>so", oil_find_files, { desc = "[S]earch Files ([O]il dir if in Oil)" })
-		map("n", "<leader>st", oil_live_grep, { desc = "[S]earch by [G]rep (Oil dir if in Oil)" })
-		map("n", "<leader>sW", oil_grep_string, { desc = "[S]earch [W]ord (Oil dir if in Oil)" })
+		map("n", "<leader>so", dir_find_files, { desc = "[S]earch Files in current dir" })
+		map("n", "<leader>st", dir_live_grep, { desc = "[S]earch by Grep in current dir" })
+		map("n", "<leader>sW", dir_grep_string, { desc = "[S]earch [W]ord in current dir" })
 
 		map("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 		map("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })

@@ -162,9 +162,9 @@ Leader: `Space`
 | `<leader>sR` | Pick from picker history (multiple previous searches) |
 | `<leader>s.` | Recent files |
 | `<leader>sn` | Neovim config files |
-| `<leader>so` | Files (Oil dir aware) |
-| `<leader>st` | Grep (Oil dir aware) |
-| `<leader>sW` | Grep word (Oil dir aware) |
+| `<leader>so` | Files in current dir (Oil dir, file's dir, or cwd) |
+| `<leader>st` | Grep in current dir (Oil dir, file's dir, or cwd) |
+| `<leader>sW` | Grep word in current dir |
 | `<leader>s/` | Grep in open files |
 | `<leader>/` | Fuzzy search current buffer |
 | `<leader><leader>` | Find buffers |
