@@ -254,8 +254,10 @@ VS Code-style search panel with separate fields for Search, Replacement, Files F
 |------|--------|
 | `<leader>h` | Open grug-far (horizontal split) |
 | `<leader>H` | Open grug-far (vertical split) |
-| `<leader>hw` | Replace word / selection |
+| `<leader>hw` | Replace word (n) / selection project-wide (v) |
 | `<leader>hf` | Replace in current file |
+| `<leader>hd` | Replace in current dir (Oil-aware) |
+| `<leader>hp` | Replace in project root (git or cwd) |
 | `<leader>ha` | Replace all (inside grug-far) |
 | `<leader>hq` | Send results to quickfix |
 | `<leader>hs` | Sync edits back to result locations |
