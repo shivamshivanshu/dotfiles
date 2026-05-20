@@ -3,7 +3,12 @@ return {
 	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		"saghen/blink.lib",
-		"L3MON4D3/LuaSnip",
+		{
+			"L3MON4D3/LuaSnip",
+			config = function()
+				require("luasnip.loaders.from_vscode").lazy_load()
+			end,
+		},
 		"rafamadriz/friendly-snippets",
 	},
 	---@module 'blink.cmp'
@@ -31,8 +36,4 @@ return {
 			implementation = "prefer_rust",
 		},
 	},
-	config = function(_, opts)
-		require("luasnip.loaders.from_vscode").lazy_load()
-		require("blink.cmp").setup(opts)
-	end,
 }

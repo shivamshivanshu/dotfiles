@@ -1,5 +1,5 @@
 return {
 	"kylechui/nvim-surround",
-	event = { "BufReadPost", "BufNewFile" },
+	event = require("shivam.util.events").BUF_LOADED,
 	opts = {},
 }

@@ -1,6 +1,6 @@
 return {
 	"lukas-reineke/indent-blankline.nvim",
-	event = "BufReadPost", -- Load after reading a buffer
+	event = require("shivam.util.events").BUF_LOADED,
 	main = "ibl",
 	opts = {
 		indent = { char = "│" }, -- character for indent guides

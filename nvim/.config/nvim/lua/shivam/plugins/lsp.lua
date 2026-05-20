@@ -27,7 +27,7 @@ return {
 	},
 	{
 		"neovim/nvim-lspconfig",
-		event = { "BufReadPre", "BufNewFile" },
+		event = require("shivam.util.events").BUF_OPEN,
 		dependencies = {
 			"saghen/blink.cmp",
 			"williamboman/mason.nvim",

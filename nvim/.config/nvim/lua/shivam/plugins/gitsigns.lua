@@ -1,15 +1,12 @@
 return {
 	"lewis6991/gitsigns.nvim",
-	event = { "BufReadPre", "BufNewFile" }, -- Load when opening a file
-	config = function()
-		local gitsigns = require("gitsigns")
-		gitsigns.setup()
-
-		local map = vim.keymap.set
-		map("n", "<leader>gp", gitsigns.preview_hunk, { desc = "Preview Git hunk" })
-		map("n", "<leader>gh", gitsigns.toggle_current_line_blame, { desc = "Toggle Git blame" })
-		map("n", "<leader>gu", gitsigns.reset_hunk, { desc = "Reset Git hunk" })
-		map("n", "]c", gitsigns.next_hunk, { desc = "Next Git hunk" })
-		map("n", "[c", gitsigns.prev_hunk, { desc = "Previous Git hunk" })
-	end,
+	event = require("shivam.util.events").BUF_OPEN,
+	keys = {
+		{ "<leader>gp", function() require("gitsigns").preview_hunk() end, desc = "Preview Git hunk" },
+		{ "<leader>gh", function() require("gitsigns").toggle_current_line_blame() end, desc = "Toggle Git blame" },
+		{ "<leader>gu", function() require("gitsigns").reset_hunk() end, desc = "Reset Git hunk" },
+		{ "]c", function() require("gitsigns").next_hunk() end, desc = "Next Git hunk" },
+		{ "[c", function() require("gitsigns").prev_hunk() end, desc = "Previous Git hunk" },
+	},
+	opts = {},
 }
