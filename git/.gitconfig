@@ -58,6 +58,7 @@
     l = log --oneline --graph --decorate
     u = reset HEAD --
     aa = add .
+    da = !git add -N . && git diff
     ri = rebase -i
     cc = commit
     cp = cherry-pick
