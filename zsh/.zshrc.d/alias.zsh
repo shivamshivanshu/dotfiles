@@ -1,4 +1,5 @@
 alias l="eza -al"
 alias ls="eza"
+alias cls="clear"
 alias vim="nvim"
 alias cat="bat --paging=never"
