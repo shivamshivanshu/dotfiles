@@ -23,6 +23,7 @@
     line-numbers = true
     navigate = true
     syntax-theme = "Monokai Extended"
+    true-color = always
     plus-style = "syntax #003800"
     minus-style = "syntax #3f0001"
     file-style = bold yellow

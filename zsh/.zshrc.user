@@ -4,6 +4,8 @@ for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
 done
 export PATH
 
+export COLORTERM=truecolor
+
 # Early init that .zshrc.d/* files depend on
 autoload -Uz compinit && compinit -C
 

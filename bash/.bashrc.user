@@ -4,6 +4,8 @@ for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
 done
 export PATH
 
+export COLORTERM=truecolor
+
 # source modular configs
 if [[ -d ~/.bashrc.d ]]; then
   for rc in ~/.bashrc.d/*; do
