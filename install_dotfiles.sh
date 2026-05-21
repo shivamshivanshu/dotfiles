@@ -50,6 +50,8 @@ CARGO_PACKAGES=(
   "eza:eza"
   "bat:bat"
   "zoxide:zoxide"
+  "tldr:tealdeer"
+  "rtk:git+https://github.com/rtk-ai/rtk"
   "cargo-install-update:cargo-update"
 )
 
@@ -173,7 +175,11 @@ install_cargo_packages() {
         echo "   already installed"
       else
         echo "   installing via cargo (may take several minutes)..."
-        cargo install "$crate" --root "$HOME/.local" --locked
+        if [[ "$crate" == git+* ]]; then
+          cargo install --git "${crate#git+}" --root "$HOME/.local" --locked
+        else
+          cargo install "$crate" --root "$HOME/.local" --locked
+        fi
       fi
     fi
   done
