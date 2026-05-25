@@ -67,3 +67,6 @@ end, { desc = "Copy relative file/dir path to clipboard" })
 
 -- Epoch converter
 require("shivam.util.epoch").setup()
+
+-- Code runner (build/run cpp & py)
+require("shivam.util.runner").setup()
