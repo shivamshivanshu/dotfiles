@@ -12,7 +12,7 @@ M.cpp = {
 		"-Wall",
 		"-Wextra",
 		"-pedantic",
-		"-std=c++20",
+		"-std=c++23",
 		"-Wshadow",
 		"-Wformat=2",
 		"-Wfloat-equal",
@@ -77,10 +77,27 @@ end
 local function run_in_term(shell_cmd, cwd, title)
 	vim.cmd("botright " .. M.term.height .. "split | enew")
 	vim.bo.bufhidden = "wipe"
+	local buf = vim.api.nvim_get_current_buf()
 	if title then
-		vim.api.nvim_buf_set_name(0, "runner: " .. title)
+		vim.api.nvim_buf_set_name(buf, "runner: " .. title)
 	end
-	vim.fn.jobstart({ "bash", "-c", shell_cmd }, { term = true, cwd = cwd })
+	vim.fn.jobstart({ "bash", "-c", shell_cmd }, {
+		term = true,
+		cwd = cwd,
+		on_exit = function(_, code)
+			vim.schedule(function()
+				if not vim.api.nvim_buf_is_valid(buf) then
+					return
+				end
+				if code == 0 then
+					vim.api.nvim_buf_delete(buf, { force = true })
+				else
+					vim.keymap.set("n", "q", "<cmd>bd!<cr>", { buffer = buf, desc = "Close runner" })
+					pcall(vim.cmd, "stopinsert")
+				end
+			end)
+		end,
+	})
 	vim.cmd("startinsert")
 end
 
