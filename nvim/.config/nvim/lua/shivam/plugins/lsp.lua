@@ -114,6 +114,13 @@ return {
 			})
 
 			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "marksman" })
+
+			vim.api.nvim_create_user_command("ToggleDiagnosticVirtualText", function()
+				local current = vim.diagnostic.config().virtual_text
+				local enabled = current ~= false and current ~= nil
+				vim.diagnostic.config({ virtual_text = not enabled })
+				vim.notify("Diagnostic virtual_text: " .. tostring(not enabled))
+			end, { desc = "Toggle LSP diagnostic virtual text" })
 		end,
 	},
 }
