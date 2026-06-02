@@ -30,6 +30,7 @@ return {
 			keymap = { preset = "cmdline" },
 			completion = {
 				menu = { auto_show = true },
+				list = { selection = { preselect = true, auto_insert = false } },
 			},
 		},
 		fuzzy = {
