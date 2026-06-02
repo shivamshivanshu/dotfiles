@@ -27,10 +27,12 @@ return {
 		},
 		cmdline = {
 			enabled = true,
-			keymap = { preset = "cmdline" },
+			keymap = {
+				preset = "cmdline",
+				["<C-y>"] = { "select_and_accept", "fallback" },
+			},
 			completion = {
 				menu = { auto_show = true },
-				list = { selection = { preselect = true, auto_insert = false } },
 			},
 		},
 		fuzzy = {
