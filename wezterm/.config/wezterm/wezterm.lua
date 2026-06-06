@@ -96,6 +96,16 @@ config.keys = {
 	{ key = "UpArrow", mods = "SHIFT", action = wezterm.action.ScrollByLine(-1) },
 	{ key = "DownArrow", mods = "SHIFT", action = wezterm.action.ScrollByLine(1) },
 
+	-- Splits (LEADER + |/% - same as tmux config)
+	{ key = "|", mods = "LEADER", action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "%", mods = "LEADER", action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }) },
+
+	-- Pane navigation (LEADER + h/j/k/l)
+	{ key = "h", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Left") },
+	{ key = "j", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Down") },
+	{ key = "k", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Up") },
+	{ key = "l", mods = "LEADER", action = wezterm.action.ActivatePaneDirection("Right") },
+
 	-- Window Management
 	{ key = "x", mods = "LEADER", action = wezterm.action.CloseCurrentPane({ confirm = true }) },
 	{ key = "z", mods = "LEADER", action = wezterm.action.ToggleFullScreen },
