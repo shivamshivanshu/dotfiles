@@ -1,4 +1,4 @@
-# Unix specific alias
+#### Aliases
 alias l="eza -al"
 alias ls="eza"
 alias vi="nvim"

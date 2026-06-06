@@ -74,8 +74,6 @@
     wip = commit -m "wip"
     shh = show HEAD
 
-
-
 [status]
     showUntrackedFiles = all
 

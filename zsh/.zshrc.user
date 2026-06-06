@@ -1,4 +1,4 @@
-# paths
+#### Paths
 for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
   [[ -d "$d" && ":$PATH:" != *":$d:"* ]] && PATH="$d:$PATH"
 done
@@ -6,11 +6,16 @@ export PATH
 
 export COLORTERM=truecolor
 
+#### Completion
 # Early init that .zshrc.d/* files depend on.
 # -C trusts the existing completion dump (skips the daily security check) for faster startup.
-autoload -Uz compinit && compinit -C
+# -d keeps the dump under ~/.cache (out of $HOME) so host renames don't litter the home dir.
+_zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+mkdir -p "${_zcompdump:h}"
+autoload -Uz compinit && compinit -C -d "$_zcompdump"
+unset _zcompdump
 
-# source modular configs
+#### Source modular configs
 if [[ -d ~/.zshrc.d ]]; then
   for rc in ~/.zshrc.d/*(N); do
     [[ -f "$rc" ]] && source "$rc"

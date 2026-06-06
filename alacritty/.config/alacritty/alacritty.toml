@@ -60,7 +60,6 @@ magenta = "#d3869b"
 cyan    = "#8ec07c"
 white   = "#ebdbb2"
 
-
 [[keyboard.bindings]]
 key = "V"
 mods = "Control|Shift"

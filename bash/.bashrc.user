@@ -1,4 +1,4 @@
-# paths
+#### Paths
 for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
   [[ -d "$d" && ":$PATH:" != *":$d:"* ]] && PATH="$d:$PATH"
 done
@@ -6,7 +6,7 @@ export PATH
 
 export COLORTERM=truecolor
 
-# source modular configs
+#### Source modular configs
 if [[ -d ~/.bashrc.d ]]; then
   for rc in ~/.bashrc.d/*; do
     [[ -f "$rc" ]] && source "$rc"
