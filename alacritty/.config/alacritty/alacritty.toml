@@ -82,6 +82,7 @@ mods = "Control"
 action = "DecreaseFontSize"
 
 [[keyboard.bindings]]
+# Shift+Enter sends ESC+CR so TUIs/REPLs can distinguish it from a plain Enter
 key = "Return"
 mods = "Shift"
 chars = "\u001b\r"

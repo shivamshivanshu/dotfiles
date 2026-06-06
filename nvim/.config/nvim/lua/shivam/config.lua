@@ -55,6 +55,9 @@ vim.o.confirm = true
 -- Enable terminal gui
 vim.o.termguicolors = true
 
+-- Blinking block cursor in all modes (matches the terminal cursor)
+vim.opt.guicursor = "a:block-blinkwait300-blinkon500-blinkoff500"
+
 -- Use system clipboard
 vim.opt.clipboard = "unnamedplus"
 

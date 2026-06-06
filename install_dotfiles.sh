@@ -47,6 +47,7 @@ CARGO_PACKAGES=(
   "tree-sitter:tree-sitter-cli"
   "delta:git-delta"
   "rg:ripgrep"
+  "fd:fd-find"
   "eza:eza"
   "bat:bat"
   "zoxide:zoxide"
