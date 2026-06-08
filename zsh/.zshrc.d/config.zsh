@@ -1,6 +1,6 @@
 #### Prompt
 autoload -Uz vcs_info
-precmd() { vcs_info }
+precmd() { vcs_info; printf '\e[1 q' }
 zstyle ':vcs_info:git:*' formats ' %F{blue}git:(%F{red}%b%F{blue})%f'
 zstyle ':vcs_info:git:*' actionformats ' %F{blue}git:(%F{red}%b|%a%F{blue})%f'
 setopt PROMPT_SUBST
@@ -35,6 +35,12 @@ export FZF_DEFAULT_OPTS=" \
   --color=marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934 \
   --preview '([ -d {} ] && eza --tree --level=2 --icons --color=always {} || bat --style=numbers --color=always --line-range :500 {}) 2>/dev/null || echo {}' \
   --preview-window 'right,60%,border-left'"
+
+#### less
+if command -v bat &>/dev/null; then
+  export LESSOPEN='| bat --color=always --style=plain --paging=never %s'
+  export LESS='-R'
+fi
 
 #### zoxide
 # Same init-script caching trick as fzf above.

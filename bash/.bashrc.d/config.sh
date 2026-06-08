@@ -28,5 +28,13 @@ export FZF_DEFAULT_OPTS=" \
   --preview '([ -d {} ] && eza --tree --level=2 --icons --color=always {} || bat --style=numbers --color=always --line-range :500 {}) 2>/dev/null || echo {}' \
   --preview-window 'right,60%,border-left'"
 
+#### less
+if command -v bat &>/dev/null; then
+  export LESSOPEN='| bat --color=always --style=plain --paging=never %s'
+  export LESS='-R'
+fi
+
 #### zoxide
 command -v zoxide &>/dev/null && eval "$(zoxide init bash)"
+
+PROMPT_COMMAND='printf "\e[1 q"'"${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
