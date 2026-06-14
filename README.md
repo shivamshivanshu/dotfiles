@@ -1,4 +1,4 @@
-## Dotfiles
+## Dotfiles ~ Shivam
 
 Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level
 directory is a Stow package whose internal tree mirrors where files land in
