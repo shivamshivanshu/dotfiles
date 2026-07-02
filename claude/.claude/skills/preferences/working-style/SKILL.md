@@ -22,12 +22,14 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
   4. Ask for a review of that plan, and revise until approved.
   5. Only then implement.
 - While implementing, track steps in a todo list so implementation and investigation proceed systematically; hand individual items to subagents with the full context and skills they need.
+- Include in the plan how each change will be verified — build, run tests, or run regression — so agents and subagents can self-check that their work is correct.
 - Estimate the size of a change before committing to it.
 
 ## Verify — a core value
 - Never claim completion without evidence; exercise or trace the change end to end.
 - Do not assume call behaviour — trace it.
 - Write tests that prove the behaviour or bug, not tests for ceremony. If a test costs more than it is worth, say so.
+- When touching behaviour, evaluate adding a test: if test infrastructure already exists or the setup is light plumbing, add one; skip only when the cost clearly outweighs the value.
 - After a refactor or conflict resolution, audit that behaviour is unchanged against the original intent.
 
 ## Edit
@@ -49,6 +51,8 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 ## Delegation
 - Prefer subagents whenever possible to preserve main-context memory — offload searches, multi-file reading, builds/tests, and broad exploration so the main thread stays focused on synthesis.
 - For large, parallelisable work — broad audits, multi-file migrations, verify-heavy reviews, wide research — reach for `ultracode` (multi-agent workflows) when it is faster or more thorough than working solo. Keep trivial edits and quick lookups solo; the fan-out cost is not worth it there.
+- Once a detailed implementation plan and sufficient context exist, evaluate each subtask's implementation complexity before spawning agents, and choose the model per agent: give simple, well-specified work to a faster model (e.g. Sonnet, 1M-token context) and reserve the strongest model for genuinely complex tasks.
+- Subagents follow these same skills: have them run the relevant ones (e.g. `simplify`, `session-insight`) on their slice and report results back for the main thread to consolidate.
 - Still make focused, shared-context edits yourself rather than delegating them. Follow the explicit instruction each time.
 - Expect frequent interrupts and course-corrections; keep steps small and checkable, and follow the latest instruction.
 
