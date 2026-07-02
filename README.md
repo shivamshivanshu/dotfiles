@@ -16,7 +16,11 @@ bash/.bashrc.user                → ~/.bashrc.user
 bash/.bashrc.d/                  → ~/.bashrc.d/
 zsh/.zshrc.user                  → ~/.zshrc.user
 zsh/.zshrc.d/                    → ~/.zshrc.d/
+claude/.claude/skills/           → ~/.claude/skills/
 ```
+
+`~/.claude` stays a real directory (credentials, sessions, caches); Stow folds
+in only the `skills/` symlink.
 
 ### Install
 
@@ -43,6 +47,26 @@ stow -nvt ~ nvim                       # dry-run + verbose
 If Stow complains that a target already exists as a real file, either back it
 up and remove it, or use `stow --adopt` to absorb it into the repo (review the
 diff afterwards).
+
+## Claude Code
+
+Personal, project-agnostic skills auto-discovered from `~/.claude/skills/`.
+Category subfolders are discovered recursively; the whole tree is symlinked in
+via Stow. Keep these **free of work-internal names** — nothing internal
+(hostnames, systems, ticket prefixes) goes here.
+
+| Skill | Category | Triggers on |
+|-------|----------|-------------|
+| `working-style` | preferences | start of any task — how work should be done |
+| `git` | preferences | commit / amend / rebase / worktree / review |
+| `codebase-recon` | preferences | understand / trace unfamiliar code before changing |
+| `cpp` | insights | writing / building / debugging C++ |
+| `python` | insights | writing / testing Python |
+| `perf-investigation` | insights | latency / throughput / CPU profiling |
+| `concurrency` | insights | multithread / lock-free / memory ordering |
+| `session-insight` | meta | "I'm done" — summarize + propose skill-repo edits |
+| `teacher` | meta | task done — offer transferable concepts to learn (notes in `~/claude_notes/`) |
+| `word-of-the-day` | meta | new session start — English word + meaning + examples |
 
 ## Shell
 

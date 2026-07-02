@@ -56,7 +56,7 @@ CARGO_PACKAGES=(
   "cargo-install-update:cargo-update"
 )
 
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude)
 
 detect_pkg_manager() {
   case "$(uname -s)" in
