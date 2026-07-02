@@ -18,10 +18,13 @@ zsh/.zshrc.user                  → ~/.zshrc.user
 zsh/.zshrc.d/                    → ~/.zshrc.d/
 claude/.claude/CLAUDE.md         → ~/.claude/CLAUDE.md
 claude/.claude/skills/           → ~/.claude/skills/
+claude/.claude/agents/           → ~/.claude/agents/
+claude/.claude/output-styles/    → ~/.claude/output-styles/
 ```
 
 `~/.claude` stays a real directory (credentials, sessions, caches); Stow folds
-in only the tracked entries (`CLAUDE.md`, `skills/`) as symlinks.
+in only the tracked entries (`CLAUDE.md`, `skills/`, `agents/`, `output-styles/`)
+as symlinks.
 `settings.json` is intentionally **not** tracked — it holds machine-local and
 work-internal config (kept in `settings.local.json` too).
 
@@ -72,6 +75,13 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 | `concurrency` | insights | multithread / lock-free / memory ordering |
 | `session-insight` | meta | "I'm done" — summarize + propose skill-repo edits |
 | `teacher` | meta | task done — offer transferable concepts to learn (notes in `~/claude_notes/`) |
+
+**Agents** (`agents/`, also tracked): `simple-implementer` (Sonnet-pinned, for
+simple well-specified subtasks) and `verifier` (build / test / regression,
+reports PASS/FAIL with evidence).
+
+**Output styles** (`output-styles/`): `terse` — lead with the answer, structured
+and scannable. Activate with `/output-style terse`.
 
 ## Shell
 
