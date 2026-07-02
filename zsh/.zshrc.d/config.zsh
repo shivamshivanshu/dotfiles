@@ -53,9 +53,3 @@ if command -v atuin &>/dev/null; then
   source "$_atuin_cache"
   unset _atuin_cache
 fi
-
-#### syntax highlighting
-# Must be sourced last so it wraps all previously-defined widgets.
-if [[ -f "${HOME}/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
-  source "${HOME}/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-fi
