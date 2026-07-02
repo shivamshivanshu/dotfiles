@@ -16,11 +16,14 @@ bash/.bashrc.user                → ~/.bashrc.user
 bash/.bashrc.d/                  → ~/.bashrc.d/
 zsh/.zshrc.user                  → ~/.zshrc.user
 zsh/.zshrc.d/                    → ~/.zshrc.d/
+claude/.claude/CLAUDE.md         → ~/.claude/CLAUDE.md
 claude/.claude/skills/           → ~/.claude/skills/
 ```
 
 `~/.claude` stays a real directory (credentials, sessions, caches); Stow folds
-in only the `skills/` symlink.
+in only the tracked entries (`CLAUDE.md`, `skills/`) as symlinks.
+`settings.json` is intentionally **not** tracked — it holds machine-local and
+work-internal config (kept in `settings.local.json` too).
 
 ### Install
 
@@ -55,10 +58,13 @@ Category subfolders are discovered recursively; the whole tree is symlinked in
 via Stow. Keep these **free of work-internal names** — nothing internal
 (hostnames, systems, ticket prefixes) goes here.
 
+`CLAUDE.md` imports `working-style` so it is always loaded.
+
 | Skill | Category | Triggers on |
 |-------|----------|-------------|
 | `working-style` | preferences | start of any task — how work should be done |
 | `git` | preferences | commit / amend / rebase / worktree / review |
+| `rtk` | preferences | rtk proxy — token savings, gain / discover / proxy |
 | `codebase-recon` | preferences | understand / trace unfamiliar code before changing |
 | `cpp` | insights | writing / building / debugging C++ |
 | `python` | insights | writing / testing Python |
@@ -66,7 +72,6 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 | `concurrency` | insights | multithread / lock-free / memory ordering |
 | `session-insight` | meta | "I'm done" — summarize + propose skill-repo edits |
 | `teacher` | meta | task done — offer transferable concepts to learn (notes in `~/claude_notes/`) |
-| `word-of-the-day` | meta | new session start — English word + meaning + examples |
 
 ## Shell
 
