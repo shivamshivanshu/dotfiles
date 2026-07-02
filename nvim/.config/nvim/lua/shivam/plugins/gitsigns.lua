@@ -1,3 +1,5 @@
+local blame_on = false -- mirrors current_line_blame; opts default it to off
+
 return {
 	"lewis6991/gitsigns.nvim",
 	event = require("shivam.util.events").BUF_OPEN,
@@ -27,14 +29,14 @@ return {
 			"<leader>gh",
 			function()
 				require("gitsigns").toggle_current_line_blame()
-				local enabled = require("gitsigns.config").config.current_line_blame
-				vim.notify("Git blame: " .. (enabled and "enabled" or "disabled"))
+				blame_on = not blame_on
+				vim.notify("Git blame: " .. (blame_on and "enabled" or "disabled"))
 			end,
 			desc = "Toggle Git blame",
 		},
 		{ "<leader>gu", function() require("gitsigns").reset_hunk() end, desc = "Reset Git hunk" },
-		{ "]c", function() require("gitsigns").next_hunk() end, desc = "Next Git hunk" },
-		{ "[c", function() require("gitsigns").prev_hunk() end, desc = "Previous Git hunk" },
+		{ "]c", function() require("gitsigns").nav_hunk("next") end, desc = "Next Git hunk" },
+		{ "[c", function() require("gitsigns").nav_hunk("prev") end, desc = "Previous Git hunk" },
 	},
 	opts = {},
 }

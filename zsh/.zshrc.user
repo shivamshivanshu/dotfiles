@@ -5,6 +5,7 @@ done
 export PATH
 
 export COLORTERM=truecolor
+export EDITOR=nvim VISUAL=nvim
 
 #### Completion
 # Early init that .zshrc.d/* files depend on.

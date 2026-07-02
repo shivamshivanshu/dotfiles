@@ -42,6 +42,7 @@
 [diff]
     tool = delta
     colorMoved = default
+    algorithm = histogram
 
 [difftool "delta"]
     cmd = "delta \"$LOCAL\" \"$REMOTE\""
@@ -56,7 +57,7 @@
     d = diff
     p = push
     s = status
-    l = log --oneline --graph --decorate
+    l = log --oneline --graph
     u = reset HEAD --
     aa = add .
     da = !git add -N . && git diff
@@ -89,3 +90,12 @@
 [rebase]
     autosquash = true
     autoStash = true
+
+[pull]
+    rebase = true
+
+[rerere]
+    enabled = true
+
+[branch]
+    sort = -committerdate

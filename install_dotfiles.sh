@@ -56,7 +56,9 @@ CARGO_PACKAGES=(
   "cargo-install-update:cargo-update"
 )
 
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell)
+# dnf config is Fedora-only; skip it elsewhere so we don't litter ~/.config
+[[ -f /etc/fedora-release ]] && STOW_PACKAGES+=(dnf)
 
 detect_pkg_manager() {
   case "$(uname -s)" in
@@ -138,14 +140,19 @@ install_tpm() {
 install_zsh_plugins() {
   local plugin_dir="$HOME/.zsh"
   mkdir -p "$plugin_dir"
-  local repo="zsh-users/zsh-autosuggestions"
-  local name="${repo##*/}"
-  if [[ -d "$plugin_dir/$name" ]]; then
-    echo "→ zsh plugin $name already cloned"
-  else
-    echo "→ cloning $repo"
-    git clone --depth 1 "https://github.com/$repo" "$plugin_dir/$name"
-  fi
+  local repos=(
+    "zsh-users/zsh-autosuggestions"
+    "zsh-users/zsh-syntax-highlighting"
+  )
+  for repo in "${repos[@]}"; do
+    local name="${repo##*/}"
+    if [[ -d "$plugin_dir/$name" ]]; then
+      echo "→ zsh plugin $name already cloned"
+    else
+      echo "→ cloning $repo"
+      git clone --depth 1 "https://github.com/$repo" "$plugin_dir/$name"
+    fi
+  done
 }
 
 ensure_cargo() {

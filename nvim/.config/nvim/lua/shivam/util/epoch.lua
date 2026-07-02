@@ -28,7 +28,15 @@ local function epoch_to_readable(epoch_str)
 	local date_str = os.date("%Y-%m-%d %H:%M:%S", adjusted_time)
 	local remainder = epoch % get_divisor()
 
-	local result = string.format("%s.%09d", date_str, remainder)
+	-- Pad the fractional part to match the granularity, not always 9 digits.
+	local frac_digits = { ns = 9, us = 6, ms = 3, s = 0 }
+	local digits = frac_digits[M.config.granularity] or 9
+	local result
+	if digits > 0 then
+		result = string.format("%s.%0" .. digits .. "d", date_str, remainder)
+	else
+		result = date_str
+	end
 	last_result = result
 	print(
 		string.format(
@@ -142,13 +150,13 @@ function M.setup()
 	vim.keymap.set(
 		"x",
 		"<leader>ec",
-		":<C-u>lua require('shivam.keybinds.epoch-converter')._convert_selection()<CR>",
+		":<C-u>lua require('shivam.util.epoch')._convert_selection()<CR>",
 		{ desc = "Epoch convert (selection)" }
 	)
 	vim.keymap.set(
 		"x",
 		"<leader>ee",
-		":<C-u>lua require('shivam.keybinds.epoch-converter')._convert_and_copy()<CR>",
+		":<C-u>lua require('shivam.util.epoch')._convert_and_copy()<CR>",
 		{ desc = "Epoch convert and copy (selection)" }
 	)
 	vim.keymap.set("n", "<leader>ey", function()
