@@ -1,6 +1,6 @@
 ---
 name: concurrency
-description: Use when writing or reviewing multithreaded or lock-free code, shared-memory IPC, or reasoning about memory ordering and data races. Keywords: concurrency, lock-free, atomics, memory ordering, data race, false sharing, SPSC, MPSC, ring buffer, mutex, shared memory, happens-before, TSan.
+description: Use when writing or reviewing multithreaded or lock-free code, shared-memory IPC, or reasoning about memory ordering and data races. Keywords: concurrency, atomics, false sharing, SPSC, MPSC, ring buffer, mutex, happens-before, TSan.
 ---
 
 # Concurrency
@@ -8,7 +8,7 @@ description: Use when writing or reviewing multithreaded or lock-free code, shar
 For multithreaded, lock-free, and shared-memory code. Pair with [[cpp]] and [[perf-investigation]].
 
 ## Default to simple
-- Prefer the simplest correct design: a mutex around a critical section, or message passing over queues, before reaching for lock-free. Treat lock-free as a last resort justified by measurement.
+- Prefer the simplest correct design: a mutex around a critical section, or message passing over queues, before reaching for lock-free — a last resort justified by measurement.
 - Confine mutable state to one owner where possible; share by communicating, not by sharing memory.
 
 ## Atomics and ordering

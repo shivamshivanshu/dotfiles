@@ -1,6 +1,6 @@
 ---
 name: cpp
-description: Use when writing, reviewing, building, testing, or debugging C++ — idioms, Bazel/GoogleTest workflow, low-latency patterns, and debugging habits. Keywords: C++, std::optional, CRTP, constexpr, Bazel, GoogleTest, EXPECT_THAT, gdb, coredump, latency, perf, clangd.
+description: Use when writing, reviewing, building, testing, or debugging C++ — idioms, Bazel/GoogleTest workflow, low-latency patterns, and debugging habits. Keywords: std::optional, CRTP, constexpr, EXPECT_THAT, gdb, coredump, perf, clangd.
 ---
 
 # C++ Insights
@@ -17,7 +17,6 @@ For performance-sensitive C++. Prefer the latest standard the code or build tool
 - Reuse and consolidate: search for an existing utility before writing one, and collapse near-duplicate functions into overloads — ready to justify the design.
 - Pass per-entity data in a dedicated params struct by `const&`; keep feature-specific fields out of shared or common types, defining them in the owning module.
 - Verify library-feature availability against the `-std` flag. `-std=c++23` does not guarantee an STL feature exists on the toolchain; check before relying on bleeding-edge STL.
-- Follow the project's existing naming conventions, including any member/local/parameter prefix scheme, rather than imposing your own.
 - Run a modernisation and const-correctness sweep as its own pass once code works: add `const`, `noexcept`, `[[nodiscard]]`, `std::to_underlying`, and structured bindings — often a separate commit.
 
 ## Build, test, debug
@@ -31,12 +30,4 @@ For performance-sensitive C++. Prefer the latest standard the code or build tool
 ## Latency and performance
 - Wire-to-wire latency is the primary concern: preserve true source hardware timestamps, and do not blindly reset fields.
 - Guard latency arithmetic against stale timestamps where a message and its timing source are not strictly one-to-one; verify per feed and per exchange.
-- State the cost of every change — startup-only versus on the hot path — and what it buys.
-- Avoid unnecessary hot-path work: cache and precompute, avoid repeated lookups (pass state by reference), and skip building data that is not consumed.
-- Mind alignment: `alignas(64)` for hot atomics, favour zero-overhead abstractions, and minimise wire bytes.
-
-## Recurring corrections
-- State the root cause before any fix.
-- No band-aid fixes — fix at the correct layer. Avoid over-engineering; prefer a simpler, configurable approach.
-- Comment only where it adds value beyond names, code, and the commit message; otherwise none. Prove claims with a traced call path and evidence.
-- Check how existing components solve a problem before inventing a new approach.
+- For measurement discipline and the usual culprits (hot-path work, false sharing, locality), see [[perf-investigation]].

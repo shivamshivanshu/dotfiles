@@ -1,6 +1,6 @@
 ---
 name: git
-description: Use when committing, amending, rebasing, squashing fixups, resolving rebase/merge conflicts, managing git worktrees, or addressing code-review comments. Keywords: commit, amend, rebase, autosquash, fixup, worktree, Change-Id, Gerrit review, concise commit message.
+description: Use when committing, amending, rebasing, squashing fixups, resolving rebase/merge conflicts, managing git worktrees, or addressing code-review comments. Keywords: autosquash, Change-Id, Gerrit review, concise commit message.
 ---
 
 # Git Workflow
@@ -21,7 +21,7 @@ Git conventions for any repository.
 - `git stash` before a change so it can be committed and squashed cleanly.
 
 ## Commit messages
-- Concise and to the point: capture what and why, and cut boilerplate and the obvious.
+- Concise: capture what and why; cut boilerplate and the obvious.
 - Follow Chris Beams' conventions — imperative, capitalised subject of 50 characters or fewer; blank line; body wrapped at 72; explain what and why, not how.
 - Prefix with the ticket id when one exists (e.g. `TICKET-123 Subject`). Committing without one and adding it later via reword is fine.
 - Before committing, run `git diff --cached --stat` to confirm only intended files are staged.

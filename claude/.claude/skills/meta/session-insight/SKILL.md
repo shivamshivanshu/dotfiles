@@ -1,6 +1,6 @@
 ---
 name: session-insight
-description: Use when the user signals a session is ending or a task is finished — "I'm done", "that's it", "wrap up", "let's close this out", "session insight". Reflects on the session, coaches better prompting, and proposes concrete improvements to the skill/knowledge repos. Keywords: done, wrap up, session summary, retro, improve skills, capture insight, prompt feedback, better prompts.
+description: Use when the user signals a session is ending or a task is finished — "I'm done", "that's it", "wrap up", "let's close this out", "session insight". Reflects on the session, coaches better prompting, and proposes concrete improvements to the skill/knowledge repos. Keywords: session summary, retro, improve skills, capture insight, prompt feedback, better prompts.
 ---
 
 # Session Insight
