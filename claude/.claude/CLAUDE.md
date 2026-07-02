@@ -1,1 +1,1 @@
-@skills/preferences/working-style/SKILL.md
+@skills/working-style/SKILL.md
