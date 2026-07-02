@@ -142,7 +142,6 @@ install_zsh_plugins() {
   mkdir -p "$plugin_dir"
   local repos=(
     "zsh-users/zsh-autosuggestions"
-    "zsh-users/zsh-syntax-highlighting"
   )
   for repo in "${repos[@]}"; do
     local name="${repo##*/}"
