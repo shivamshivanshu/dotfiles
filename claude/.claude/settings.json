@@ -1,5 +1,9 @@
 {
   "model": "opus[1m]",
+  "env": {
+    "EDITOR": "nvim",
+    "VISUAL": "nvim"
+  },
   "hooks": {
     "PreToolUse": [
       {
