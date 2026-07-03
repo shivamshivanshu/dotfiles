@@ -52,6 +52,12 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Prefer subagents whenever possible to preserve main-context memory — offload searches, multi-file reading, builds/tests, and broad exploration so the main thread stays focused on synthesis.
 - For large, parallelisable work — broad audits, multi-file migrations, verify-heavy reviews, wide research — reach for `ultracode` (multi-agent workflows) when it is faster or more thorough than working solo. Keep trivial edits and quick lookups solo; the fan-out cost is not worth it there.
 - Once a detailed implementation plan and sufficient context exist, evaluate each subtask's implementation complexity before spawning agents, and choose the model per agent: give simple, well-specified work to a faster model (e.g. Sonnet, 1M-token context) and reserve the strongest model for genuinely complex tasks.
+- Before parallelising implementation, build a dependency tree of the changes and delegate by it:
+  - Independent nodes — files/modules that don't consume each other's output — go to concurrent agents.
+  - Dependent nodes run only after their prerequisites land; brief each agent on what it waits for and what it produces.
+  - In `ultracode`, encode the tree in the Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents. The orchestrator sequences deterministically — agents don't self-coordinate.
+- Scale to the change: trivial or tightly-scoped → implement yourself, no agents. Convoluted or tightly-coupled with tangled dependencies → skip the tree and go sequential in one context. Reserve the tree for work that is both sizeable and cleanly separable.
+- Always review an agent's code before accepting it: read the diff, check it against the plan and these skills, and correct or re-delegate rather than trust it blind.
 - Subagents follow these same skills: have them run the relevant ones (e.g. `simplify`, `session-insight`) on their slice and report results back for the main thread to consolidate.
 - Still make focused, shared-context edits yourself rather than delegating them. Follow the explicit instruction each time.
 - Expect frequent interrupts and course-corrections; keep steps small and checkable, and follow the latest instruction.
