@@ -18,7 +18,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Before writing any code, plan first — scale the depth to the change, but the gate always holds:
   1. Investigate and gather context; state the root cause or mechanism.
   2. Surface every design question and clarification, and ask them — wait for the answers.
-  3. Write the implementation plan to a temp file (e.g. `~/claude_notes/<topic>-plan.md`).
+  3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `~/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Always use this dated folder; never a random `/tmp` or session scratchpad. (Permanent learning writeups still live at `~/claude_notes/<slug>.md` per [[teacher]].)
   4. Ask for a review of that plan, and revise until approved.
   5. Only then implement.
 - While implementing, track steps in a todo list so implementation and investigation proceed systematically; hand individual items to subagents with the full context and skills they need.
