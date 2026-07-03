@@ -26,6 +26,16 @@
           }
         ]
       }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/.claude/hooks/notify.py"
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {
