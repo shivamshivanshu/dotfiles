@@ -5,5 +5,6 @@ require("shivam.appearance").apply(config)
 require("shivam.options").apply(config)
 require("shivam.hyperlinks").apply(config)
 require("shivam.keys").apply(config)
+require("shivam.bell").apply(config)
 
 return config
