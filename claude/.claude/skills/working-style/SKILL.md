@@ -31,6 +31,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Write tests that prove the behaviour or bug, not tests for ceremony. If a test costs more than it is worth, say so.
 - When touching behaviour, evaluate adding a test: if test infrastructure already exists or the setup is light plumbing, add one; skip only when the cost clearly outweighs the value.
 - After a refactor or conflict resolution, audit that behaviour is unchanged against the original intent.
+- When evidence is a human observation, pin down exactly which artifact was seen and isolate one signal per test before hypothesizing.
 
 ## Edit
 - Code as documentation. Add a comment only when it carries value that names, code, and the commit message cannot — a non-obvious *why* or a genuinely complex algorithm. Never restate what the code already says.
