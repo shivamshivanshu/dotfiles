@@ -18,7 +18,7 @@ Git conventions for any repository.
 - Fixups and autosquash: `git commit --fixup=<sha>`, then `git rebase --autosquash -i <sha>~1` (non-interactive: `GIT_SEQUENCE_EDITOR=true`).
 - With several changes in flight, keep each in its correct parent commit so it squashes cleanly, and split unrelated concerns into separate commits.
 - Preserve `Change-Id` across every amend and rebase; drop a duplicate when two commits share one ticket.
-- `git stash` before a change so it can be committed and squashed cleanly.
+- `git stash` to shelve unrelated in-progress work before staging, so each commit stays atomic.
 
 ## Commit messages
 - Concise: capture what and why; cut boilerplate and the obvious.

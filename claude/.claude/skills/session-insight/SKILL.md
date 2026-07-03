@@ -29,7 +29,7 @@ Run at the end of a session to turn what happened into durable improvements — 
    | Anything work-internal (internal hostnames, systems, ticket prefixes, proprietary domain) | Project-local `CLAUDE.md` or Claude memory — never the global dotfiles skills |
    | A durable fact or correction with no natural skill home | Claude memory file |
 
-5. **Propose concrete changes.** For each, name the exact target file and show the specific edit or new-skill draft. Prefer updating an existing skill over creating one — check `~/.claude/skills/{preferences,insights,meta}/` first. Follow the skill-authoring format: frontmatter `name` and a `description` starting with "Use when…", a terse body, and no comment bloat.
+5. **Propose concrete changes.** For each, name the exact target file and show the specific edit or new-skill draft. Prefer updating an existing skill over creating one — check existing skills in `~/.claude/skills/` first (e.g. working-style, git, cpp). Follow the skill-authoring format: frontmatter `name` and a `description` starting with "Use when…", a terse body, and no comment bloat.
 
 6. **Stop for review.** Present the proposals grouped as Global, Local, and Memory. Apply only what is approved, and commit or push only when asked.
 
@@ -47,7 +47,7 @@ Run at the end of a session to turn what happened into durable improvements — 
 
 ## Proposed changes
 ### Global (~/.claude/skills — must stay free of work-internal names)
-- update insights/cpp: …
+- update cpp: …
 ### Local (this repo)
 - add to CLAUDE.md: …
 ### Memory
