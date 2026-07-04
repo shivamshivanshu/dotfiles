@@ -7,7 +7,7 @@
     defaultBranch = main
 
 [merge]
-    conflictstyle = diff3
+    conflictstyle = zdiff3
     tool = nvimdiff
 
 [mergetool]
@@ -83,6 +83,7 @@
 
 [push]
     default = simple
+    autoSetupRemote = true
 
 [fetch]
     prune = true
