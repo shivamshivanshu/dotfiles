@@ -40,12 +40,15 @@
     diffFilter = delta --color-only
 
 [diff]
-    tool = delta
+    tool = nvimdiff
     colorMoved = default
     algorithm = histogram
 
-[difftool "delta"]
-    cmd = "delta \"$LOCAL\" \"$REMOTE\""
+[difftool]
+    prompt = false
+
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 
 [log]
     decorate = short
@@ -61,6 +64,7 @@
     u = reset HEAD --
     aa = add .
     da = !git add -N . && git diff
+    dt = difftool
     ri = rebase -i
     cc = commit
     cp = cherry-pick
