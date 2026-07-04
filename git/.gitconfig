@@ -2,9 +2,14 @@
     pager = delta
     editor = nvim
     autocrlf = input
+    fsmonitor = true
+    untrackedCache = true
 
 [init]
     defaultBranch = main
+
+[commit]
+    verbose = true
 
 [merge]
     conflictstyle = zdiff3
@@ -90,12 +95,15 @@
 [rebase]
     autosquash = true
     autoStash = true
+    updateRefs = true
+    missingCommitsCheck = error
 
 [pull]
     rebase = true
 
 [rerere]
     enabled = true
+    autoupdate = true
 
 [branch]
     sort = -committerdate
