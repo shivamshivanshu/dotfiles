@@ -107,3 +107,6 @@
 
 [branch]
     sort = -committerdate
+
+[worktree]
+    guessRemote = true

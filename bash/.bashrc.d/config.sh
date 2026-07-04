@@ -13,6 +13,10 @@ _shell_alias="${XDG_CONFIG_HOME:-$HOME/.config}/shell/alias.sh"
 [[ -r "$_shell_alias" ]] && source "$_shell_alias"
 unset _shell_alias
 
+_shell_worktree="${XDG_CONFIG_HOME:-$HOME/.config}/shell/worktree.sh"
+[[ -r "$_shell_worktree" ]] && source "$_shell_worktree"
+unset _shell_worktree
+
 #### zoxide
 _cache_init zoxide "$HOME/.cache/zoxide-init.bash" zoxide init bash
 
