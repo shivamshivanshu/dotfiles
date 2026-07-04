@@ -12,7 +12,6 @@ function M.apply(config)
 		{ key = "m", mods = "LEADER|CTRL", action = act.SendKey({ key = "m", mods = "CTRL" }) },
 
 		{ key = "r", mods = "LEADER", action = act.ReloadConfiguration },
-		{ key = "f", mods = "CTRL|SHIFT", action = act.Search("CurrentSelectionOrEmptyString") },
 		{ key = "Space", mods = "LEADER", action = act.QuickSelect },
 
 		{ key = "=", mods = "LEADER", action = act.IncreaseFontSize },
@@ -38,8 +37,6 @@ function M.apply(config)
 		{ key = "[", mods = "LEADER", action = act.ActivateTabRelative(-1) },
 		{ key = "]", mods = "LEADER", action = act.ActivateTabRelative(1) },
 
-		{ key = "PageUp", mods = "SHIFT", action = act.ScrollByPage(-1) },
-		{ key = "PageDown", mods = "SHIFT", action = act.ScrollByPage(1) },
 		{ key = "UpArrow", mods = "SHIFT", action = act.ScrollByLine(-1) },
 		{ key = "DownArrow", mods = "SHIFT", action = act.ScrollByLine(1) },
 

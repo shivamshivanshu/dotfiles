@@ -6,7 +6,7 @@ function M.apply(config)
 	config.term = "xterm-256color"
 
 	config.scrollback_lines = 10000
-	config.front_end = "OpenGL"
+	config.front_end = "WebGpu"
 	config.max_fps = 120
 
 	config.send_composed_key_when_left_alt_is_pressed = false
