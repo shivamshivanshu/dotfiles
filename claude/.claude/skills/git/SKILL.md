@@ -25,6 +25,7 @@ Git conventions for any repository.
 - Concise: capture what and why; cut boilerplate and the obvious.
 - Follow Chris Beams' conventions — imperative, capitalised subject of 50 characters or fewer; blank line; body wrapped at 72; explain what and why, not how.
 - Prefix with the ticket id when one exists (e.g. `TICKET-123 Subject`). Committing without one and adding it later via reword is fine.
+- Never add a `Co-Authored-By` trailer or any AI/tool attribution (e.g. "Generated with…") to commit messages.
 - Before committing, run `git diff --cached --stat` to confirm only intended files are staged.
 - After an amend or rebase, run `git show --stat HEAD` to confirm the files, a preserved Change-Id, and a message that matches the content.
 
