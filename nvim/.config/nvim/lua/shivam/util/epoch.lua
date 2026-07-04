@@ -7,36 +7,48 @@ M.config = {
 
 local last_result = nil
 
-local function get_divisor()
-	local divisors = { ns = 1e9, us = 1e6, ms = 1e3, s = 1 }
-	return divisors[M.config.granularity] or 1e9
+local FRAC_DIGITS = { ns = 9, us = 6, ms = 3, s = 0 }
+
+local function frac_digits()
+	return FRAC_DIGITS[M.config.granularity] or 9
 end
 
-local function apply_timezone(timestamp)
-	return timestamp + (M.config.timezone_offset * 3600)
+local function offset_seconds()
+	return M.config.timezone_offset * 3600
+end
+
+-- os.time treats its table as LOCAL wall-clock; correct for the machine TZ to
+-- get a true UTC epoch so the configured offset is the sole source of truth.
+local function utc_time(parts)
+	local secs = os.time(parts)
+	local utc = os.date("!*t", secs)
+	utc.isdst = nil
+	return secs + os.difftime(secs, os.time(utc))
 end
 
 local function epoch_to_readable(epoch_str)
-	local epoch = tonumber(epoch_str)
-	if not epoch then
+	if not epoch_str:match("^%d+$") then
 		vim.notify("Invalid epoch timestamp", vim.log.levels.ERROR)
 		return nil
 	end
 
-	local seconds = math.floor(epoch / get_divisor())
-	local adjusted_time = apply_timezone(seconds)
-	local date_str = os.date("%Y-%m-%d %H:%M:%S", adjusted_time)
-	local remainder = epoch % get_divisor()
-
-	-- Pad the fractional part to match the granularity, not always 9 digits.
-	local frac_digits = { ns = 9, us = 6, ms = 3, s = 0 }
-	local digits = frac_digits[M.config.granularity] or 9
-	local result
-	if digits > 0 then
-		result = string.format("%s.%0" .. digits .. "d", date_str, remainder)
+	-- Split off the sub-second portion textually: full ns epochs (~1.7e18)
+	-- exceed double exactness, so arithmetic only touches the small seconds part.
+	local digits = frac_digits()
+	local sec_str, frac_str
+	if digits == 0 then
+		sec_str, frac_str = epoch_str, ""
+	elseif #epoch_str <= digits then
+		sec_str = "0"
+		frac_str = string.rep("0", digits - #epoch_str) .. epoch_str
 	else
-		result = date_str
+		sec_str = epoch_str:sub(1, #epoch_str - digits)
+		frac_str = epoch_str:sub(#epoch_str - digits + 1)
 	end
+
+	local adjusted_time = tonumber(sec_str) + offset_seconds()
+	local date_str = os.date("!%Y-%m-%d %H:%M:%S", adjusted_time)
+	local result = digits > 0 and (date_str .. "." .. frac_str) or date_str
 	last_result = result
 	print(
 		string.format(
@@ -51,30 +63,31 @@ local function epoch_to_readable(epoch_str)
 end
 
 local function readable_to_epoch(date_str)
-	local year, month, day, hour, min, sec, ms = date_str:match("(%d+)-(%d+)-(%d+)%s+(%d+):(%d+):(%d+):?(%d*)")
+	local year, month, day, hour, min, sec, frac =
+		date_str:match("(%d+)-(%d+)-(%d+)%s+(%d+):(%d+):(%d+)[.:]?(%d*)")
 	if not year then
-		vim.notify("Invalid format. Use: YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS:mmm", vim.log.levels.ERROR)
+		vim.notify("Invalid format. Use: YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.frac", vim.log.levels.ERROR)
 		return nil
 	end
 
-	local time = os.time({
+	local seconds = utc_time({
 		year = tonumber(year),
 		month = tonumber(month),
 		day = tonumber(day),
 		hour = tonumber(hour),
 		min = tonumber(min),
 		sec = tonumber(sec),
-	})
+	}) - offset_seconds()
 
-	local adjusted_time = time - (M.config.timezone_offset * 3600)
-	local epoch = adjusted_time * get_divisor()
-
-	if ms and ms ~= "" then
-		local ms_nanos = tonumber(ms) * 1e6
-		epoch = epoch + ms_nanos
+	-- Reassemble as a string: append the sub-second digits (left-aligned decimal
+	-- fraction, padded/truncated to the granularity) rather than doing float math.
+	local digits = frac_digits()
+	local epoch = string.format("%d", seconds)
+	if digits > 0 then
+		epoch = epoch .. (frac .. string.rep("0", digits)):sub(1, digits)
 	end
 
-	local result = string.format("%d", epoch)
+	local result = epoch
 	last_result = result
 	print(
 		string.format(
