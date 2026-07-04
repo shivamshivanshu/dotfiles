@@ -7,30 +7,30 @@ export LOCAL_WORKTREE_ROOT="${LOCAL_WORKTREE_ROOT:-$HOME/worktree}"
 gwt() {
   local name="$1"
   if [ -z "$name" ]; then echo "usage: gwt <name>" >&2; return 1; fi
-  local common repo path
-  common=$(git rev-parse --git-common-dir 2>&1) || { echo "gwt: not in a git repo ($common)" >&2; return 1; }
-  common=$(cd "$common" 2>/dev/null && pwd) || { echo "gwt: cannot resolve git dir '$common'" >&2; return 1; }
+  # "path" is off-limits as a name: in zsh it is tied to PATH, and localizing
+  # it empties PATH inside the function.
+  local common repo wt_path
+  common=$(git rev-parse --path-format=absolute --git-common-dir 2>&1) || { echo "gwt: not in a git repo ($common)" >&2; return 1; }
   repo=$(basename "$(dirname "$common")")
-  path="$LOCAL_WORKTREE_ROOT/$repo/$name"
+  wt_path="$LOCAL_WORKTREE_ROOT/$repo/$name"
   if git show-ref --verify --quiet "refs/heads/$name"; then
-    git worktree add "$path" "$name" || return 1
+    git worktree add "$wt_path" "$name" || return 1
   else
-    git worktree add -b "$name" "$path" || return 1
+    git worktree add -b "$name" "$wt_path" || return 1
   fi
-  cd "$path"
+  cd "$wt_path"
 }
 
 gwts() {
   [ -d "$LOCAL_WORKTREE_ROOT" ] || { echo "no worktrees under $LOCAL_WORKTREE_ROOT" >&2; return 1; }
-  local path
-  path=$(find "$LOCAL_WORKTREE_ROOT" -mindepth 2 -maxdepth 2 -type d 2>/dev/null | fzf) || return
-  [ -n "$path" ] && cd "$path"
+  local wt_path
+  wt_path=$(find "$LOCAL_WORKTREE_ROOT" -mindepth 2 -maxdepth 2 -type d 2>/dev/null | fzf) || return
+  cd "$wt_path"
 }
 
 gwtrm() {
-  local line path
+  local line wt_path
   line=$(git worktree list 2>/dev/null | tail -n +2 | fzf) || return
-  [ -z "$line" ] && return
-  path=$(printf '%s\n' "$line" | awk '{print $1}')
-  git worktree remove "$path" && git worktree prune && echo "removed $path"
+  read -r wt_path _ <<< "$line"
+  git worktree remove "$wt_path" && git worktree prune && echo "removed $wt_path"
 }
