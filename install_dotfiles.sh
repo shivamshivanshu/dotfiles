@@ -172,7 +172,7 @@ ensure_cargo() {
 }
 
 install_cargo_packages() {
-  ensure_cargo
+  [[ "$MODE" == auto ]] && ensure_cargo
   for entry in "${CARGO_PACKAGES[@]}"; do
     local bin="${entry%%:*}"
     local crate="${entry#*:}"
@@ -198,7 +198,10 @@ stow_packages() {
     exit 1
   fi
   mkdir -p "$HOME/.config"
-  cd "$DOTFILES_DIR"
+  # Claude Code writes a real ~/.claude/settings.json at runtime that shadows the
+  # tracked one and would make `stow claude` abort; drop it so the tracked file links.
+  local claude_settings="$HOME/.claude/settings.json"
+  [[ -f "$claude_settings" && ! -L "$claude_settings" ]] && rm -f "$claude_settings"
   for pkg in "${STOW_PACKAGES[@]}"; do
     echo "→ stow $pkg"
     stow --restow --target="$HOME" --dir="$DOTFILES_DIR" "$pkg"
