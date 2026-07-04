@@ -25,6 +25,16 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\" done"
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {

@@ -23,9 +23,9 @@ def read_event():
         return {}
 
 
-def format_toast(event, label):
-    label = label or os.path.basename(event.get("cwd") or "")
-    message = event.get("message") or DEFAULT_MESSAGE
+def format_toast(event, message):
+    label = os.path.basename(event.get("cwd") or "")
+    message = message or event.get("message") or DEFAULT_MESSAGE
     title = f"Claude [{label}]" if label else "Claude"
     return f"{title}: {message}"
 
@@ -52,8 +52,8 @@ def display_in_tmux_status(toast):
 
 
 def main():
-    label = sys.argv[1] if len(sys.argv) > 1 else None
-    toast = format_toast(read_event(), label)
+    message = sys.argv[1] if len(sys.argv) > 1 else None
+    toast = format_toast(read_event(), message)
     display_in_tmux_status(toast)
     # Hook stdout is captured by Claude Code, so write to the controlling tty;
     # the bytes travel through tmux/ssh to the local terminal.
