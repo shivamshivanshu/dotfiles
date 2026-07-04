@@ -16,17 +16,24 @@ bash/.bashrc.user                → ~/.bashrc.user
 bash/.bashrc.d/                  → ~/.bashrc.d/
 zsh/.zshrc.user                  → ~/.zshrc.user
 zsh/.zshrc.d/                    → ~/.zshrc.d/
+shell/.config/shell/             → ~/.config/shell/
 claude/.claude/CLAUDE.md         → ~/.claude/CLAUDE.md
 claude/.claude/skills/           → ~/.claude/skills/
 claude/.claude/agents/           → ~/.claude/agents/
 claude/.claude/output-styles/    → ~/.claude/output-styles/
+claude/.claude/commands/         → ~/.claude/commands/
+claude/.claude/hooks/            → ~/.claude/hooks/
+claude/.claude/keybindings.json  → ~/.claude/keybindings.json
+claude/.claude/settings.json     → ~/.claude/settings.json
 ```
 
 `~/.claude` stays a real directory (credentials, sessions, caches); Stow folds
-in only the tracked entries (`CLAUDE.md`, `skills/`, `agents/`, `output-styles/`)
-as symlinks.
-`settings.json` is intentionally **not** tracked — it holds machine-local and
-work-internal config (kept in `settings.local.json` too).
+in only the tracked entries (`CLAUDE.md`, `skills/`, `agents/`, `output-styles/`,
+`commands/`, `hooks/`, `keybindings.json`, `settings.json`) as symlinks.
+`settings.json` **is** tracked — a universal settings file shared across
+machines. Machine-local and work-internal overrides stay in `settings.local.json`
+(untracked). Note Claude Code writes a real `settings.json` at runtime; the
+installer removes any such file so the tracked one links.
 
 ### Install
 
@@ -82,6 +89,9 @@ reports PASS/FAIL with evidence).
 
 **Output styles** (`output-styles/`): `terse` — lead with the answer, structured
 and scannable. Activate with `/output-style terse`.
+
+**Also tracked**: `commands/` (custom slash commands), `hooks/` (event hook
+scripts), `keybindings.json`, and `settings.json` (universal config; see above).
 
 ## Shell
 
