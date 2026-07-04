@@ -81,7 +81,7 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 | `perf-investigation` | insights | latency / throughput / CPU profiling |
 | `concurrency` | insights | multithread / lock-free / memory ordering |
 | `session-insight` | meta | "I'm done" — summarize + propose skill-repo edits |
-| `teacher` | meta | task done — offer transferable concepts to learn (notes in `~/claude_notes/`) |
+| `teacher` | meta | task done — offer transferable concepts to learn (notes in `$HOME/claude_notes/`) |
 
 **Agents** (`agents/`, also tracked): `simple-implementer` (Sonnet-pinned, for
 simple well-specified subtasks) and `verifier` (build / test / regression,

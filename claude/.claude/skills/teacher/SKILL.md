@@ -18,12 +18,12 @@ Grow the user's transferable software knowledge from real work. Optional, brief,
 4. Everything else.
 
 ## Steps
-1. **Housekeep.** Open `~/claude_notes/backlog.md` (create the folder and file if absent). Remove every line already checked `[x]` — done means gone, so the file stays small.
+1. **Housekeep.** Open `$HOME/claude_notes/backlog.md` (create the folder and file if absent). Remove every line already checked `[x]` — done means gone, so the file stays small.
 2. **Select.** From the finished task, pick at most **three** transferable concepts, ranked by the tiers above.
 3. **Agenda.** Present them as a bare-minimum list: one line each — the concept and, in a few words, the payoff of diving deep. Tag each with its tier. Nothing more.
 4. **Ask** which to dive into now, which to defer, and which to skip.
-5. **Deep-dive (now).** Write a clear, intuitive, example-led explanation to `~/claude_notes/<slug>.md` (see style below).
-6. **Defer.** Append a single `[ ]` one-liner under its tier heading in `~/claude_notes/backlog.md`, so it isn't lost.
+5. **Deep-dive (now).** Write a clear, intuitive, example-led explanation to `$HOME/claude_notes/<slug>.md` (see style below).
+6. **Defer.** Append a single `[ ]` one-liner under its tier heading in `$HOME/claude_notes/backlog.md`, so it isn't lost.
 7. **Skip.** Drop it — record nothing.
 
 ## Deep-dive writing style
@@ -47,5 +47,5 @@ Grow the user's transferable software knowledge from real work. Optional, brief,
 
 ## Guardrails
 - Keep it minimal — a short pick-list, never a lecture. If nothing is worth surfacing, say so and stop.
-- Keep the skills repo and any generic deep-dive free of work-internal names; domain-specific notes live only in `~/claude_notes/`.
+- Keep the skills repo and any generic deep-dive free of work-internal names; domain-specific notes live only in `$HOME/claude_notes/`.
 - Sibling end-of-work skill: [[session-insight]] improves the skill repo; this one grows your knowledge.

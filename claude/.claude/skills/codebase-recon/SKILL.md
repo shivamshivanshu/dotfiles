@@ -16,7 +16,7 @@ Understand before you change. Pair with [[working-style]].
 - Check how similar features already solve the problem, and prefer an existing pattern over a new one.
 
 ## Record findings
-- For non-trivial work, write findings to that day's scratchpad first (e.g. `~/claude_notes/scratchpad/<YYYYMMDD>/<topic>.md`): the call path, the key types, the invariants, and the open questions. Then implement from the notes.
+- For non-trivial work, write findings to that day's scratchpad first (e.g. `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>.md`): the call path, the key types, the invariants, and the open questions. Then implement from the notes.
 - State the root cause or mechanism before proposing a change.
 
 ## Before editing
