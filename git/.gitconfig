@@ -59,6 +59,7 @@
     aa = add .
     da = !git add -N . && git diff
     dt = difftool
+    mt = mergetool
     ri = rebase -i
     cc = commit
     cp = cherry-pick
