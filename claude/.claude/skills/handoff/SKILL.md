@@ -26,4 +26,8 @@ Preserve **substance completely** — every important finding, decision, and inv
 - Begin the file with one line stating what it is and how to use it (e.g. "Handoff for resuming <topic>; read fully before acting").
 
 ## Save
-Write with the Write tool to the absolute path the caller specifies. The Write tool does not expand `$HOME` or `~`, so use the absolute path verbatim. Then confirm the saved path in one line.
+1. Create today's export dir and capture its absolute path (run via Bash so `$HOME` and the date expand):
+   `mkdir -p "$HOME/claude_notes/exports/$(date +%Y%m%d)" && printf '%s\n' "$HOME/claude_notes/exports/$(date +%Y%m%d)"`
+2. Filename: the name the user gave when invoking, else a short kebab-case slug of the main topic.
+3. Write the handoff with the Write tool to `<abs-dir>/<name>.md`, using the absolute path from step 1 verbatim (the Write tool does not expand `$HOME`/`~`).
+4. Confirm the saved path in one line.

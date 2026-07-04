@@ -82,6 +82,7 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 | `concurrency` | insights | multithread / lock-free / memory ordering |
 | `session-insight` | meta | "I'm done" — summarize + propose skill-repo edits |
 | `teacher` | meta | task done — offer transferable concepts to learn (notes in `$HOME/claude_notes/`) |
+| `handoff` | meta | `/handoff [name]` — save a resumable context handoff for a fresh instance |
 
 **Agents** (`agents/`, also tracked): `simple-implementer` (Sonnet-pinned, for
 simple well-specified subtasks) and `verifier` (build / test / regression,
