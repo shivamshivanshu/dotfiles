@@ -1,9 +1,19 @@
 #!/usr/bin/env python3
+"""Claude Code Notification hook: rings the terminal bell and raises a
+WezTerm desktop toast, forwarding correctly through tmux."""
 import json
 import os
 import shutil
 import subprocess
 import sys
+
+ESC = "\x1b"
+BELL = "\x07"
+DEFAULT_MESSAGE = "needs your attention"
+DESKTOP_TOAST_START = f"{ESC}]9;"  # OSC 9: WezTerm desktop notification
+DESKTOP_TOAST_END = BELL
+TMUX_PASSTHROUGH_START = f"{ESC}Ptmux;"
+TMUX_PASSTHROUGH_END = f"{ESC}\\"
 
 
 def read_event():
@@ -13,38 +23,43 @@ def read_event():
         return {}
 
 
-def toast_text(event, label):
+def format_toast(event, label):
     label = label or os.path.basename(event.get("cwd") or "")
-    message = event.get("message") or "needs your attention"
+    message = event.get("message") or DEFAULT_MESSAGE
     title = f"Claude [{label}]" if label else "Claude"
     return f"{title}: {message}"
 
 
-def notification_bytes(text):
-    # BEL for sound, OSC 9 for a wezterm desktop toast; tmux only forwards
-    # the OSC when wrapped in its passthrough envelope (allow-passthrough on).
-    # ESC/BEL inside the text would terminate the sequence early, so strip them.
-    text = text.replace("\x1b", "").replace("\x07", "")
-    osc = f"\x1b]9;{text}\a"
-    if os.environ.get("TMUX"):
-        osc = "\x1bPtmux;" + osc.replace("\x1b", "\x1b\x1b") + "\x1b\\"
-    return "\a" + osc
+def terminal_sequence(toast):
+    # An ESC or BELL inside the text would close the escape sequence early.
+    toast = toast.replace(ESC, "").replace(BELL, "")
+    desktop_toast = f"{DESKTOP_TOAST_START}{toast}{DESKTOP_TOAST_END}"
+    inside_tmux = bool(os.environ.get("TMUX"))
+    if inside_tmux:
+        # tmux only forwards the OSC when wrapped in its passthrough envelope
+        # (needs allow-passthrough on), with every inner ESC doubled.
+        desktop_toast = (
+            TMUX_PASSTHROUGH_START
+            + desktop_toast.replace(ESC, ESC + ESC)
+            + TMUX_PASSTHROUGH_END
+        )
+    return BELL + desktop_toast
 
 
-def show_in_tmux(text):
+def display_in_tmux_status(toast):
     if os.environ.get("TMUX") and shutil.which("tmux"):
-        subprocess.run(["tmux", "display-message", text], check=False)
+        subprocess.run(["tmux", "display-message", toast], check=False)
 
 
 def main():
     label = sys.argv[1] if len(sys.argv) > 1 else None
-    text = toast_text(read_event(), label)
-    show_in_tmux(text)
+    toast = format_toast(read_event(), label)
+    display_in_tmux_status(toast)
     # Hook stdout is captured by Claude Code, so write to the controlling tty;
     # the bytes travel through tmux/ssh to the local terminal.
     try:
         with open("/dev/tty", "w") as tty:
-            tty.write(notification_bytes(text))
+            tty.write(terminal_sequence(toast))
     except OSError:
         pass
 

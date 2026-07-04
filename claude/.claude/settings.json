@@ -16,23 +16,12 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /home/.claude/hooks/simplify-after-commit.py"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /home/.claude/hooks/notify.py"
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\""
           }
         ]
       }
