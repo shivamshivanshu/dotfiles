@@ -102,3 +102,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		})
 	end,
 })
+
+-- Pick up external edits (Claude/agents write files underneath open buffers)
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
+	command = "checktime",
+})
