@@ -7,7 +7,7 @@ map("n", "<C-d>", "<C-d>zz")
 map("n", "<C-u>", "<C-u>zz")
 
 -- Terminal Mode
-map("n", "<leader>t", "<cmd>terminal<CR>", { desc = "Open vim terminal" }) -- Exit terminal mode. May not work with emulators
+map("n", "<leader>t", "<cmd>terminal<CR>", { desc = "Open vim terminal" })
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }) -- Exit terminal mode. May not work with emulators
 
 -- Persistance Copy
@@ -32,25 +32,9 @@ map("n", "<leader>wj", "<C-w>j", { desc = "Move to bottom window" })
 map("n", "<leader>wk", "<C-w>k", { desc = "Move to top window" })
 map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 
--- Helper: fetch current path (dir in oil.nvim, file in regular buffers)
-local function get_current_path()
-	local ok, oil = pcall(require, "oil")
-	if ok and oil.get_current_dir and vim.bo.filetype == "oil" then
-		local dir = oil.get_current_dir()
-		if dir and dir ~= "" then
-			return dir
-		end
-	end
-	local buf = vim.fn.expand("%:p")
-	if buf ~= "" then
-		return buf
-	end
-	return nil
-end
-
 -- Helper: copy path with an optional modifier (":p" absolute, ":." relative)
 local function copy_path(mod, label)
-	local path = get_current_path()
+	local path = require("shivam.util.paths").current_path()
 	if not path then
 		vim.notify("No valid path to copy", vim.log.levels.WARN)
 		return

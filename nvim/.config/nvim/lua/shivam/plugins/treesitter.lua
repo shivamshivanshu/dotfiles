@@ -19,7 +19,7 @@ local parsers = {
 	"javascript",
 	"typescript",
 	"tmux",
-	"rust"
+	"rust",
 }
 
 return {

@@ -1,14 +1,4 @@
-local function current_dir()
-	local ok, oil = pcall(require, "oil")
-	if ok and vim.bo.filetype == "oil" then
-		return oil.get_current_dir(0)
-	end
-	local bufname = vim.api.nvim_buf_get_name(0)
-	if bufname ~= "" then
-		return vim.fn.fnamemodify(bufname, ":h")
-	end
-	return vim.fn.getcwd()
-end
+local current_dir = require("shivam.util.paths").current_dir
 
 local function project_root()
 	return vim.fs.root(0, ".git") or vim.fn.getcwd()

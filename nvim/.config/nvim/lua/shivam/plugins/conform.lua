@@ -26,6 +26,5 @@ return {
 			html = { "prettier" },
 			css = { "prettier" },
 		},
-		format_on_save = nil, -- Disable auto-format on save (use <leader>f instead)
 	},
 }
