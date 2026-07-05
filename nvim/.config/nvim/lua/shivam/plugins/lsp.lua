@@ -1,13 +1,13 @@
 return {
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
 		lazy = false,
 		opts = {},
 	},
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		lazy = false,
-		dependencies = { "williamboman/mason.nvim" },
+		dependencies = { "mason.nvim" },
 		opts = {
 			ensure_installed = {
 				"stylua",
@@ -21,9 +21,9 @@ return {
 		},
 	},
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		lazy = false,
-		dependencies = { "williamboman/mason.nvim" },
+		dependencies = { "mason.nvim" },
 		opts = {
 			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "marksman" },
 			automatic_enable = false,
@@ -34,8 +34,8 @@ return {
 		event = require("shivam.util.events").BUF_OPEN,
 		dependencies = {
 			"saghen/blink.cmp",
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
+			"mason.nvim",
+			"mason-lspconfig.nvim",
 		},
 		config = function()
 			vim.api.nvim_create_autocmd("LspAttach", {
