@@ -5,7 +5,7 @@ description: Use when writing, reviewing, building, testing, or debugging C++ â€
 
 # C++ Insights
 
-For performance-sensitive C++. Prefer the latest standard the code or build tool already targets; when it isn't obvious, default to C++20. Pair with [[working-style]].
+For performance-sensitive C++. Prefer the latest standard the code or build tool already targets; when it isn't obvious, default to C++20. Assume Linux x86-64 as the execution target unless the repo says otherwise â€” development often happens on macOS; don't tune for it. Pair with [[working-style]].
 
 ## Idioms
 - Prefer pure, side-effect-free functions, and express and enforce it with `const`, `noexcept`, and `[[nodiscard]]`, passing inputs by `const&`.

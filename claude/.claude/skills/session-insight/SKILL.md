@@ -19,6 +19,7 @@ Run at the end of a session to turn what happened into durable improvements — 
    Skip one-off details, ticket specifics, and anything already captured.
 
 3. **Coach the prompting.** Review the prompts given this session (they are in the conversation). Where a prompt was ambiguous, underspecified, or led to rework, show a concrete **before → after** rewrite with one line on why the sharper version works. Surface only the top 1–3; skip if the prompts were already clear.
+   For each, also check whether a CLAUDE.md or skill edit could make the fix automatic — a standing default, or a rule to restate/clarify before acting — and propose that edit alongside the rewrite; config beats coaching when both work.
 
 4. **Route each insight** to the right home:
 
@@ -28,6 +29,8 @@ Run at the end of a session to turn what happened into durable improvements — 
    | Fact tied to a specific repo or project | That project's `CLAUDE.md` or `.claude/skills/` (local) |
    | Anything work-internal (internal hostnames, systems, ticket prefixes, proprietary domain) | Project-local `CLAUDE.md` or Claude memory — never the global dotfiles skills |
    | A durable fact or correction with no natural skill home | Claude memory file |
+
+   When the local-vs-global call is ambiguous, run a quick 2–3 agent one-round debate ([[stochastic-consensus]]) to categorise; still in doubt → local. Global only if the insight is repo- and employer-independent.
 
 5. **Propose concrete changes.** For each, name the exact target file and show the specific edit or new-skill draft. Prefer updating an existing skill over creating one — check existing skills in `~/.claude/skills/` first (e.g. working-style, git, cpp). Follow the skill-authoring format: frontmatter `name` and a `description` starting with "Use when…", a terse body, and no comment bloat.
 

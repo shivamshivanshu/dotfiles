@@ -13,11 +13,12 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - When asked, explain the mechanism — trace the exact chain of calls. The aim is understanding the system, not just producing a diff.
 - Summarise on demand: before acting, or when a thread grows long, give a crisp status.
 - Concede readily. When a fix is challenged as possibly wrong, verify and correct course without defensiveness.
+- Prefer top-quality output over token savings unless explicitly told to economise.
 
 ## Plan and scope
 - Before writing any code, plan first — scale the depth to the change, but the gate always holds:
   1. Investigate and gather context; state the root cause or mechanism.
-  2. Surface every design question and clarification, and ask them — wait for the answers.
+  2. Surface every design question and clarification, and ask them — wait for the answers. If the request itself is ambiguous, open with a sharpened restatement to confirm intent before spawning agents or starting any real work.
   3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Always use this dated folder; never a random `/tmp` or session scratchpad. (Permanent learning writeups still live at `$HOME/claude_notes/<slug>.md` per [[teacher]].)
   4. Ask for a review of that plan, and revise until approved.
   5. Only then implement.
