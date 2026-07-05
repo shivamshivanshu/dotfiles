@@ -32,6 +32,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - When touching behaviour, evaluate adding a test: if test infrastructure already exists or the setup is light plumbing, add one; skip only when the cost clearly outweighs the value.
 - After a refactor or conflict resolution, audit that behaviour is unchanged against the original intent.
 - When evidence is a human observation, pin down exactly which artifact was seen and isolate one signal per test before hypothesizing.
+- Background any run expected to exceed ~2 minutes (builds, test suites, regressions) and keep working while it runs; check its result before claiming completion.
 
 ## Edit
 - Code as documentation. Add a comment only when it carries value that names, code, and the commit message cannot — a non-obvious *why* or a genuinely complex algorithm. Never restate what the code already says.
@@ -42,22 +43,26 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Reuse first (DRY): search for an existing utility before writing a new one.
 - Match the naming and style conventions of the surrounding files; when editing an existing file, keep its conventions even where you would choose differently.
 - Clean up as you go; remove redundant or unused parameters.
+- Shell code must run on both macOS (BSD userland) and Linux — `bash -n`/`zsh -n` will not catch divergence. Known traps: `sed -i ''` (BSD) vs `sed -i` (GNU), `stat -f` vs `stat -c`, no `date -d`, `readlink -f`, or `grep -P` on macOS. Prefer portable forms (`perl -pi -e`, `python3`, `$(cd dir && pwd)`) or branch on `uname`.
 
 ## Git and safety
 - Commit and push only when asked. Never deploy or push to production without explicit approval; dry-run first.
 - After making a commit, run the `simplify` skill (delegated to subagents) to refactor, clean up, and fold easy improvements into that commit, then amend — before moving on.
 - Keep commit messages concise and ticketed — see [[git]].
-- Do not create tickets; record them in a file instead.
+- Do not create tickets; record them in a file instead — repo-local `TODO.md` for project work, `$HOME/claude_notes/tickets.md` for cross-project items. Delete entries when done; the file holds only open work.
 
 ## Delegation
-- Prefer subagents whenever possible to preserve main-context memory — offload searches, multi-file reading, builds/tests, and broad exploration so the main thread stays focused on synthesis.
-- For large, parallelisable work — broad audits, multi-file migrations, verify-heavy reviews, wide research — reach for `ultracode` (multi-agent workflows) when it is faster or more thorough than working solo. Keep trivial edits and quick lookups solo; the fan-out cost is not worth it there.
-- Once a detailed implementation plan and sufficient context exist, evaluate each subtask's complexity before spawning agents and assign each a model tier to match. Discover the tiers available in this session from the harness (the Agent tool's model options) and rank them by capability — never hardcode model names in skills or prompts. Reserve the strongest tier for brainstorming/design, gnarly debugging, and final reviews; step down as complexity falls, giving mechanical well-specified work to the fastest tier. When unsure, omit the override and let the agent inherit the session model.
-- Before parallelising implementation, build a dependency tree of the changes and delegate by it:
-  - Independent nodes — files/modules that don't consume each other's output — go to concurrent agents.
-  - Dependent nodes run only after their prerequisites land; brief each agent on what it waits for and what it produces.
-  - In `ultracode`, encode the tree in the Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents. The orchestrator sequences deterministically — agents don't self-coordinate.
-- Scale to the change: trivial or tightly-scoped → implement yourself, no agents. Convoluted or tightly-coupled with tangled dependencies → skip the tree and go sequential in one context. Reserve the tree for work that is both sizeable and cleanly separable.
+- Keep the main context as small as possible — delegate by default. The main thread holds only synthesis, decisions, and focused shared-context edits; searches, file reading, builds/tests, audits, research, and anything multi-step go to subagents or background workflows, which return conclusions, not raw output.
+- The main thread acts as the engineering lead: organise, plan, take the user's instruction, and choose the execution shape. Agents do the work; the lead manages it.
+- For large, parallelisable work, orchestrate multi-agent Workflows (`ultracode`) by intent: [[fan-n]] to average out variance on one question, [[stochastic-consensus]] to explore and debate an open problem, [[agent-team]] to execute a separable implementation plan. Trivial edits and quick lookups stay solo — the fan-out cost is not worth it there.
+- Assign each subtask a model tier by complexity: discover the session's tiers from the Agent tool's model options and rank them — never hardcode model names in skills or prompts (agent-definition frontmatter is config and may pin one). The ladder:
+  - Janitor/mechanical — run tools, collect output, apply well-specified edits: fastest tier; spawn fast and often.
+  - Mid-level — code scraping, summarising code or lower agents' output: middle tiers, effort high.
+  - High-level — brainstorming, design, proposing solutions, fan-in/dedup synthesis, final review: strongest tiers.
+  - When unsure, omit the override and inherit the session model.
+  - Wherever a model is named and the surface accepts it (settings, agent frontmatter, `/model`), request the 1M-context variant with the `[1m]` suffix.
+- Code review and simplify passes always fan out to multiple agents — never a single reviewer; pattern in [[fan-n]].
+- Before parallelising implementation, build a dependency tree of the changes and delegate by it — mechanics in [[agent-team]]. Trivial, tightly-scoped, or tangled work stays sequential in one context; the tree is for work that is both sizeable and cleanly separable.
 - Always review an agent's code before accepting it: read the diff, check it against the plan and these skills, and correct or re-delegate rather than trust it blind.
 - Subagents follow these same skills: have them run the relevant ones (e.g. `simplify`, `session-insight`) on their slice and report results back for the main thread to consolidate.
 - Still make focused, shared-context edits yourself rather than delegating them. Follow the explicit instruction each time.

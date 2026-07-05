@@ -1,10 +1,27 @@
 {
-  "model": "claude-fable-5[1m]",
   "env": {
     "EDITOR": "nvim",
-    "VISUAL": "nvim"
+    "VISUAL": "nvim",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "teammateMode": "auto",
+  "permissions": {
+    "defaultMode": "auto",
+    "additionalDirectories": ["~/claude_notes"]
+  },
+  "model": "claude-fable-5[1m]",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/session_start.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -16,12 +33,24 @@
         ]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\" busy",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/hooks/notify.py\""
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\"",
+            "timeout": 5
           }
         ]
       }
@@ -31,7 +60,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/hooks/notify.py\" done"
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\" done",
+            "timeout": 5
           }
         ]
       }
@@ -40,9 +70,7 @@
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true
   },
-  "skipDangerousModePermissionPrompt": true,
   "tui": "fullscreen",
-  "permissions": {
-    "defaultMode": "auto"
-  }
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true
 }

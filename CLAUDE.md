@@ -14,6 +14,8 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
 - tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t`.
 - install script: `bash -n install_dotfiles.sh`, then `./install_dotfiles.sh link`.
+- claude hooks: `python3 -m py_compile claude/.claude/hooks/*.py`, then pipe a
+  sample event JSON into the hook and check the emitted context/state.
 - Plugin/keybind swaps promising parity: verify each key's *behaviour* end to end
   (including tmux/pane crossing), not just that the mapping exists.
 
@@ -29,7 +31,5 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - `claude/.claude/settings.json` is tracked (universal); machine-local overrides
   go in untracked `settings.local.json`. The installer drops a runtime-written
   `~/.claude/settings.json` so the tracked one links.
-- Comments only for a non-obvious *why*; never restate code.
-- Atomic commits; commit only when asked.
 - Split navigation: tmux owns panes everywhere; native wezterm splits are unused
   (LEADER binds only) — don't add wezterm-side nav integrations.

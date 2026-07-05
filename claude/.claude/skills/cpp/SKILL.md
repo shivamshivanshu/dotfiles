@@ -10,11 +10,10 @@ For performance-sensitive C++. Prefer the latest standard the code or build tool
 ## Idioms
 - Prefer pure, side-effect-free functions, and express and enforce it with `const`, `noexcept`, and `[[nodiscard]]`, passing inputs by `const&`.
 - Prefer `std::optional` over sentinels or try/catch for "maybe" results, and avoid try/catch as control flow. Return `nullopt` and let the caller decide.
-- Prefer enums and typed constants over bare bools and magic numbers, especially in template and configuration parameters.
-- Avoid hardcoded constants; drive values from configuration with a sane default, and enforce invariants with asserts rather than silent fallbacks.
+- Enforce invariants with asserts rather than silent fallbacks.
 - Prefer compile-time dispatch over runtime polymorphism: CRTP, `if constexpr`, concepts, `static_assert`, and variadic fan-out over `std::function`. Confirm there is no runtime cost.
 - Constrain templates with concepts where it is straightforward — it makes intent and error messages far clearer.
-- Reuse and consolidate: search for an existing utility before writing one, and collapse near-duplicate functions into overloads.
+- Collapse near-duplicate functions into overloads.
 - Pass per-entity data in a dedicated params struct by `const&`; keep feature-specific fields out of shared or common types, defining them in the owning module.
 - Verify library-feature availability against the `-std` flag. `-std=c++23` does not guarantee an STL feature exists on the toolchain; check before relying on bleeding-edge STL.
 - Run a modernisation and const-correctness sweep as its own pass once code works: add `const`, `noexcept`, `[[nodiscard]]`, `std::to_underlying`, and structured bindings — often a separate commit.

@@ -13,7 +13,7 @@ Grow the user's transferable software knowledge from real work. Optional, brief,
 
 ## Priority (surface higher tiers first)
 1. Generic C++ — `std`, common libraries, design patterns, CPU optimisation.
-2. OS and computer architecture, and compiler internals — equal weight with — network concepts.
+2. OS, computer architecture, compiler internals, and network concepts — equal weight.
 3. Work/domain-specific knowledge.
 4. Everything else.
 
@@ -22,14 +22,12 @@ Grow the user's transferable software knowledge from real work. Optional, brief,
 2. **Select.** From the finished task, pick at most **three** transferable concepts, ranked by the tiers above.
 3. **Agenda.** Present them as a bare-minimum list: one line each — the concept and, in a few words, the payoff of diving deep. Tag each with its tier. Nothing more.
 4. **Ask** which to dive into now, which to defer, and which to skip.
-5. **Deep-dive (now).** Write a clear, intuitive, example-led explanation to `$HOME/claude_notes/<slug>.md` (see style below).
+5. **Deep-dive (now).** Write a clear, intuitive, example-led explanation to `$HOME/claude_notes/<slug>.md` (see style below). For currency-sensitive topics (new toolchain releases, stdlib changes, ecosystem shifts), drive the deep-dive through the deep-research skill instead of answering from model knowledge.
 6. **Defer.** Append a single `[ ]` one-liner under its tier heading in `$HOME/claude_notes/backlog.md`, so it isn't lost.
 7. **Skip.** Drop it — record nothing.
 
 ## Deep-dive writing style
-- Intuitive, simple wording aimed at a strong engineer new to the topic.
-- Lead with the core idea in a sentence or two, then a concrete, runnable example.
-- Bare minimum — no padding, no exhaustive enumeration. Enough to genuinely understand and apply it.
+Write in the teaching output style (offer `/output-style teaching`).
 
 ## backlog.md format
 ```markdown

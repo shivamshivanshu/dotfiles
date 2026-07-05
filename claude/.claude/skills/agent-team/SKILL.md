@@ -1,0 +1,31 @@
+---
+name: agent-team
+description: Use when executing a sizeable, separable implementation with a team of subagents — dependency-tree delegation, per-agent briefs and verify steps, worktree isolation, tiered models. Keywords: agent team, parallel implementation, delegate, orchestrate, worktree, subagent implementation, migration.
+---
+
+# Agent Team
+
+Deterministic orchestration for implementation. The plan decides; agents execute; the orchestrator sequences — agents never self-coordinate. Requires an approved plan first (see [[working-style]]); for exploring *what* to build use [[stochastic-consensus]], for sampling use [[fan-n]].
+
+## Native agent teams (interactive teammates)
+Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: auto` → tmux split panes). Reach for a native team instead of Workflow orchestration when the work is *interactive and long-lived*: parallel development across worktrees/repos where each teammate holds durable context the user converses with. Fire-and-forget stages stay in Workflows.
+- Teams provide no filesystem isolation — give each teammate its own worktree (`gwt`, per [[git]]) before it edits anything.
+- Coordinate through the shared task list with dependencies; let teammates self-claim; message by name (SendMessage).
+- Known edges: `/resume` does not restore in-process teammates; one team per session; teammates cannot nest teams or spawn background subagents; all inherit the lead's permission mode at spawn; context cost scales linearly per teammate.
+- The lead stays a synthesizer — per [[working-style]], per-repo context lives in the teammates, not the lead.
+
+## Shape the team from the dependency tree
+- Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
+- In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents.
+- Scale honestly: trivial or tightly-coupled work goes to one context (often yourself) — the tree is for work that is both sizeable and cleanly separable.
+
+## Brief each agent completely
+- Its plan slice, the context it needs (paths, conventions, constraints) embedded in the prompt, the skills it must follow, what it waits for, and what it must produce.
+- Include the verify command in the brief — build, test, or regression — so the agent self-checks before reporting. A report without evidence is not done.
+- Assign model tiers by subtask complexity per [[working-style]]; omit the override when unsure.
+
+## Isolation and integration
+- Worktree isolation when agents mutate files concurrently — never let two agents edit the same tree.
+- Review every agent's diff against the plan before accepting ([[working-style]]).
+- The team is for breadth, not for one-file fixes.
+- After integration, run the verify and simplify passes on the combined result — per-agent green does not prove the composition works.

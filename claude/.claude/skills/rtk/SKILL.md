@@ -5,7 +5,7 @@ description: Use when working with rtk (the token-optimising CLI proxy) — its 
 
 # rtk — Rust Token Killer
 
-Token-optimised CLI proxy (60–90% savings on dev operations). Most commands are auto-rewritten through the Claude Code hook (e.g. `git status` → `rtk git status`), transparently and at zero token overhead. Use rtk when available; if you spot a concrete improvement to it, make or propose it so future runs use it better.
+Token-optimised CLI proxy (60–90% savings on dev operations). Most commands are auto-rewritten through the Claude Code hook (e.g. `git status` → `rtk git status`), transparently and at zero token overhead.
 
 ## Meta commands (run rtk directly)
 - `rtk gain` — token-savings analytics; `rtk gain --history` for usage history with savings.

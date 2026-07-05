@@ -22,7 +22,6 @@ Preserve **substance completely** — every important finding, decision, and inv
 ## Style
 - High-signal prose and lists; never a verbatim chat log.
 - Concrete over vague: real names, paths, line numbers, numbers, commands.
-- Completeness of substance beats brevity — err toward keeping an important detail.
 - Begin the file with one line stating what it is and how to use it (e.g. "Handoff for resuming <topic>; read fully before acting").
 
 ## Save
