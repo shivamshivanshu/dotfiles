@@ -17,7 +17,7 @@ return {
 			"mtime",
 		},
 		keymaps = {
-			-- Disable C-h/j/k/l for vim-tmux-navigator compatibility
+			-- Disable C-h/j/k/l for smart-splits navigation compatibility
 			["<C-h>"] = false,
 			["<C-j>"] = false,
 			["<C-k>"] = false,
