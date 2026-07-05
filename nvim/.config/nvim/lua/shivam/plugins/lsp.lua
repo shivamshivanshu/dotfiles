@@ -13,8 +13,7 @@ return {
 				"stylua",
 				"clang-format",
 				"prettier",
-				"isort",
-				"black",
+				"ruff",
 				"cmakelang", -- provides cmake-format (conform's cmake_format)
 			},
 			auto_update = false,
