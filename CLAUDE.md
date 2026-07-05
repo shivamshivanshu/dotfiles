@@ -14,6 +14,14 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
 - tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t`.
 - install script: `bash -n install_dotfiles.sh`, then `./install_dotfiles.sh link`.
+- Plugin/keybind swaps promising parity: verify each key's *behaviour* end to end
+  (including tmux/pane crossing), not just that the mapping exists.
+
+## nvim LSP gotchas
+- `vim.lsp.config()` merges list fields index-wise with the upstream default —
+  a reordered `root_markers` gets mangled; control roots with a `root_dir` function.
+- Unmatched `root_markers` still attach the server in single-file mode; the only
+  reliable scope gate is a `root_dir` callback that skips `on_dir`.
 
 ## Conventions
 - Shared shell logic lives in `shell/.config/shell/` and is sourced by both bash
@@ -23,3 +31,5 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   `~/.claude/settings.json` so the tracked one links.
 - Comments only for a non-obvious *why*; never restate code.
 - Atomic commits; commit only when asked.
+- Split navigation: tmux owns panes everywhere; native wezterm splits are unused
+  (LEADER binds only) — don't add wezterm-side nav integrations.
