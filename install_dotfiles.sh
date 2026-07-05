@@ -52,6 +52,8 @@ CARGO_PACKAGES=(
   "bat:bat"
   "zoxide:zoxide"
   "tldr:tealdeer"
+  "iwe:iwe"
+  "iwes:iwes"
   "rtk:git+https://github.com/rtk-ai/rtk"
   "cargo-install-update:cargo-update"
 )

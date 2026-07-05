@@ -24,7 +24,7 @@ return {
 		lazy = false,
 		dependencies = { "mason.nvim" },
 		opts = {
-			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "marksman" },
+			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "markdown_oxide" },
 			automatic_enable = false,
 		},
 	},
@@ -111,11 +111,25 @@ return {
 				root_markers = { "CMakePresets.json", "CTestConfig.cmake", ".git", "build", "cmake" },
 			})
 
-			vim.lsp.config("marksman", {
-				root_markers = { ".marksman.toml", ".git" },
+			vim.lsp.config("markdown_oxide", {
+				root_markers = { ".obsidian", ".moxide.toml", ".git" },
 			})
 
-			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "marksman" })
+			-- not in nvim-lspconfig/mason; installed via `cargo install iwe iwes`
+			vim.lsp.config("iwe", {
+				cmd = { "iwes" },
+				filetypes = { "markdown" },
+				-- attach only inside `iwe init`ed vaults; skipping on_dir (unlike
+				-- unmatched root_markers) also prevents single-file-mode attach
+				root_dir = function(bufnr, on_dir)
+					local vault = vim.fs.root(vim.api.nvim_buf_get_name(bufnr), ".iwe")
+					if vault then
+						on_dir(vault)
+					end
+				end,
+			})
+
+			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "markdown_oxide", "iwe" })
 
 			vim.api.nvim_create_user_command("ToggleDiagnosticVirtualText", function()
 				local current = vim.diagnostic.config().virtual_text
