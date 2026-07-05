@@ -3,12 +3,6 @@ return {
 	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		"saghen/blink.lib",
-		{
-			"L3MON4D3/LuaSnip",
-			config = function()
-				require("luasnip.loaders.from_vscode").lazy_load()
-			end,
-		},
 		"rafamadriz/friendly-snippets",
 	},
 	---@module 'blink.cmp'
@@ -21,7 +15,6 @@ return {
 			["<C-n>"] = { "select_next", "snippet_forward", "fallback" },
 			["<C-p>"] = { "select_prev", "snippet_backward", "fallback" },
 		},
-		snippets = { preset = "luasnip" },
 		sources = {
 			default = { "lsp", "snippets", "buffer", "path" },
 		},
