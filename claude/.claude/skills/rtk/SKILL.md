@@ -7,6 +7,9 @@ description: Use when working with rtk (the token-optimising CLI proxy) — its 
 
 Token-optimised CLI proxy (60–90% savings on dev operations). Most commands are auto-rewritten through the Claude Code hook (e.g. `git status` → `rtk git status`), transparently and at zero token overhead.
 
+## Gotchas
+- rtk may silently truncate long output (e.g. `git log`); when a verification depends on completeness or counting, bypass it: `rtk proxy <cmd>` or `command git …`.
+
 ## Meta commands (run rtk directly)
 - `rtk gain` — token-savings analytics; `rtk gain --history` for usage history with savings.
 - `rtk discover` — analyse Claude Code history for missed opportunities.
