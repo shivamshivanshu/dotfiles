@@ -28,12 +28,6 @@ function M.apply(config)
 	config.cursor_blink_rate = 600
 	config.window_background_opacity = 0.97
 	config.macos_window_background_blur = 20
-
-	config.visual_bell = {
-		fade_in_duration_ms = 150,
-		fade_out_duration_ms = 150,
-		target = "CursorColor",
-	}
 end
 
 return M
