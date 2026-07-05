@@ -31,15 +31,17 @@ return {
 		},
 	},
 	{
-		"iamcco/markdown-preview.nvim",
-		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-		ft = "markdown",
-		build = "cd app && npx --yes yarn install",
-		init = function()
-			vim.g.mkdp_filetypes = { "markdown" }
-		end,
+		"brianhuster/live-preview.nvim",
+		cmd = { "LivePreview" },
 		keys = {
-			{ "<leader>mp", "<cmd>MarkdownPreviewToggle<CR>", ft = "markdown", desc = "Toggle markdown preview" },
+			{
+				"<leader>mp",
+				function()
+					vim.cmd(require("livepreview").is_running() and "LivePreview close" or "LivePreview start")
+				end,
+				ft = "markdown",
+				desc = "Toggle markdown preview",
+			},
 		},
 	},
 	{
