@@ -66,6 +66,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Code review and simplify passes always fan out to multiple agents — never a single reviewer; pattern in [[fan-n]].
 - Before parallelising implementation, build a dependency tree of the changes and delegate by it — mechanics in [[agent-team]]. Trivial, tightly-scoped, or tangled work stays sequential in one context; the tree is for work that is both sizeable and cleanly separable.
 - Always review an agent's code before accepting it: read the diff, check it against the plan and these skills, and correct or re-delegate rather than trust it blind.
+- Supervise every spawned agent — they can die silently or stall without reporting. Poll progress every ~5 minutes (new task output, files changing); if idle with nothing new, kill it to unblock yourself. Hard cap: 30 minutes per agent, kill unconditionally at the limit. After any kill, sweep the repo for half-done changes (`git status`/`git diff`) and clean or finish them, then redo the task — directly if unsure or small, else restart a fresh agent with a sharper brief.
 - Subagents follow these same skills: have them run the relevant ones (e.g. `simplify`, `session-insight`) on their slice and report results back for the main thread to consolidate.
 - Still make focused, shared-context edits yourself rather than delegating them.
 - Expect frequent interrupts and course-corrections; keep steps small and checkable, and follow the latest instruction.
