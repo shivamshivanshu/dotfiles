@@ -37,3 +37,4 @@ Git conventions for any repository.
 ## Safety
 - Commit autonomously when a coherent unit of work is done and verified, then run the post-commit simplify+amend pass per [[working-style]]. Push only when explicitly asked.
 - Prefer `--amend` or a fixup over `reset` plus a new commit. Never drop commits or Change-Ids.
+- Before `--amend` or any history rewrite, check the commit isn't on a remote branch (`git branch -r --contains <sha>` must be empty); if it is, make a new commit instead — rewriting pushed history needs a force-push. Exception: Gerrit-style `refs/for/*` reviews, where amending the pushed change is the workflow.
