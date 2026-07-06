@@ -1,6 +1,6 @@
 ---
 name: working-style
-description: Use at the start of any coding task and before proposing a plan, writing code, or claiming work is done — standing preferences for how Claude should communicate, plan, verify, edit, and commit. Keywords: working style, preferences, terse, explain why, verify, no comments, minimum change, don't overengineer, commit only when asked.
+description: Use at the start of any coding task and before proposing a plan, writing code, or claiming work is done — standing preferences for how Claude should communicate, plan, verify, edit, and commit. Keywords: working style, preferences, terse, explain why, verify, no comments, minimum change, don't overengineer, auto-commit checkpoints, push only when asked.
 ---
 
 # Working Style
@@ -16,10 +16,10 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Prefer top-quality output over token savings unless explicitly told to economise.
 
 ## Plan and scope
-- Before writing any code, plan first — scale the depth to the change, but the gate always holds:
+- Before writing any code, plan first — scale the depth to the change. For a trivial or mechanical edit the gate collapses to a one-line statement of intent; for anything non-trivial or ambiguous it holds in full:
   1. Investigate and gather context; state the root cause or mechanism.
   2. Surface every design question and clarification, and ask them — wait for the answers. If the request itself is ambiguous, open with a sharpened restatement to confirm intent before spawning agents or starting any real work.
-  3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Always use this dated folder; never a random `/tmp` or session scratchpad. (Permanent learning writeups still live at `$HOME/claude_notes/<slug>.md` per [[teacher]].)
+  3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Durable notes (plans, designs, recon) always go in this dated folder — never `/tmp` or the harness session scratchpad, which are for ephemeral tool output only. (Permanent learning writeups still live at `$HOME/claude_notes/<slug>.md` per [[teacher]].)
   4. Ask for a review of that plan, and revise until approved.
   5. Only then implement.
 - While implementing, track steps in a todo list so implementation and investigation proceed systematically; hand individual items to subagents with the full context and skills they need.
@@ -47,13 +47,13 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Shell code must run on both macOS (BSD userland) and Linux — `bash -n`/`zsh -n` will not catch divergence. Known traps: `sed -i ''` (BSD) vs `sed -i` (GNU), `stat -f` vs `stat -c`, no `date -d`, `readlink -f`, or `grep -P` on macOS. Prefer portable forms (`perl -pi -e`, `python3`, `$(cd dir && pwd)`) or branch on `uname`.
 
 ## Git and safety
-- Commit and push only when asked. Never deploy or push to production without explicit approval; dry-run first.
-- After making a commit, run the `simplify` skill (delegated to subagents) to refactor, clean up, and fold easy improvements into that commit, then amend — before moving on.
+- Commit autonomously at checkpoints: when a coherent unit of work is done and verified, commit it without being asked. Push only when asked; never deploy or push to production without explicit approval — dry-run first.
+- After a non-trivial commit, run the `simplify` skill (delegated to subagents) to refactor, clean up, and fold easy improvements into that commit, then amend — before moving on. The amend is part of the commit and needs no separate approval; the push gate above still holds.
 - Keep commit messages concise and ticketed — see [[git]].
 - Do not create tickets; record them in a file instead — repo-local `TODO.md` for project work, `$HOME/claude_notes/tickets.md` for cross-project items. Delete entries when done; the file holds only open work.
 
 ## Delegation
-- Keep the main context as small as possible — delegate by default. The main thread holds only synthesis, decisions, and focused shared-context edits; searches, file reading, builds/tests, audits, research, and anything multi-step go to subagents or background workflows, which return conclusions, not raw output.
+- Keep the main context as small as possible — delegate by default. The main thread holds only synthesis, decisions, focused shared-context edits, and just enough inline scouting to write good briefs; broad searches, bulk file reading, builds/tests, audits, research, and anything multi-step go to subagents or background workflows, which return conclusions, not raw output.
 - The main thread acts as the engineering lead: organise, plan, take the user's instruction, and choose the execution shape. Agents do the work; the lead manages it.
 - For large, parallelisable work, orchestrate multi-agent Workflows (`ultracode`) by intent: [[fan-n]] to average out variance on one question, [[stochastic-consensus]] to explore and debate an open problem, [[agent-team]] to execute a separable implementation plan. Trivial edits and quick lookups stay solo — the fan-out cost is not worth it there.
 - Assign each subtask a model tier by complexity: discover the session's tiers from the Agent tool's model options and rank them — never hardcode model names in skills or prompts (agent-definition frontmatter is config and may pin one). The ladder:

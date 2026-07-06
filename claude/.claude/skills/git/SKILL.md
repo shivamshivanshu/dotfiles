@@ -35,5 +35,5 @@ Git conventions for any repository.
 - After addressing feedback, re-audit for correctness and refine the commit message against the ticket.
 
 ## Safety
-- Commit and push only when explicitly asked. Prepare the commit, then stop.
+- Commit autonomously when a coherent unit of work is done and verified, then run the post-commit simplify+amend pass per [[working-style]]. Push only when explicitly asked.
 - Prefer `--amend` or a fixup over `reset` plus a new commit. Never drop commits or Change-Ids.

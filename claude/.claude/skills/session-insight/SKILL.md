@@ -5,7 +5,7 @@ description: Use when the user signals a session is ending or a task is finished
 
 # Session Insight
 
-Run at the end of a session to turn what happened into durable improvements — to the skill repos and to how the user prompts. Propose changes; do not apply them — the user reviews and commits.
+Run at the end of a session to turn what happened into durable improvements — to the skill repos and to how the user prompts. Propose changes; do not apply them — the user reviews first. Normally reached via the `wrap` command; if wrap already ran this skill in this session, don't re-run it.
 
 ## Steps
 
@@ -36,7 +36,7 @@ Run at the end of a session to turn what happened into durable improvements — 
 
 6. **Audit the library (mechanical — report only if something is found).** Lint the skills for broken `[[wiki-links]]`, leaked work-internal names, and references to files or flags that no longer exist. If the session surfaced a repeated unproxied command pattern, propose one `rtk` improvement.
 
-7. **Stop for review.** Present the proposals grouped as Global, Local, and Memory. Apply only what is approved, and commit or push only when asked.
+7. **Stop for review.** Present the proposals grouped as Global, Local, and Memory. Apply only what is approved; push only when asked.
 
 ## Output shape
 
@@ -62,5 +62,5 @@ Run at the end of a session to turn what happened into durable improvements — 
 ## Guardrails
 - Keep the global skills repo free of work-internal names. If an insight leaks internal identifiers, route it to local or memory instead and say why.
 - Don't over-capture — one or two high-value insights (and prompt tips) beat a dump. If nothing durable emerged, say so.
-- Don't apply edits, create tickets, or push without explicit approval.
+- Don't apply edits or push without explicit approval; never create tickets — record them in a file per [[working-style]].
 - Sibling end-of-work skill: [[teacher]] grows the user's own knowledge; this one improves the skill repo and prompting.
