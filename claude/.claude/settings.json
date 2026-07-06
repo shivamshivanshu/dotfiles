@@ -4,7 +4,7 @@
     "VISUAL": "nvim",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
-  "teammateMode": "auto",
+  "teammateMode": "in-process",
   "permissions": {
     "defaultMode": "auto",
     "additionalDirectories": ["~/claude_notes"]
