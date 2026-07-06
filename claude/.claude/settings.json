@@ -65,6 +65,17 @@
           }
         ]
       }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\" clear",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {

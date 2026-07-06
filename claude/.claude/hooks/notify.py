@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Claude Code notification hook.
 
-Keeps a per-window tmux state glyph current (busy/waiting/done) and raises a
+Keeps a per-window tmux state glyph current (busy/waiting/done, cleared when
+the session ends) and raises a
 WezTerm desktop toast — but only when the user isn't already looking at the
 window, since the glyph covers the watched case."""
 import json
@@ -80,15 +81,19 @@ def ensure_glyph_rendered():
 
 def set_tmux_window_state(message):
     pane = tmux_pane()
-    if pane:
-        ensure_glyph_rendered()
-        tmux("set-option", "-w", "-t", pane, "@claude_state", STATE_GLYPHS.get(message, ""))
+    if not pane:
+        return
+    if message == "clear":
+        tmux("set-option", "-w", "-t", pane, "-u", "@claude_state")
+        return
+    ensure_glyph_rendered()
+    tmux("set-option", "-w", "-t", pane, "@claude_state", STATE_GLYPHS.get(message, ""))
 
 
 def main():
     message = sys.argv[1] if len(sys.argv) > 1 else None
     set_tmux_window_state(message or "waiting")
-    if message == "busy" or user_is_watching():
+    if message in ("busy", "clear") or user_is_watching():
         return
     toast = format_toast(read_event(), message)
     # Hook stdout is captured by Claude Code, so write to the controlling tty;
