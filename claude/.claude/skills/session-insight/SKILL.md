@@ -1,6 +1,6 @@
 ---
 name: session-insight
-description: Use when the user signals a session is ending or a task is finished — "I'm done", "that's it", "wrap up", "let's close this out", "session insight". Reflects on the session, coaches better prompting, and proposes concrete improvements to the skill/knowledge repos. Keywords: session summary, retro, improve skills, capture insight, prompt feedback, better prompts.
+description: Use when the wrap command reaches its insight step, or the user explicitly asks for a session retro ("session insight"). Treat wrap-up phrases ("I'm done", "wrap up") as the wrap command, not this skill directly. Reflects on the session, coaches better prompting, and proposes concrete improvements to the skill/knowledge repos. Keywords: session summary, retro, improve skills, capture insight, prompt feedback, better prompts.
 ---
 
 # Session Insight
@@ -63,4 +63,5 @@ Run at the end of a session to turn what happened into durable improvements — 
 - Keep the global skills repo free of work-internal names. If an insight leaks internal identifiers, route it to local or memory instead and say why.
 - Don't over-capture — one or two high-value insights (and prompt tips) beat a dump. If nothing durable emerged, say so.
 - Don't apply edits or push without explicit approval; never create tickets — record them in a file per [[working-style]].
+- When run by a subagent, skip the interactive stop-for-review: return the proposals in the report for the main thread to present.
 - Sibling end-of-work skill: [[teacher]] grows the user's own knowledge; this one improves the skill repo and prompting.

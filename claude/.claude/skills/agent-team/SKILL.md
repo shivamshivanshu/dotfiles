@@ -17,7 +17,7 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 ## Shape the team from the dependency tree
 - Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
 - In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents.
-- Scale honestly: trivial or tightly-coupled work goes to one context (often yourself) — the tree is for work that is both sizeable and cleanly separable.
+- Scale honestly: per [[working-style]], trivial, tightly-scoped, or tangled work stays in one context (often yourself) — the tree is for work that is both sizeable and cleanly separable.
 
 ## Brief each agent completely
 - Its plan slice, the context it needs (paths, conventions, constraints) embedded in the prompt, the skills it must follow, what it waits for, and what it must produce.

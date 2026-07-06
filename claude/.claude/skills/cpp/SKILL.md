@@ -19,7 +19,7 @@ For performance-sensitive C++. Prefer the latest standard the code or build tool
 - Run a modernisation and const-correctness sweep as its own pass once code works: add `const`, `noexcept`, `[[nodiscard]]`, `std::to_underlying`, and structured bindings — often a separate commit.
 
 ## Build, test, debug
-- Bazel: do not pass your own `--config`; the user's `bazelrc` already sets it. Delegate long builds and tests to a background agent to keep context clean.
+- Bazel: do not pass your own `--config`; the user's `bazelrc` already sets it. Delegate long builds/tests to a background agent — satisfies working-style's ~2-minute backgrounding rule and keeps the log out of the main context.
 - Treat regression and integration simulations as the primary verification loop: run them, then inspect the output data directly — columns populated, values in range. Bless new expected outputs only after verifying them.
 - GoogleTest: use modern matchers (`EXPECT_THAT`/`ASSERT_THAT`) over legacy macros. Tests must be meaningful — mock the component to prove the bug, and mirror existing error-path tests. Weigh the cost of writing them first.
 - Greppable, tagged debug prints are acceptable during investigation; strip them before finalising.

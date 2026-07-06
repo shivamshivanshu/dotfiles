@@ -1,6 +1,6 @@
 ---
 name: working-style
-description: Use at the start of any coding task and before proposing a plan, writing code, or claiming work is done — standing preferences for how Claude should communicate, plan, verify, edit, and commit. Keywords: working style, preferences, terse, explain why, verify, no comments, minimum change, don't overengineer, auto-commit checkpoints, push only when asked.
+description: Use when starting any coding task and before proposing a plan, writing code, or claiming work is done — standing preferences for how Claude should communicate, plan, verify, edit, and commit. Keywords: working style, preferences, terse, explain why, verify, no comments, minimum change, don't overengineer, auto-commit checkpoints, push only when asked.
 ---
 
 # Working Style
@@ -11,7 +11,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Be terse and mirror the user's brevity. Lead with the answer, not preamble.
 - Explain the *why* before any non-trivial change, and justify tradeoffs concretely rather than asserting them. Expect to be asked "why?".
 - When asked, explain the mechanism — trace the exact chain of calls. The aim is understanding the system, not just producing a diff.
-- Summarise on demand: before acting, or when a thread grows long, give a crisp status.
+- Summarise on demand: before acting, or after ~10 tool calls/turns without a checkpoint, give a crisp status.
 - Concede readily. When a fix is challenged as possibly wrong, verify and correct course without defensiveness.
 - Prefer top-quality output over token savings unless explicitly told to economise.
 
@@ -22,6 +22,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
   3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Durable notes (plans, designs, recon) always go in this dated folder — never `/tmp` or the harness session scratchpad, which are for ephemeral tool output only. (Permanent learning writeups still live at `$HOME/claude_notes/<slug>.md` per [[teacher]].)
   4. Ask for a review of that plan, and revise until approved.
   5. Only then implement.
+- Auto permission mode's bias to proceed does not override this gate: for non-trivial or ambiguous work, still stop and ask; auto mode only removes permission prompts for mechanical, low-risk steps.
 - While implementing, track steps in a todo list so implementation and investigation proceed systematically; hand individual items to subagents with the full context and skills they need.
 - Include in the plan how each change will be verified — build, run tests, or run regression — so agents and subagents can self-check that their work is correct.
 - Estimate the size of a change before committing to it.
@@ -56,7 +57,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Keep the main context as small as possible — delegate by default. The main thread holds only synthesis, decisions, focused shared-context edits, and just enough inline scouting to write good briefs; broad searches, bulk file reading, builds/tests, audits, research, and anything multi-step go to subagents or background workflows, which return conclusions, not raw output.
 - The main thread acts as the engineering lead: organise, plan, take the user's instruction, and choose the execution shape. Agents do the work; the lead manages it.
 - For large, parallelisable work, orchestrate multi-agent Workflows (`ultracode`) by intent: [[fan-n]] to average out variance on one question, [[stochastic-consensus]] to explore and debate an open problem, [[agent-team]] to execute a separable implementation plan. Trivial edits and quick lookups stay solo — the fan-out cost is not worth it there.
-- Assign each subtask a model tier by complexity: discover the session's tiers from the Agent tool's model options and rank them — never hardcode model names in skills or prompts (agent-definition frontmatter is config and may pin one). The ladder:
+- Assign each subtask a model tier by complexity: discover the session's tiers from the model options of the subagent-spawning tool (Agent/Task — name varies by harness version) and rank them — never hardcode model names in skills or prompts (agent-definition frontmatter is config and may pin one). The ladder:
   - Janitor/mechanical — run tools, collect output, apply well-specified edits: fastest tier; spawn fast and often.
   - Mid-level — code scraping, summarising code or lower agents' output: middle tiers, effort high.
   - High-level — brainstorming, design, proposing solutions, fan-in/dedup synthesis, final review: strongest tiers.
@@ -66,7 +67,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Before parallelising implementation, build a dependency tree of the changes and delegate by it — mechanics in [[agent-team]]. Trivial, tightly-scoped, or tangled work stays sequential in one context; the tree is for work that is both sizeable and cleanly separable.
 - Always review an agent's code before accepting it: read the diff, check it against the plan and these skills, and correct or re-delegate rather than trust it blind.
 - Subagents follow these same skills: have them run the relevant ones (e.g. `simplify`, `session-insight`) on their slice and report results back for the main thread to consolidate.
-- Still make focused, shared-context edits yourself rather than delegating them. Follow the explicit instruction each time.
+- Still make focused, shared-context edits yourself rather than delegating them.
 - Expect frequent interrupts and course-corrections; keep steps small and checkable, and follow the latest instruction.
 
 ## Tools
@@ -77,4 +78,4 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Claiming "done" without having exercised the change.
 - Writing a band-aid, or gold-plating a simple fix.
 - Reinventing a utility that likely already exists.
-- Spawning an agent for a focused edit better made directly.
+- Spawning an agent for a focused, shared-context edit — make it directly (well-specified mechanical edits still go to a fast implementer agent).

@@ -1,11 +1,13 @@
 ---
 name: teacher
-description: Use after a task is complete (never mid-task) to grow the user's software knowledge — surface a few transferable, worth-knowing concepts that came up, ranked by the learning priorities below, with a one-line agenda each, and offer to deep-dive now or defer. Keywords: teach, study, knowledge base, transferable skill, explain concept, upskill.
+description: Use when a task has just completed (never mid-task) to grow the user's software knowledge — surface a few transferable, worth-knowing concepts that came up, ranked by the learning priorities below, with a one-line agenda each, and offer to deep-dive now or defer. Keywords: teach, study, knowledge base, transferable skill, explain concept, upskill.
 ---
 
 # Teacher
 
 Grow the user's transferable software knowledge from real work. Optional, brief, and only once a task is finished.
+
+Normally reached via the `wrap` command — if wrap already ran it this session, don't re-run. When run by a subagent, return the concept list in the report instead of asking the user.
 
 ## When
 - After a task completes — never interrupt work in progress.

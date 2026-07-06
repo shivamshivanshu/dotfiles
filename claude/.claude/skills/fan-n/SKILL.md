@@ -24,7 +24,7 @@ N identical agents → one fan-in judge. The cheapest way to buy reliability fro
 - Only the fan-in's synthesis returns to the main thread.
 
 ## Review fan-out (varied prompts)
-Code review and simplify passes always use this shape — never a single reviewer:
+Code review and simplify passes always use this shape (per [[working-style]]) — never a single reviewer:
 - Most agents get full context with slightly varied prompts, each emphasising a different concern.
 - Spawn a few with no context at all — inferring purely from the diff and commit messages; blind eyes catch what briefed ones assume away.
 - Give every agent MCP/tool access.

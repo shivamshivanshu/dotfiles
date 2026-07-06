@@ -1,6 +1,6 @@
 ---
 name: codebase-recon
-description: Use before changing an unfamiliar codebase, or when asked to understand or audit how something works — map the relevant slice and trace the real call path before proposing edits. Keywords: understand codebase, explore, onboarding, how does this work, don't assume.
+description: Use when about to change an unfamiliar codebase, or when asked to understand or audit how something works — map the relevant slice and trace the real call path before proposing edits. Keywords: understand codebase, explore, onboarding, how does this work, don't assume.
 ---
 
 # Codebase Recon

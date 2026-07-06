@@ -14,8 +14,10 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
 - tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t`.
 - install script: `bash -n install_dotfiles.sh`, then `./install_dotfiles.sh link`.
-- claude hooks: `python3 -m py_compile claude/.claude/hooks/*.py`, then pipe a
-  sample event JSON into the hook and check the emitted context/state.
+- claude hooks: `python3 -m py_compile claude/.claude/hooks/*.py` first.
+- `session_start.py`: pipe sample event JSON in, check emitted additionalContext
+  on stdout. `notify.py`: stdout is captured — verify via the `@claude_state`
+  tmux window option (and tty escape output), not stdout.
 - Plugin/keybind swaps promising parity: verify each key's *behaviour* end to end
   (including tmux/pane crossing), not just that the mapping exists.
 
@@ -29,7 +31,8 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - Shared shell logic lives in `shell/.config/shell/` and is sourced by both bash
   and zsh — put cross-shell code there, never duplicated per shell.
 - `claude/.claude/settings.json` is tracked (universal); machine-local overrides
-  go in untracked `settings.local.json`. The installer drops a runtime-written
-  `~/.claude/settings.json` so the tracked one links.
+  go in untracked `settings.local.json`. Claude Code writes a real
+  `~/.claude/settings.json` at runtime; the installer deletes it so stow can
+  symlink the tracked one.
 - Split navigation: tmux owns panes everywhere; native wezterm splits are unused
   (LEADER binds only) — don't add wezterm-side nav integrations.

@@ -13,9 +13,9 @@ Map the approach space with independent solvers, then let them argue. For identi
 - Keep outliers as first-class output — they map the *different approaches*, and an outlier regularly ends as the champion once debated. Never let ranking bury them.
 
 ## Phase 2 — debate
-- Define the number of steps up front. Each step, every agent receives the outcome of all other agents and must incorporate it: answer challenges aimed at it, concede when convinced (log every concession), raise a few sharp challenges, and update its stance (champion/support/skeptical/kill).
+- Define the number of steps up front (default 2–4; extend only while concessions still flow). Each step, every agent receives the outcome of all other agents and must incorporate it: answer challenges aimed at it, concede when convinced (log every concession), raise a few sharp challenges, and update its stance (champion/support/skeptical/kill).
 - Verify inside the debate: debaters check load-bearing claims against docs or code, not just argue — consensus without verification amplifies shared wrong assumptions.
-- Bounded positions via schema (~300 words, capped challenges); pass only the latest round plus the shared ranked list, never full history.
+- Bounded positions via schema (~300 words, max 3 challenges per agent per step); pass only the latest round plus the shared ranked list, never full history.
 - Push agents to kill weak items — a good debate prunes. Force convergence in the final quarter of steps.
 - Concession flow is the convergence signal: concessions drying up early means stop; still flowing at the end means the steps were well spent.
 

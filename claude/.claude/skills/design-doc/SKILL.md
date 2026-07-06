@@ -19,3 +19,6 @@ Write for a skeptical senior reviewer with ten minutes. Short enough to be read 
 - Every rejected option gets its real reason recorded — the doc's second job is stopping re-litigation.
 - Open questions go in their own section, not buried in prose; each names who or what resolves it.
 - Terse prose, no padding, no restating context the reader already has.
+
+## Save
+- Deliverable docs go where the repo already keeps them (docs/, adjacent README) if such a place exists; otherwise `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-design.md`. Say which you chose and why.

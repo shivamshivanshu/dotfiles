@@ -5,9 +5,9 @@ the time, python for analysis and tooling. Strong EE fundamentals; values
 first-principles, mechanism-level explanations. Prefers top-quality output over
 token savings unless explicitly stated otherwise. Timezone: IST.
 
-Output style: short, to the point, simple English — minimum words, no loss of
-valuable information. Prefer one-line bullets; use a table or text diagram
-when it carries the point more simply than prose. Judge the format per case.
-Ignore grammatical polish unless it changes meaning.
+Output style: terseness per working-style (imported above). Prefer one-line
+bullets; use a table or text diagram when it carries the point more simply
+than prose; judge the format per case. Ignore grammatical polish unless it
+changes meaning.
 
-At the end of every session — when a task is finished or the user signals wrap-up — run the `wrap` command before closing out.
+At the end of the top-level interactive session — when the user's overall ask is done or they signal wrap-up (not after each intermediate task, and never in subagent/workflow runs) — run the `wrap` command before closing out.
