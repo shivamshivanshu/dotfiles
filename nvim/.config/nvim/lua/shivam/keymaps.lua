@@ -6,6 +6,17 @@ map("n", "<Esc>", "<cmd>nohlsearch<CR>") -- Clear search highlight
 map("n", "<C-d>", "<C-d>zz")
 map("n", "<C-u>", "<C-u>zz")
 
+-- Buffers
+map("n", "<leader>bd", function()
+	require("mini.bufremove").delete(0)
+end, { desc = "Delete buffer (keep window layout)" })
+map("n", "<Tab>", "<cmd>bnext<CR>", { desc = "Next buffer" })
+map("n", "<S-Tab>", "<cmd>bprevious<CR>", { desc = "Prev buffer" })
+
+-- Ctrl+Backspace deletes previous word (terminals often deliver it as <C-h>)
+map({ "i", "c" }, "<C-BS>", "<C-w>")
+map({ "i", "c" }, "<C-h>", "<C-w>")
+
 -- Terminal Mode
 map("n", "<leader>t", "<cmd>terminal<CR>", { desc = "Open vim terminal" })
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }) -- Exit terminal mode. May not work with emulators

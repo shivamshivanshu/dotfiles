@@ -27,5 +27,8 @@ return {
 		for _, group in ipairs(groups) do
 			vim.api.nvim_set_hl(0, group, { fg = vtext_color })
 		end
+
+		-- Make the current line number pop against the dim relative numbers
+		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = vtext_color, bg = "#3c3836", bold = true })
 	end,
 }

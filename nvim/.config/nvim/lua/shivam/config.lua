@@ -21,6 +21,12 @@ vim.o.breakindent = true
 -- Save undo history
 vim.o.undofile = true
 
+-- No swapfiles; persistent undo above covers recovery
+vim.o.swapfile = false
+
+-- Rounded borders for all floating windows (LSP hover, completion docs, ...)
+vim.o.winborder = "rounded"
+
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true

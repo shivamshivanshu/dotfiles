@@ -49,7 +49,6 @@ return {
 		ft = "markdown",
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
-			"nvim-tree/nvim-web-devicons",
 		},
 		keys = {
 			{ "<leader>mr", "<cmd>RenderMarkdown toggle<CR>", ft = "markdown", desc = "Toggle render markdown" },
