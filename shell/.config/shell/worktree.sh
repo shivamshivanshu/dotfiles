@@ -12,7 +12,7 @@ gwt() {
   local common repo wt_path
   common=$(git rev-parse --path-format=absolute --git-common-dir 2>&1) || { echo "gwt: not in a git repo ($common)" >&2; return 1; }
   repo=$(basename "$(dirname "$common")")
-  wt_path="$LOCAL_WORKTREE_ROOT/$repo/$name"
+  wt_path="$LOCAL_WORKTREE_ROOT/$repo/${name//\//-}"
   if git show-ref --verify --quiet "refs/heads/$name"; then
     git worktree add "$wt_path" "$name" || return 1
   else
@@ -29,8 +29,7 @@ gwts() {
 }
 
 gwtrm() {
-  local line wt_path
-  line=$(git worktree list 2>/dev/null | tail -n +2 | fzf) || return
-  read -r wt_path _ <<< "$line"
+  local wt_path
+  wt_path=$(git worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p' | tail -n +2 | fzf) || return
   git worktree remove "$wt_path" && git worktree prune && echo "removed $wt_path"
 }

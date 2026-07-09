@@ -27,6 +27,16 @@ case "$MODE" in
   auto)
     PKG_MANAGER="${1:-}"
     [[ $# -gt 0 ]] && shift
+    case "$PKG_MANAGER" in
+      "") ;;
+      brew|apt|dnf|pacman|yay)
+        command -v "$PKG_MANAGER" &>/dev/null || { echo "Error: $PKG_MANAGER not found on this system" >&2; exit 1; }
+        ;;
+      *)
+        echo "Error: unsupported package manager: $PKG_MANAGER (supported: brew, apt, dnf, pacman, yay)" >&2
+        exit 1
+        ;;
+    esac
     ;;
   *) usage ;;
 esac
@@ -201,9 +211,20 @@ stow_packages() {
   fi
   mkdir -p "$HOME/.config"
   # Claude Code writes a real ~/.claude/settings.json at runtime that shadows the
-  # tracked one and would make `stow claude` abort; drop it so the tracked file links.
+  # tracked one and would make `stow claude` abort; drop it (keeping a .pre-stow
+  # copy if it diverged) so the tracked file links.
   local claude_settings="$HOME/.claude/settings.json"
-  [[ -f "$claude_settings" && ! -L "$claude_settings" ]] && rm -f "$claude_settings"
+  local tracked_settings="$DOTFILES_DIR/claude/.claude/settings.json"
+  if [[ -f "$claude_settings" && ! -L "$claude_settings" ]]; then
+    if cmp -s "$claude_settings" "$tracked_settings"; then
+      rm "$claude_settings"
+    else
+      echo "→ preserving runtime settings.json as settings.json.pre-stow"
+      mv "$claude_settings" "$claude_settings.pre-stow"
+    fi
+  elif [[ -L "$claude_settings" && ! -e "$claude_settings" ]]; then
+    rm "$claude_settings"
+  fi
   for pkg in "${STOW_PACKAGES[@]}"; do
     echo "→ stow $pkg"
     local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR")

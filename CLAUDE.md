@@ -32,7 +32,7 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   and zsh — put cross-shell code there, never duplicated per shell.
 - `claude/.claude/settings.json` is tracked (universal); machine-local overrides
   go in untracked `settings.local.json`. Claude Code writes a real
-  `~/.claude/settings.json` at runtime; the installer deletes it so stow can
-  symlink the tracked one.
+  `~/.claude/settings.json` at runtime; the installer removes it (keeping a
+  `.pre-stow` copy if it diverged) so stow can symlink the tracked one.
 - Split navigation: tmux owns panes everywhere; native wezterm splits are unused
   (LEADER binds only) — don't add wezterm-side nav integrations.

@@ -20,7 +20,7 @@
     keepBackup = false
 
 [mergetool "nvimdiff"]
-    cmd = "nvim -d $LOCAL $REMOTE $MERGED -c 'wincmd w'"
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c 'wincmd w'"
 
 [delta]
     features = "side-by-side line-numbers decorations"
