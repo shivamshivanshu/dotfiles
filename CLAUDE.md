@@ -34,5 +34,6 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   go in untracked `settings.local.json`. Claude Code writes a real
   `~/.claude/settings.json` at runtime; the installer deletes it so stow can
   symlink the tracked one.
-- Split navigation: tmux owns panes everywhere; native wezterm splits are unused
-  (LEADER binds only) — don't add wezterm-side nav integrations.
+- Split navigation: tmux owns panes everywhere; wezterm keeps only LEADER t
+  (tab) and LEADER x (close pane), stock split/tab chords are disabled — don't
+  add wezterm-side nav integrations.

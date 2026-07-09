@@ -63,8 +63,7 @@ local function epoch_to_readable(epoch_str)
 end
 
 local function readable_to_epoch(date_str)
-	local year, month, day, hour, min, sec, frac =
-		date_str:match("(%d+)-(%d+)-(%d+)%s+(%d+):(%d+):(%d+)[.:]?(%d*)")
+	local year, month, day, hour, min, sec, frac = date_str:match("(%d+)-(%d+)-(%d+)%s+(%d+):(%d+):(%d+)[.:]?(%d*)")
 	if not year then
 		vim.notify("Invalid format. Use: YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.frac", vim.log.levels.ERROR)
 		return nil
@@ -128,22 +127,37 @@ local function convert_selection()
 	return convert(text)
 end
 
-function M._convert_selection()
-	return convert_selection()
-end
-
-function M._convert_and_copy()
-	convert_selection()
-	if last_result then
-		vim.fn.setreg("+", last_result)
-		print("Copied: " .. last_result)
+-- Marks are charwise-precise but may be stale; trust them only when they
+-- match the range the user actually gave
+local function convert_range(args)
+	if args.line1 == vim.fn.line("'<") and args.line2 == vim.fn.line("'>") then
+		return convert_selection()
 	end
+	return convert(table.concat(vim.fn.getline(args.line1, args.line2), "\n"))
 end
 
 function M.setup()
 	vim.api.nvim_create_user_command("Epoch", function(args)
-		convert(args.args)
-	end, { nargs = 1, desc = "Convert epoch ↔ date/time (auto-detect)" })
+		if args.args ~= "" then
+			convert(args.args)
+		elseif args.range > 0 then
+			convert_range(args)
+		else
+			vim.notify("Usage: :Epoch <ts|date> or :'<,'>Epoch", vim.log.levels.WARN)
+		end
+	end, { nargs = "?", range = true, desc = "Convert epoch ↔ date/time (arg or visual range)" })
+
+	vim.api.nvim_create_user_command("EpochCopy", function(args)
+		if args.range > 0 then
+			convert_range(args)
+		end
+		if last_result then
+			vim.fn.setreg("+", last_result)
+			print("Copied: " .. last_result)
+		else
+			vim.notify("No conversion result to copy", vim.log.levels.WARN)
+		end
+	end, { range = true, desc = "Copy conversion result (of range if given)" })
 
 	vim.api.nvim_create_user_command("EpochSetTimezone", function(args)
 		M.config.timezone_offset = tonumber(args.args) or 0
@@ -159,27 +173,6 @@ function M.setup()
 			vim.notify("Invalid granularity. Use: ns, us, ms, or s", vim.log.levels.ERROR)
 		end
 	end, { nargs = 1, desc = "Set epoch granularity (ns/us/ms/s)" })
-
-	vim.keymap.set(
-		"x",
-		"<leader>ec",
-		":<C-u>lua require('shivam.util.epoch')._convert_selection()<CR>",
-		{ desc = "Epoch convert (selection)" }
-	)
-	vim.keymap.set(
-		"x",
-		"<leader>ee",
-		":<C-u>lua require('shivam.util.epoch')._convert_and_copy()<CR>",
-		{ desc = "Epoch convert and copy (selection)" }
-	)
-	vim.keymap.set("n", "<leader>ey", function()
-		if last_result then
-			vim.fn.setreg("+", last_result)
-			print("Copied: " .. last_result)
-		else
-			vim.notify("No conversion result to copy", vim.log.levels.WARN)
-		end
-	end, { desc = "Copy last conversion result" })
 end
 
 return M

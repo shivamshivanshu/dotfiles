@@ -168,20 +168,18 @@ Leader: `Space`
 
 ### Yank / Paste
 
+`y`/`p` use the system clipboard directly (`clipboard=unnamedplus`).
+
 | Keys | Mode | Action |
 |------|------|--------|
-| `gy` | n, x | Yank to register `a` |
-| `gp` | n, x | Paste from register `a` |
-| `<leader>y` | n, v | Yank to system clipboard |
-| `<leader>Y` | n | Yank line to system clipboard |
 | `<leader>p` | x | Paste without overwriting register |
+| `<leader>cb` | n | Copy entire buffer to clipboard |
 
 ### Windows / Navigation
 
 | Keys | Action |
 |------|--------|
-| `<leader>wh/j/k/l` | Move to split |
-| `<C-h/j/k/l>` | Tmux-aware navigation |
+| `<C-h/j/k/l>` | Tmux-aware navigation (nvim splits included) |
 | `<C-\>` | Tmux previous pane |
 | `<A-arrows>` | Resize split |
 
@@ -235,10 +233,11 @@ Leader: `Space`
 
 | Keys | Action |
 |------|--------|
-| `]c` / `[c` | Next / prev hunk |
+| `]c` / `[c` | Next / prev hunk (native jump in diff windows) |
 | `<leader>gp` | Preview hunk |
-| `<leader>gh` | Toggle line blame |
 | `<leader>gu` | Reset hunk |
+
+Commands: `:Gitsigns toggle_current_line_blame`, `:CopyCommitHash` (hash of current line).
 
 ### Treesitter Text Objects
 
@@ -285,9 +284,7 @@ Leader: `Space`
 
 ### Undotree
 
-| Keys | Action |
-|------|--------|
-| `<leader>u` | Toggle undo tree |
+`:UndotreeToggle`
 
 ### Comments
 
@@ -301,19 +298,17 @@ Leader: `Space`
 VS Code-style search panel with separate fields for Search, Replacement, Files Filter
 (supports globs like `cuttlefish/**/*.cpp`, `!**/test/**`), and Flags.
 
+Launch with `:GrugFar`. Inside the panel:
+
 | Keys | Action |
 |------|--------|
-| `<leader>h` | Open grug-far (horizontal split) |
-| `<leader>H` | Open grug-far (vertical split) |
-| `<leader>hw` | Replace word (n) / selection project-wide (v) |
-| `<leader>hf` | Replace in current file |
-| `<leader>hd` | Replace in current dir (Oil-aware) |
-| `<leader>hp` | Replace in project root (git or cwd) |
-| `<leader>ha` | Replace all (inside grug-far) |
+| `<leader>ha` | Replace all |
 | `<leader>hq` | Send results to quickfix |
 | `<leader>hs` | Sync edits back to result locations |
+| `<leader>hl` | Sync current line |
 | `<leader>hr` | Refresh search |
 | `<leader>ht` | Open search history |
+| `q` | Close |
 
 ### Completion (nvim-cmp)
 
@@ -324,7 +319,7 @@ VS Code-style search panel with separate fields for Search, Replacement, Files F
 | `<C-n>` | Next item / snippet jump |
 | `<C-p>` | Prev item / snippet jump |
 
-### Markdown (`<leader>m`)
+### Markdown
 
 | Keys | Action |
 |------|--------|
@@ -339,19 +334,15 @@ VS Code-style search panel with separate fields for Search, Replacement, Files F
 | `]]` / `[[` | Next / prev heading |
 | `]p` | Parent heading |
 | `]h` | Current heading |
-| `<leader>ml` | Add list item below |
-| `<leader>mL` | Add list item above |
-| `<leader>mc` | Toggle checkbox |
-| `<leader>mp` | Toggle browser preview |
-| `<leader>mr` | Toggle in-buffer rendering |
+
+Commands: `:MDListItemBelow`, `:MDListItemAbove`, `:MDTaskToggle` (list/checkbox ops),
+`:LivePreview start|close` (browser preview), `:RenderMarkdown toggle` (in-buffer rendering).
 
 ### Epoch Converter
 
-| Keys | Mode | Action |
-|------|------|--------|
-| `<leader>ec` | x | Convert epoch/date |
-| `<leader>ee` | x | Convert and copy |
-| `<leader>ey` | n | Copy last result |
-| `:Epoch <ts>` | cmd | Convert timestamp |
-| `:EpochSetTimezone <h>` | cmd | Set timezone offset |
-| `:EpochSetGranularity <unit>` | cmd | Set unit (ns/us/ms/s) |
+| Command | Action |
+|---------|--------|
+| `:Epoch <ts>` / `:'<,'>Epoch` | Convert timestamp arg or visual range |
+| `:'<,'>EpochCopy` / `:EpochCopy` | Convert range and copy / copy last result |
+| `:EpochSetTimezone <h>` | Set timezone offset |
+| `:EpochSetGranularity <unit>` | Set unit (ns/us/ms/s) |

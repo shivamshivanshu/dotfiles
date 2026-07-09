@@ -21,28 +21,14 @@ map({ "i", "c" }, "<C-h>", "<C-w>")
 map("n", "<leader>t", "<cmd>terminal<CR>", { desc = "Open vim terminal" })
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }) -- Exit terminal mode. May not work with emulators
 
--- Persistance Copy
-local modes = { "n", "x" } -- normal and visual modes
-map(modes, "gy", [["ay]], { desc = "Yank to register a" })
-map(modes, "gp", [["ap]], { desc = "Paste from register a" })
-
--- Yanking Keymaps
+-- Yanking Keymaps (y/Y already hit the clipboard via clipboard=unnamedplus)
 map("x", "<leader>p", [["_dP]])
-map({ "n", "v" }, "<leader>y", [["+y]])
-map("n", "<leader>Y", [["+Y]])
--- <leader>c* to avoid shadowing <leader>y + a-textobjects (e.g. <leader>yaw)
 map("n", "<leader>cb", function()
 	local pos = vim.api.nvim_win_get_cursor(0)
 	vim.cmd("silent %yank +")
 	vim.api.nvim_win_set_cursor(0, pos)
 	vim.notify("Copied buffer to clipboard (" .. vim.api.nvim_buf_line_count(0) .. " lines)")
 end, { desc = "Copy entire buffer to clipboard" })
-
--- Window navigation (nvim splits only, <C-hjkl> used by tmux-navigator)
-map("n", "<leader>wh", "<C-w>h", { desc = "Move to left window" })
-map("n", "<leader>wj", "<C-w>j", { desc = "Move to bottom window" })
-map("n", "<leader>wk", "<C-w>k", { desc = "Move to top window" })
-map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 
 -- Helper: copy path with an optional modifier (":p" absolute, ":." relative)
 local function copy_path(mod, label)
@@ -66,6 +52,33 @@ end, { desc = "Copy absolute file/dir path to clipboard" })
 vim.keymap.set("n", "<leader>cr", function()
 	copy_path(":.", "relative")
 end, { desc = "Copy relative file/dir path to clipboard" })
+
+-- Copy the commit hash of the current line (blames in the file's own repo)
+vim.api.nvim_create_user_command("CopyCommitHash", function()
+	local file = vim.fn.resolve(vim.fn.expand("%:p"))
+	local line = vim.fn.line(".")
+	local blame = vim.fn.systemlist({
+		"git",
+		"-C",
+		vim.fn.fnamemodify(file, ":h"),
+		"blame",
+		"-L",
+		line .. "," .. line,
+		"--porcelain",
+		file,
+	})
+	if vim.v.shell_error ~= 0 or #blame == 0 then
+		vim.notify("git blame failed", vim.log.levels.WARN)
+		return
+	end
+	local hash = blame[1]:match("^(%S+)")
+	if not hash or hash:match("^0+$") then
+		vim.notify("Line not committed yet", vim.log.levels.WARN)
+		return
+	end
+	vim.fn.setreg("+", hash)
+	vim.notify("Copied commit hash: " .. hash)
+end, { desc = "Copy commit hash for current line" })
 
 -- Epoch converter
 require("shivam.util.epoch").setup()

@@ -249,18 +249,6 @@ function M.setup()
 	cmd("OpenInput", M.open_input, { desc = "Runner: open input.txt (vsplit)" })
 	cmd("OpenOutput", M.open_output, { desc = "Runner: open output.txt (vsplit)" })
 	cmd("CleanBinary", M.clean, { desc = "Runner: clean built binary" })
-
-	local map = vim.keymap.set
-	map("n", "<leader>rb", function()
-		M.build("release")
-	end, { desc = "Runner: BuildRelease" })
-	map("n", "<leader>rr", function()
-		M.run()
-	end, { desc = "Runner: Run" })
-	map("n", "<leader>ri", run_with_input, { desc = "Runner: RunWithInput" })
-	map("n", "<leader>rI", M.open_input, { desc = "Runner: OpenInput" })
-	map("n", "<leader>rO", M.open_output, { desc = "Runner: OpenOutput" })
-	map("n", "<leader>rc", M.clean, { desc = "Runner: CleanBinary" })
 end
 
 return M

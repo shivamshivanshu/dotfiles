@@ -21,37 +21,17 @@ return {
 				strikethrough = { key = "s", txt = "~~" },
 				code = { key = "c", txt = "`" },
 			},
-			on_attach = function(bufnr)
-				local map = vim.keymap.set
-				map("n", "<leader>ml", "<cmd>MDListItemBelow<CR>", { buffer = bufnr, desc = "Add list item below" })
-				map("n", "<leader>mL", "<cmd>MDListItemAbove<CR>", { buffer = bufnr, desc = "Add list item above" })
-				map("n", "<leader>mc", "<cmd>MDTaskToggle<CR>", { buffer = bufnr, desc = "Toggle task checkbox" })
-				map("x", "<leader>mc", ":MDTaskToggle<CR>", { buffer = bufnr, desc = "Toggle task checkboxes" })
-			end,
 		},
 	},
 	{
 		"brianhuster/live-preview.nvim",
 		cmd = { "LivePreview" },
-		keys = {
-			{
-				"<leader>mp",
-				function()
-					vim.cmd(require("livepreview").is_running() and "LivePreview close" or "LivePreview start")
-				end,
-				ft = "markdown",
-				desc = "Toggle markdown preview",
-			},
-		},
 	},
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		ft = "markdown",
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
-		},
-		keys = {
-			{ "<leader>mr", "<cmd>RenderMarkdown toggle<CR>", ft = "markdown", desc = "Toggle render markdown" },
 		},
 		opts = {
 			heading = {
