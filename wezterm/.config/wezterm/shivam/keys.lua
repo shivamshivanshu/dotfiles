@@ -46,6 +46,9 @@ function M.apply(config)
 		{ key = "UpArrow", mods = "SHIFT", action = act.ScrollByLine(-1) },
 		{ key = "DownArrow", mods = "SHIFT", action = act.ScrollByLine(1) },
 
+		-- ESC+CR = Claude Code newline; tmux extended keys are off (tmux/tmux#4663)
+		{ key = "Enter", mods = "SHIFT", action = act.SendString("\x1b\r") },
+
 		-- Splits match the tmux config (| horizontal, % vertical)
 		{ key = "|", mods = "LEADER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 		{ key = "%", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
