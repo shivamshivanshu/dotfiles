@@ -4,13 +4,29 @@ return {
 	"lewis6991/gitsigns.nvim",
 	event = require("shivam.util.events").BUF_OPEN,
 	keys = {
-		{ "<leader>gp", function() require("gitsigns").preview_hunk() end, desc = "Preview Git hunk" },
+		{
+			"<leader>gp",
+			function()
+				require("gitsigns").preview_hunk()
+			end,
+			desc = "Preview Git hunk",
+		},
 		{
 			"<leader>gy",
 			function()
-				local file = vim.fn.expand("%:p")
+				-- resolve() so stowed symlinks blame in the real repo, not the link path
+				local file = vim.fn.resolve(vim.fn.expand("%:p"))
 				local line = vim.fn.line(".")
-				local blame = vim.fn.systemlist({ "git", "blame", "-L", line .. "," .. line, "--porcelain", file })
+				local blame = vim.fn.systemlist({
+					"git",
+					"-C",
+					vim.fn.fnamemodify(file, ":h"),
+					"blame",
+					"-L",
+					line .. "," .. line,
+					"--porcelain",
+					file,
+				})
 				if vim.v.shell_error ~= 0 or #blame == 0 then
 					vim.notify("git blame failed", vim.log.levels.WARN)
 					return
@@ -34,9 +50,35 @@ return {
 			end,
 			desc = "Toggle Git blame",
 		},
-		{ "<leader>gu", function() require("gitsigns").reset_hunk() end, desc = "Reset Git hunk" },
-		{ "]c", function() require("gitsigns").nav_hunk("next") end, desc = "Next Git hunk" },
-		{ "[c", function() require("gitsigns").nav_hunk("prev") end, desc = "Previous Git hunk" },
+		{
+			"<leader>gu",
+			function()
+				require("gitsigns").reset_hunk()
+			end,
+			desc = "Reset Git hunk",
+		},
+		{
+			"]c",
+			function()
+				if vim.wo.diff then
+					vim.cmd.normal({ "]c", bang = true })
+				else
+					require("gitsigns").nav_hunk("next")
+				end
+			end,
+			desc = "Next Git hunk / diff change",
+		},
+		{
+			"[c",
+			function()
+				if vim.wo.diff then
+					vim.cmd.normal({ "[c", bang = true })
+				else
+					require("gitsigns").nav_hunk("prev")
+				end
+			end,
+			desc = "Previous Git hunk / diff change",
+		},
 	},
 	opts = {},
 }

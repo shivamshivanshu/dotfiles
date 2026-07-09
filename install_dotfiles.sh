@@ -206,7 +206,11 @@ stow_packages() {
   [[ -f "$claude_settings" && ! -L "$claude_settings" ]] && rm -f "$claude_settings"
   for pkg in "${STOW_PACKAGES[@]}"; do
     echo "→ stow $pkg"
-    stow --restow --target="$HOME" --dir="$DOTFILES_DIR" "$pkg"
+    local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR")
+    # Never fold ~/.claude: Claude Code writes runtime state (credentials,
+    # sessions) there, which a folded dir symlink would land inside the repo
+    [[ "$pkg" == claude ]] && flags+=(--no-folding)
+    stow "${flags[@]}" "$pkg"
   done
 }
 

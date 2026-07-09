@@ -105,6 +105,23 @@ vim.opt.sessionoptions = {
 	"folds", -- Save folds
 }
 
+-- tmux-resurrect's nvim strategy restores via `nvim -S` only when Session.vim
+-- exists in the pane's cwd; :SessionTrack opts a project in, the autocmd keeps it fresh
+vim.api.nvim_create_user_command("SessionTrack", function()
+	vim.cmd("mksession! Session.vim")
+	vim.notify("Session tracking on (Session.vim)")
+end, {})
+vim.api.nvim_create_autocmd("VimLeavePre", {
+	group = vim.api.nvim_create_augroup("shivam-session-track", { clear = true }),
+	callback = function()
+		-- Only the instance that created (:SessionTrack) or loaded (nvim -S)
+		-- the session refreshes it; incidental nvim runs must not clobber it
+		if vim.v.this_session ~= "" then
+			vim.cmd("silent! mksession! " .. vim.fn.fnameescape(vim.v.this_session))
+		end
+	end,
+})
+
 -- Highlight text when yanking
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",

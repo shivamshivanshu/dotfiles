@@ -140,10 +140,7 @@ function M.build(mode)
 	end
 	local cc = resolve_cc()
 	if not cc then
-		vim.notify(
-			"No C++ compiler found. Tried: " .. table.concat(M.cpp.cc_candidates, ", "),
-			vim.log.levels.ERROR
-		)
+		vim.notify("No C++ compiler found. Tried: " .. table.concat(M.cpp.cc_candidates, ", "), vim.log.levels.ERROR)
 		return false
 	end
 	save_if_modifiable()
@@ -162,7 +159,8 @@ local function with_io(cmd_str, opts)
 		cmd_str = cmd_str .. " < " .. vim.fn.shellescape(opts.stdin)
 	end
 	if opts.tee then
-		cmd_str = cmd_str .. " | tee " .. vim.fn.shellescape(opts.tee)
+		-- pipefail so a crash isn't masked by tee's 0 and the buffer survives
+		cmd_str = "set -o pipefail; " .. cmd_str .. " | tee " .. vim.fn.shellescape(opts.tee)
 	end
 	return cmd_str
 end
