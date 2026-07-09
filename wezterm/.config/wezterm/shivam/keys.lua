@@ -11,6 +11,12 @@ function M.apply(config)
 		-- Double-press leader to send a literal Ctrl-m through
 		{ key = "m", mods = "LEADER|CTRL", action = act.SendKey({ key = "m", mods = "CTRL" }) },
 
+		-- tmux owns panes; both mod spellings cover wezterm's SHIFT normalization
+		{ key = '"', mods = "CTRL|SHIFT|ALT", action = act.DisableDefaultAssignment },
+		{ key = '"', mods = "CTRL|ALT", action = act.DisableDefaultAssignment },
+		{ key = "%", mods = "CTRL|SHIFT|ALT", action = act.DisableDefaultAssignment },
+		{ key = "%", mods = "CTRL|ALT", action = act.DisableDefaultAssignment },
+
 		{ key = "r", mods = "LEADER", action = act.ReloadConfiguration },
 		{ key = "Space", mods = "LEADER", action = act.QuickSelect },
 

@@ -10,6 +10,12 @@ function M.apply(config)
 	config.front_end = "WebGpu"
 	config.max_fps = 120
 
+	config.check_for_updates = false
+
+	config.quick_select_patterns = {
+		[[\S+\.(?:cpp|cc|cxx|h|hpp|py|lua|sh):\d+(?::\d+)?]],
+	}
+
 	config.send_composed_key_when_left_alt_is_pressed = false
 	config.send_composed_key_when_right_alt_is_pressed = false
 

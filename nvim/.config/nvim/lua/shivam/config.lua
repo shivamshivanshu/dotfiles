@@ -66,6 +66,16 @@ vim.opt.guicursor = "a:block-blinkwait300-blinkon500-blinkoff500"
 -- Use system clipboard
 vim.opt.clipboard = "unnamedplus"
 
+-- Without a clipboard tool the provider falls back to `tmux load-buffer`
+-- (no -w), so yanks never leave tmux; OSC 52 does reach the OS clipboard
+local clipboard_tools = { "pbcopy", "wl-copy", "xclip", "xsel" }
+local has_clipboard_tool = vim.iter(clipboard_tools):any(function(tool)
+	return vim.fn.executable(tool) == 1
+end)
+if not has_clipboard_tool then
+	vim.g.clipboard = "osc52"
+end
+
 -- Enable Relative Linenumber
 vim.opt.relativenumber = true
 

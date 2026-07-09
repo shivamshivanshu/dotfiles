@@ -8,6 +8,17 @@ local function nav(key, dir)
 	}
 end
 
+-- <A-hjkl> belongs to mini.move, so resizing lives on Alt+arrows
+local function resize(key, dir)
+	return {
+		key,
+		function()
+			require("smart-splits")["resize_" .. dir]()
+		end,
+		desc = "Resize split " .. dir,
+	}
+end
+
 return {
 	"mrjones2014/smart-splits.nvim",
 	keys = {
@@ -15,6 +26,10 @@ return {
 		nav("<c-j>", "down"),
 		nav("<c-k>", "up"),
 		nav("<c-l>", "right"),
+		resize("<A-Left>", "left"),
+		resize("<A-Down>", "down"),
+		resize("<A-Up>", "up"),
+		resize("<A-Right>", "right"),
 		{
 			"<c-\\>",
 			function()

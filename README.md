@@ -183,6 +183,7 @@ Leader: `Space`
 | `<leader>wh/j/k/l` | Move to split |
 | `<C-h/j/k/l>` | Tmux-aware navigation |
 | `<C-\>` | Tmux previous pane |
+| `<A-arrows>` | Resize split |
 
 ### File Explorer (Oil)
 

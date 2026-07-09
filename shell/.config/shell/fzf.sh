@@ -19,6 +19,10 @@ export FZF_DEFAULT_OPTS=" \
   --preview '([ -d {} ] && eza --tree --level=2 --icons --color=always {} || bat --style=numbers --color=always --line-range :500 {}) 2>/dev/null || echo {}' \
   --preview-window 'right,60%,border-left'"
 
+#### fzf x tmux
+# Ctrl-T/Ctrl-R/Alt-C in a popup; fzf only consults this inside tmux
+export FZF_TMUX_OPTS='-p 80%,80%'
+
 #### less
 if command -v bat &>/dev/null; then
   export LESSOPEN='| bat --color=always --style=plain --paging=never %s'
