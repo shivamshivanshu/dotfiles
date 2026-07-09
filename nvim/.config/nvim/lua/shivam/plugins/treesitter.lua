@@ -63,6 +63,13 @@ return {
 	},
 
 	{
+		"nvim-treesitter/nvim-treesitter-context",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		event = require("shivam.util.events").BUF_OPEN,
+		opts = { max_lines = 4 },
+	},
+
+	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		branch = "main",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
