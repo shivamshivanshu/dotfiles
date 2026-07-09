@@ -7,7 +7,9 @@ _cache_init() {  # $1=tool  $2=cache-file  then the init command + args
   local bin; bin="$(command -v "$1")" || return
   local cache="$2"; shift 2
   local stamp="# generated-by: $*"
-  if [[ ! -f "$cache" || "$bin" -nt "$cache" || "$(head -n 1 "$cache" 2>/dev/null)" != "$stamp" ]]; then
+  local first=""
+  [[ -f "$cache" ]] && IFS= read -r first < "$cache"
+  if [[ "$bin" -nt "$cache" || "$first" != "$stamp" ]]; then
     mkdir -p "${cache%/*}"
     # Write via temp + mv so a failed generator can't poison the cache
     local tmp="$cache.tmp.$$"

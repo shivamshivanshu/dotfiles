@@ -91,6 +91,10 @@
 
 [fetch]
     prune = true
+    writeCommitGraph = true
+
+[feature]
+    manyFiles = true
 
 [rebase]
     autosquash = true

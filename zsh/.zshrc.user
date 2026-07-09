@@ -12,9 +12,13 @@ export EDITOR=nvim VISUAL=nvim
 # -C trusts the existing completion dump (skips the daily security check) for faster startup.
 # -d keeps the dump under ~/.cache (out of $HOME) so host renames don't litter the home dir.
 _zcompdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
-mkdir -p "${_zcompdump:h}"
+[[ -d "${_zcompdump:h}" ]] || mkdir -p "${_zcompdump:h}"
 autoload -Uz compinit && compinit -C -d "$_zcompdump"
+[[ ! -f "$_zcompdump.zwc" || "$_zcompdump" -nt "$_zcompdump.zwc" ]] && zcompile "$_zcompdump"
 unset _zcompdump
+# Self-removing stub: no-ops the machine ~/.zshrc's redundant second compinit,
+# then restores the real autoload for manual use.
+compinit() { unfunction compinit; autoload -Uz compinit; }
 
 #### Source modular configs
 if [[ -d ~/.zshrc.d ]]; then

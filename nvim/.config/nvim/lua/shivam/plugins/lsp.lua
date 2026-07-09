@@ -1,12 +1,11 @@
 return {
 	{
 		"mason-org/mason.nvim",
-		lazy = false,
 		opts = {},
 	},
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		lazy = false,
+		event = "VeryLazy",
 		dependencies = { "mason.nvim" },
 		opts = {
 			ensure_installed = {
@@ -21,7 +20,6 @@ return {
 	},
 	{
 		"mason-org/mason-lspconfig.nvim",
-		lazy = false,
 		dependencies = { "mason.nvim" },
 		opts = {
 			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "markdown_oxide" },
