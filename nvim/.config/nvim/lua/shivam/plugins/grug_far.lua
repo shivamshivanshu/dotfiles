@@ -1,6 +1,11 @@
 return {
 	"MagicDuck/grug-far.nvim",
 	cmd = { "GrugFar", "GrugFarWithin" },
+	init = function()
+		vim.api.nvim_create_user_command("GrugFarWord", function()
+			require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+		end, { desc = "Search/replace the word under cursor project-wide" })
+	end,
 	opts = {
 		engine = "ripgrep",
 		transient = true,

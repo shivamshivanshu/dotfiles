@@ -151,6 +151,27 @@ return {
 				vim.diagnostic.config({ virtual_text = not enabled })
 				vim.notify("Diagnostic virtual_text: " .. tostring(not enabled))
 			end, { desc = "Toggle LSP diagnostic virtual text" })
+
+			vim.api.nvim_create_user_command("ToggleInlayHints", function()
+				local enable = not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+				vim.lsp.inlay_hint.enable(enable, { bufnr = 0 })
+				vim.notify("Inlay hints: " .. tostring(enable))
+			end, { desc = "Toggle LSP inlay hints in this buffer" })
+
+			vim.api.nvim_create_user_command("ToggleDiagnostics", function()
+				local enable = not vim.diagnostic.is_enabled()
+				vim.diagnostic.enable(enable)
+				vim.notify("Diagnostics: " .. tostring(enable))
+			end, { desc = "Toggle all diagnostics" })
+
+			vim.api.nvim_create_user_command("DiagnosticsToQuickfix", function()
+				vim.diagnostic.setqflist()
+			end, { desc = "Send all diagnostics to the quickfix list" })
+
+			-- nvim 0.12's builtin :lsp suppresses lspconfig's LspLog with no replacement
+			vim.api.nvim_create_user_command("LspLog", function()
+				vim.cmd.tabnew(vim.lsp.log.get_filename())
+			end, { desc = "Open the LSP log" })
 		end,
 	},
 }

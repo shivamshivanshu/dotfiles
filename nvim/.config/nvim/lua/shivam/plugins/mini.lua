@@ -32,8 +32,15 @@ return {
 		require("mini.bufremove").setup()
 
 		require("mini.trailspace").setup()
+		vim.api.nvim_create_user_command("TrimTrailspace", function()
+			MiniTrailspace.trim()
+			MiniTrailspace.trim_last_lines()
+		end, { desc = "Trim trailing whitespace and trailing blank lines" })
 
 		require("mini.indentscope").setup({ symbol = "│" })
+		vim.api.nvim_create_user_command("ToggleIndentScope", function()
+			vim.g.miniindentscope_disable = not vim.g.miniindentscope_disable
+		end, { desc = "Toggle the indent scope line" })
 
 		local miniclue = require("mini.clue")
 		miniclue.setup({
@@ -74,5 +81,8 @@ return {
 				hex_color = hipatterns.gen_highlighter.hex_color(),
 			},
 		})
+		vim.api.nvim_create_user_command("ToggleHipatterns", function()
+			hipatterns.toggle(0)
+		end, { desc = "Toggle TODO/FIXME/hex highlighting in this buffer" })
 	end,
 }

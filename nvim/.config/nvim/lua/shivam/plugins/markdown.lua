@@ -13,6 +13,15 @@ return {
 	{
 		"brianhuster/live-preview.nvim",
 		cmd = { "LivePreview" },
+		init = function()
+			vim.api.nvim_create_user_command("MarkdownPreviewToggle", function()
+				if package.loaded["livepreview"] and require("livepreview").is_running() then
+					vim.cmd("LivePreview close")
+				else
+					vim.cmd("LivePreview start")
+				end
+			end, { desc = "Toggle browser live preview of this buffer" })
+		end,
 	},
 	{
 		"MeanderingProgrammer/render-markdown.nvim",

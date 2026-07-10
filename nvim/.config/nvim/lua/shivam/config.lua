@@ -92,6 +92,15 @@ vim.api.nvim_create_user_command("SessionTrack", function()
 	vim.cmd("mksession! Session.vim")
 	vim.notify("Session tracking on (Session.vim)")
 end, {})
+vim.api.nvim_create_user_command("SessionUntrack", function()
+	if vim.v.this_session == "" then
+		vim.notify("No session being tracked")
+		return
+	end
+	os.remove(vim.v.this_session)
+	vim.v.this_session = ""
+	vim.notify("Session tracking off")
+end, {})
 vim.api.nvim_create_autocmd("VimLeavePre", {
 	group = vim.api.nvim_create_augroup("shivam-session-track", { clear = true }),
 	callback = function()
