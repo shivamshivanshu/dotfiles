@@ -22,7 +22,7 @@ return {
 		"mason-org/mason-lspconfig.nvim",
 		dependencies = { "mason.nvim" },
 		opts = {
-			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "markdown_oxide" },
+			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "markdown_oxide", "ltex_plus" },
 			automatic_enable = false,
 		},
 	},
@@ -113,6 +113,21 @@ return {
 				root_markers = { ".obsidian", ".moxide.toml", ".git" },
 			})
 
+			-- spelling/grammar via LanguageTool; narrowed from the upstream
+			-- filetype list so the Java server only attaches to prose buffers
+			vim.lsp.config("ltex_plus", {
+				filetypes = { "markdown", "gitcommit", "text", "tex", "plaintex", "typst" },
+				-- blank JAVA_HOME so the launcher falls back to its bundled JDK 21
+				cmd_env = { JAVA_HOME = "" },
+				settings = {
+					ltex = {
+						language = "en-US",
+						checkFrequency = "save",
+						additionalRules = { enablePickyRules = true },
+					},
+				},
+			})
+
 			-- not in nvim-lspconfig/mason; installed via `cargo install iwe iwes`
 			vim.lsp.config("iwe", {
 				cmd = { "iwes" },
@@ -127,7 +142,7 @@ return {
 				end,
 			})
 
-			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "markdown_oxide", "iwe" })
+			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "markdown_oxide", "ltex_plus", "iwe" })
 
 			vim.api.nvim_create_user_command("ToggleDiagnosticVirtualText", function()
 				local current = vim.diagnostic.config().virtual_text

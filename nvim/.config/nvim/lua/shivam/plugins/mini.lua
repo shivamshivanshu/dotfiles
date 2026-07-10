@@ -31,6 +31,8 @@ return {
 		require("mini.move").setup()
 		require("mini.bufremove").setup()
 
+		require("mini.trailspace").setup()
+
 		require("mini.indentscope").setup({ symbol = "│" })
 
 		local miniclue = require("mini.clue")
