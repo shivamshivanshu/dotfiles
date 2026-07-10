@@ -1,11 +1,6 @@
-#### Paths
-for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
-  [[ -d "$d" && ":$PATH:" != *":$d:"* ]] && PATH="$d:$PATH"
-done
-export PATH
-
-export COLORTERM=truecolor
-export EDITOR=nvim VISUAL=nvim
+_shell_env="${XDG_CONFIG_HOME:-$HOME/.config}/shell/env.sh"
+[[ -r "$_shell_env" ]] && source "$_shell_env"
+unset _shell_env
 
 #### Source modular configs
 if [[ -d ~/.bashrc.d ]]; then

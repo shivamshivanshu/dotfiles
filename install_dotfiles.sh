@@ -43,7 +43,7 @@ esac
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Each entry is "binary:package-name" — kept as parallel list for bash 3.2 compat (macOS).
+# "binary:package-name" pairs — colon-delimited because macOS bash 3.2 lacks associative arrays.
 PACKAGES=(
   "nvim:neovim"
   "git:git"
@@ -109,10 +109,6 @@ install_package() {
     dnf)    sudo dnf install -y "$pkg" ;;
     pacman) sudo pacman -S --needed --noconfirm "$pkg" ;;
     yay)    yay -S --needed --noconfirm "$pkg" ;;
-    *)
-      echo "Unsupported manager: $pm; please install $pkg manually."
-      return 1
-      ;;
   esac
 }
 
@@ -227,7 +223,7 @@ stow_packages() {
   fi
   for pkg in "${STOW_PACKAGES[@]}"; do
     echo "→ stow $pkg"
-    local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR")
+    local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
     # Never fold ~/.claude: Claude Code writes runtime state (credentials,
     # sessions) there, which a folded dir symlink would land inside the repo
     [[ "$pkg" == claude ]] && flags+=(--no-folding)

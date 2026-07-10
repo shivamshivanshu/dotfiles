@@ -3,16 +3,7 @@ return {
 	lazy = false, -- Must load immediately for colorscheme
 	priority = 1000,
 	config = function()
-		require("gruvbox").setup({
-			contrast = "hard", -- or "soft", "medium"
-			italic = {
-				strings = true,
-				comments = true,
-				operators = false,
-				folds = true,
-			},
-			transparent_mode = false,
-		})
+		require("gruvbox").setup({ contrast = "hard" })
 		vim.cmd.colorscheme("gruvbox")
 
 		-- Set all virtual text to bright yellow for visibility

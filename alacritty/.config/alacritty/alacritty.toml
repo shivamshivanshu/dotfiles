@@ -1,8 +1,5 @@
 [window]
 padding = { x = 8, y = 8 }
-decorations = "Full"     # Options: Full | None | Transparent | Buttonless
-opacity = 1.0
-blur = true
 
 [font]
 normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
@@ -12,15 +9,9 @@ size = 12.5
 offset = { x = 0, y = 2 }
 glyph_offset = { x = 0, y = 1 }
 
-[scrolling]
-history = 10000
-multiplier = 3
-
 [cursor]
 style = { shape = "Beam", blinking = "Off" }
 vi_mode_style = { shape = "Block", blinking = "Off" }
-blink_interval = 500
-thickness = 0.15
 
 [selection]
 save_to_clipboard = true
@@ -59,26 +50,6 @@ blue    = "#83a598"
 magenta = "#d3869b"
 cyan    = "#8ec07c"
 white   = "#ebdbb2"
-
-[[keyboard.bindings]]
-key = "V"
-mods = "Control|Shift"
-action = "Paste"
-
-[[keyboard.bindings]]
-key = "C"
-mods = "Control|Shift"
-action = "Copy"
-
-[[keyboard.bindings]]
-key = "Equals"
-mods = "Control"
-action = "IncreaseFontSize"
-
-[[keyboard.bindings]]
-key = "Minus"
-mods = "Control"
-action = "DecreaseFontSize"
 
 [[keyboard.bindings]]
 # Shift+Enter sends ESC+CR so TUIs/REPLs can distinguish it from a plain Enter

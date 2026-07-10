@@ -32,11 +32,9 @@ return {
 			},
 		})
 
-		-- Enable Telescope extensions if they are installed
 		pcall(require("telescope").load_extension, "fzf")
 		pcall(require("telescope").load_extension, "ui-select")
 
-		-- See `:help telescope.builtin`
 		local builtin = require("telescope.builtin")
 		local map = vim.keymap.set
 
@@ -52,24 +50,15 @@ return {
 			}
 		end
 
-		local function dir_find_files()
-			local dir = current_dir()
-			require("telescope.builtin").find_files(titled_opts("Files", dir))
+		local function dir_picker(picker, kind)
+			return function()
+				picker(titled_opts(kind, current_dir()))
+			end
 		end
 
-		local function dir_live_grep()
-			local dir = current_dir()
-			require("telescope.builtin").live_grep(titled_opts("Grep", dir))
-		end
-
-		local function dir_grep_string()
-			local dir = current_dir()
-			require("telescope.builtin").grep_string(titled_opts("Grep word", dir))
-		end
-
-		map("n", "<leader>so", dir_find_files, { desc = "[S]earch Files in current dir" })
-		map("n", "<leader>st", dir_live_grep, { desc = "[S]earch by Grep in current dir" })
-		map("n", "<leader>sW", dir_grep_string, { desc = "[S]earch [W]ord in current dir" })
+		map("n", "<leader>so", dir_picker(builtin.find_files, "Files"), { desc = "[S]earch Files in current dir" })
+		map("n", "<leader>st", dir_picker(builtin.live_grep, "Grep"), { desc = "[S]earch by Grep in current dir" })
+		map("n", "<leader>sW", dir_picker(builtin.grep_string, "Grep word"), { desc = "[S]earch [W]ord in current dir" })
 
 		map("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 		map("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
@@ -83,7 +72,6 @@ return {
 		map("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 		map("n", "<leader>ss", builtin.lsp_document_symbols, { desc = "[L]SP [S]ymbols in current buffer" })
 
-		-- Slightly advanced example of overriding default behavior and theme
 		map("n", "<leader>/", function()
 			builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
 				winblend = 10,
@@ -98,7 +86,6 @@ return {
 			})
 		end, { desc = "[S]earch [/] in Open Files" })
 
-		-- Shortcut for searching your Neovim configuration files
 		vim.keymap.set("n", "<leader>sn", function()
 			builtin.find_files({ cwd = vim.fn.stdpath("config") })
 		end, { desc = "[S]earch [N]eovim files" })

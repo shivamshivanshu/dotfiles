@@ -23,7 +23,6 @@
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c 'wincmd w'"
 
 [delta]
-    features = "side-by-side line-numbers decorations"
     side-by-side = true
     line-numbers = true
     navigate = true
@@ -48,9 +47,6 @@
 
 [difftool "nvimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
-
-[log]
-    decorate = short
 
 [alias]
     a = add
@@ -82,11 +78,7 @@
 [status]
     showUntrackedFiles = all
 
-[color]
-    ui = auto
-
 [push]
-    default = simple
     autoSetupRemote = true
 
 [fetch]

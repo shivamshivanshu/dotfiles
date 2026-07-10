@@ -1,5 +1,4 @@
 #### Git worktree helpers
-# Shared by bash and zsh; symlinked to ~/.config/shell/worktree.sh via `stow shell`.
 # Every repo's worktrees live centrally under $LOCAL_WORKTREE_ROOT/<repo>/<name>,
 # so they sit in one place instead of scattered beside each repo.
 export LOCAL_WORKTREE_ROOT="${LOCAL_WORKTREE_ROOT:-$HOME/worktree}"

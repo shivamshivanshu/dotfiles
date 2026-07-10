@@ -12,6 +12,7 @@ alacritty/.config/alacritty/...  → ~/.config/alacritty/...
 wezterm/.config/wezterm/...      → ~/.config/wezterm/...
 tmux/.tmux.conf                  → ~/.tmux.conf
 git/.gitconfig                   → ~/.gitconfig
+dnf/.config/dnf/dnf.conf         → ~/.config/dnf/dnf.conf  (Fedora only)
 bash/.bashrc.user                → ~/.bashrc.user
 bash/.bashrc.d/                  → ~/.bashrc.d/
 zsh/.zshrc.user                  → ~/.zshrc.user
@@ -80,6 +81,10 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 | `python` | insights | writing / testing Python |
 | `perf-investigation` | insights | latency / throughput / CPU profiling |
 | `concurrency` | insights | multithread / lock-free / memory ordering |
+| `agent-team` | meta | sizeable, separable implementation — dependency-tree delegation across subagents |
+| `fan-n` | meta | one sample isn't trustworthy — fan N agents over the same prompt, fan-in ranks consensus |
+| `stochastic-consensus` | meta | open problem exploration — independent solutions ranked, then cross-examined in debate rounds |
+| `design-doc` | meta | writing a design doc / RFC / ADR — structure and tradeoff discipline |
 | `session-insight` | meta | "I'm done" — summarize + propose skill-repo edits |
 | `teacher` | meta | task done — offer transferable concepts to learn (notes in `$HOME/claude_notes/`) |
 | `handoff` | meta | `/handoff [name]` — save a resumable context handoff for a fresh instance |
@@ -89,7 +94,8 @@ simple well-specified subtasks) and `verifier` (build / test / regression,
 reports PASS/FAIL with evidence).
 
 **Output styles** (`output-styles/`): `terse` — lead with the answer, structured
-and scannable. Activate with `/output-style terse`.
+and scannable. `teaching` — example-led explanations with mechanism traces, for
+deep-dives rather than routine work. Activate with `/output-style <name>`.
 
 **Also tracked**: `commands/` (custom slash commands), `hooks/` (event hook
 scripts), `keybindings.json`, and `settings.json` (universal config; see above).

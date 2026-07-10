@@ -1,7 +1,3 @@
-# Shared fzf/less environment for bash and zsh.
-# Symlinked to ~/.config/shell/fzf.sh via `stow shell`; sourced from both
-# .bashrc.d/config.sh and .zshrc.d/config.zsh.
-
 #### fzf x fd
 # Use fd to walk files/dirs (honours .gitignore, includes dotfiles, skips .git).
 if command -v fd &>/dev/null; then

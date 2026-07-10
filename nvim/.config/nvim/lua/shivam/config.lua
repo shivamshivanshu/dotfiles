@@ -6,19 +6,15 @@ vim.g.loaded_python3_provider = 0
 
 -- UI
 
--- Make line numbers default
 vim.o.number = true
 
--- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = "a"
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
 
--- Enable break indent
 vim.o.breakindent = true
 
--- Save undo history
 vim.o.undofile = true
 
 -- No swapfiles; persistent undo above covers recovery
@@ -31,26 +27,20 @@ vim.o.winborder = "rounded"
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
--- Keep signcolumn on by default
 vim.o.signcolumn = "yes"
 
--- Decrease update time
 vim.o.updatetime = 250
 
--- Decrease mapped sequence wait time
 vim.o.timeoutlen = 750
 
--- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
 
 vim.o.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
--- Show which line your cursor is on
 vim.o.cursorline = true
 
--- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
@@ -58,12 +48,10 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- Enable terminal gui
 vim.o.termguicolors = true
 
 vim.opt.guicursor = "a:block-blinkwait300-blinkon500-blinkoff500"
 
--- Use system clipboard
 vim.opt.clipboard = "unnamedplus"
 
 -- Without a clipboard tool the provider falls back to `tmux load-buffer`
@@ -76,33 +64,26 @@ if not has_clipboard_tool then
 	vim.g.clipboard = "osc52"
 end
 
--- Enable Relative Linenumber
 vim.opt.relativenumber = true
 
--- Indentation settings
-vim.opt.autoindent = true -- Copy indent from current line when starting a new one
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
+vim.opt.expandtab = true
 
--- Tab and indentation width
-vim.opt.tabstop = 4 -- Display width of a tab character
-vim.opt.shiftwidth = 4 -- Spaces used for each step of autoindent
-vim.opt.softtabstop = 4 -- Spaces a <Tab> counts for while editing
-vim.opt.expandtab = true -- Convert tabs to spaces
-
--- Performance optimizations
-vim.opt.lazyredraw = false -- Don't set to true, causes issues in Neovim 0.10+
-vim.opt.synmaxcol = 240 -- Don't syntax highlight long lines
-vim.opt.redrawtime = 1500 -- Time in ms for redrawing display
+vim.opt.synmaxcol = 240
+vim.opt.redrawtime = 1500
 
 -- Session options for tmux-resurrect
 vim.opt.sessionoptions = {
-	"buffers", -- Save all buffers
-	"curdir", -- Save current directory
-	"tabpages", -- Save all tab pages
-	"winsize", -- Save window sizes
-	"help", -- Save help windows
-	"globals", -- Save global variables
-	"skiprtp", -- Exclude runtime path from session
-	"folds", -- Save folds
+	"buffers",
+	"curdir",
+	"tabpages",
+	"winsize",
+	"help",
+	"globals",
+	"skiprtp",
+	"folds",
 }
 
 -- tmux-resurrect's nvim strategy restores via `nvim -S` only when Session.vim
@@ -122,17 +103,11 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 	end,
 })
 
--- Highlight text when yanking
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	group = vim.api.nvim_create_augroup("shivam-highlight-yank", { clear = true }),
 	callback = function()
-		vim.hl.on_yank({
-			higroup = "IncSearch",
-			timeout = 150,
-			on_macro = false,
-			on_visual = true,
-		})
+		vim.hl.on_yank()
 	end,
 })
 

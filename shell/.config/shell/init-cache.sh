@@ -1,5 +1,4 @@
 #### Tool init-script cache
-# Shared by bash and zsh; symlinked to ~/.config/shell/init-cache.sh via `stow shell`.
 # Cache a tool's generated shell-init script and regenerate it when the binary
 # is newer than the cache or the init command line changed (stamped in line 1),
 # so startup doesn't shell out to the tool every time.

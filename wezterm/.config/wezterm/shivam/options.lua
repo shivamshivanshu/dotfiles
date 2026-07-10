@@ -3,11 +3,9 @@ local wezterm = require("wezterm")
 local M = {}
 
 function M.apply(config)
-	config.term = "xterm-256color"
 	config.audible_bell = "Disabled"
 
 	config.scrollback_lines = 10000
-	config.front_end = "WebGpu"
 	config.max_fps = 120
 
 	config.check_for_updates = false
