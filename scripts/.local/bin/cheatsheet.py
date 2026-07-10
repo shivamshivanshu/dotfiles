@@ -230,12 +230,16 @@ _NVIM_CMD_LOAD = (
     "require('lazy').load({plugins = names}) end)"
 )
 _NVIM_CMD_DUMP = (
-    "+lua local out = {} "
+    "+lua local maps = {} "
     "for _, mode in ipairs({'n','x','o','i','t'}) do "
     "for _, m in ipairs(vim.api.nvim_get_keymap(mode)) do "
     "if m.desc and m.desc ~= '' then "
-    "out[#out+1] = {mode = mode, lhs = m.lhs, desc = m.desc} end end end "
-    "io.write(vim.json.encode(out))"
+    "maps[#maps+1] = {mode = mode, lhs = m.lhs, desc = m.desc} end end end "
+    "local cmds = {} "
+    "for name, c in pairs(vim.api.nvim_get_commands({builtin = false})) do "
+    "cmds[#cmds+1] = {name = name, desc = type(c.definition) == 'string' "
+    "and c.definition:sub(1, 80) or ''} end "
+    "io.write(vim.json.encode({maps = maps, cmds = cmds}))"
 )
 
 
@@ -253,14 +257,14 @@ def parse_nvim(root: Path) -> Tool:
         timeout=20,
     )
     out = proc.stdout
-    start, end = out.find("["), out.rfind("]")
+    start, end = out.find("{"), out.rfind("}")
     if start < 0 or end <= start:
-        raise ValueError(f"no JSON array in nvim output (stderr: {proc.stderr[:200]})")
-    maps = json.loads(out[start : end + 1])
+        raise ValueError(f"no JSON object in nvim output (stderr: {proc.stderr[:200]})")
+    data = json.loads(out[start : end + 1])
 
     leader = _nvim_leader(root)
     merged = {}
-    for m in maps:
+    for m in data["maps"]:
         lhs = m["lhs"]
         if lhs.startswith(leader):
             lhs = "<leader>" + lhs[len(leader) :]
@@ -279,6 +283,8 @@ def parse_nvim(root: Path) -> Tool:
         Section(f"mode: {combo}", rows)
         for combo, rows in sorted(by_modes.items(), key=lambda kv: mode_rank(kv[0]))
     ]
+    cmd_rows = sorted((f":{c['name']}", c["desc"], "") for c in data["cmds"])
+    sections.append(Section("user commands", cmd_rows))
     leader_name = "Space" if leader == " " else leader
     notes = [
         f"leader: {leader_name}",
