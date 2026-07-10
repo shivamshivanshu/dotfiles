@@ -68,7 +68,7 @@ CARGO_PACKAGES=(
   "cargo-install-update:cargo-update"
 )
 
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts)
 # dnf config is Fedora-only; skip it elsewhere so we don't litter ~/.config
 [[ -f /etc/fedora-release ]] && STOW_PACKAGES+=(dnf)
 

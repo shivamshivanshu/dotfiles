@@ -20,6 +20,9 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   tmux window option (and tty escape output), not stdout.
 - Plugin/keybind swaps promising parity: verify each key's *behaviour* end to end
   (including tmux/pane crossing), not just that the mapping exists.
+- After changing any keybind, alias, or shell function: run `cheatsheet.py --dump`
+  and confirm the change appears (the parsers regex tmux.conf/alias.sh/keys.lua —
+  a config restructure can silently break them); regenerate with `cheatsheet.py`.
 
 ## nvim LSP gotchas
 - `vim.lsp.config()` merges list fields index-wise with the upstream default —

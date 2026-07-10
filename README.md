@@ -18,6 +18,7 @@ bash/.bashrc.d/                  → ~/.bashrc.d/
 zsh/.zshrc.user                  → ~/.zshrc.user
 zsh/.zshrc.d/                    → ~/.zshrc.d/
 shell/.config/shell/             → ~/.config/shell/
+scripts/.local/bin/              → ~/.local/bin/  (cheatsheet.py — keybind cheatsheet)
 claude/.claude/CLAUDE.md         → ~/.claude/CLAUDE.md
 claude/.claude/skills/           → ~/.claude/skills/
 claude/.claude/agents/           → ~/.claude/agents/
@@ -35,6 +36,17 @@ in only the tracked entries (`CLAUDE.md`, `skills/`, `agents/`, `output-styles/`
 machines. Machine-local and work-internal overrides stay in `settings.local.json`
 (untracked). Note Claude Code writes a real `settings.json` at runtime; the
 installer removes any such file so the tracked one links.
+
+### Cheatsheet
+
+`cheatsheet` regenerates `~/.cache/cheatsheet.html` from the live configs and
+prints its `file://` URL. For an always-on live server instead:
+
+```bash
+cheatsheet --serve --port 36969 >/dev/null 2>&1 & disown   # run detached
+lsof -i :36969                                             # what's on the port
+kill $(lsof -ti :36969) 2>/dev/null; cheatsheet --serve --port 36969 >/dev/null 2>&1 & disown   # restart
+```
 
 ### Install
 
