@@ -293,11 +293,111 @@ def parse_nvim(root: Path) -> Tool:
     return Tool("nvim", sections, notes=notes)
 
 
+_PLUGIN_DEFAULTS: List[Tuple[str, List[Row]]] = [
+    ("oil.nvim (in oil buffer)", [
+        ("<CR>", "open entry under cursor", ""),
+        ("-", "go up one directory (keep pressing to ascend)", ""),
+        ("edit + :w", "create/rename/delete files by editing lines, save to apply", "oil's core trick"),
+        ("<C-s>", "open entry in vertical split", "<C-h> horizontal variant disabled by config"),
+        ("<C-p>", "preview entry in a float", ""),
+        ("g.", "toggle hidden (dot) files", ""),
+        ("gs", "change sort order (interactive)", ""),
+        ("g?", "show all oil keybinds", ""),
+    ]),
+    ("telescope (inside picker, insert mode)", [
+        ("<C-q>", "send ALL results to quickfix and open it", ""),
+        ("<M-q>", "send only <Tab>-selected results to quickfix", ""),
+        ("<Tab> / <S-Tab>", "toggle-select entry and move down/up (multi-select)", ""),
+        ("<C-x> / <C-v> / <C-t>", "open result in hsplit / vsplit / new tab", ""),
+        ("<C-u> / <C-d>", "scroll the preview window up/down", ""),
+        ("<C-r><C-w>", "insert word under cursor into the prompt", ""),
+        ("<C-/>", "show all picker mappings", ""),
+    ]),
+    ("blink.cmp (insert mode, menu visible)", [
+        ("<C-y>", "accept selected completion", "<CR> also accepts (config override)"),
+        ("<C-e>", "cancel/hide the menu", ""),
+        ("<C-Space>", "open menu; again toggles documentation window", ""),
+        ("<C-n> / <C-p>", "next/prev item; if snippet active, jump forward/back", ""),
+        ("<C-b> / <C-f>", "scroll documentation window up/down", ""),
+        ("<C-k>", "toggle signature-help window", ""),
+        ("<Tab> / <S-Tab> (in : cmdline)", "show completion menu and cycle candidates", "<C-y> accepts"),
+    ]),
+    ("mini.ai (2nd char after a/i, an/in, al/il)", [
+        ("q", "nearest quotes: '' \"\" ``  (e.g. ciq)", ""),
+        ("b", "nearest bracket pair: () [] {}  (e.g. dab)", ""),
+        ("( [ { <  vs  ) ] } >", "that specific pair; open form trims inner edge whitespace", "i( vs i)"),
+        ("t", "HTML/XML tag pair", ""),
+        ("f", "function call name(args)", "plain af/if taken by treesitter function object; reach via anf/inf"),
+        ("?", "prompted custom left/right delimiters", ""),
+        ("any punct/digit", "pair of that literal char (e.g. ci_ , ci*)", ""),
+    ]),
+    ("mini.surround (2nd char after ys{motion}/ds/cs)", [
+        ("ysiw)", "wrap word in () — closers = tight pair", ""),
+        ("ysiw(", "wrap with padding: ( word )", "openers add inner spaces; ds/cs also eat edge whitespace"),
+        ("q", "quotes: ds q deletes nearest quotes, cs q ' changes them to '", "add-side q emits \"\""),
+        ("f", "function call: ysiwf prompts name -> name(word); dsf unwraps a call", ""),
+        ("t", "tag: yst prompts tag; dst / cst work on nearest tag", ""),
+        ("cs)]", "replace: input char then output char, e.g. () -> []", ""),
+        ("?", "prompted arbitrary left/right pair", ""),
+    ]),
+    ("markdown.nvim (markdown buffers)", [
+        ("gs{motion}{style}", "toggle emphasis: i=*italic* b=**bold** s=~~strike~~ c=`code` (e.g. gsiwb)", ""),
+        ("gss{style}", "toggle emphasis on the whole line (e.g. gssb)", ""),
+        ("gsd{style} / gsc{style}", "delete / change emphasis at cursor", "config remaps"),
+        ("gl{motion}", "add link around motion (prompts for URL)", ""),
+        ("gx", "follow link under cursor", "buffer-local; shadows builtin gx in markdown"),
+        ("]] / [[", "next / previous heading", "buffer-local in markdown"),
+        ("]p", "go to parent heading", "]h (config remap) = current heading"),
+    ]),
+    ("diffview (inside a Diffview tab)", [
+        ("<Tab> / <S-Tab>", "open diff for next / previous file", ""),
+        ("<leader>e / <leader>b", "focus / toggle the file panel", ""),
+        ("s or - (file panel)", "stage/unstage entry;  S = stage all,  U = unstage all", ""),
+        ("X (file panel)", "restore entry to left-side state (discard changes)", ""),
+        ("i (file panel)", "toggle list vs tree listing", ""),
+        ("[x / ]x", "prev / next merge conflict;  2do/3do = take ours/theirs hunk", "3-way merge view"),
+        ("y (file-history panel)", "copy commit hash of entry under cursor", ""),
+        ("g?", "per-panel help listing every bind", ""),
+    ]),
+    ("undotree (panel)", [
+        ("J / K", "step to previous / next undo state (applies it live)", ""),
+        ("<CR>", "revert buffer to state under cursor", ""),
+        ("D", "toggle the diff panel for the hovered state", ""),
+        ("< / >", "jump to previous / next saved (written) state", ""),
+        ("T", "toggle relative vs absolute timestamps", ""),
+        ("? / q / <Tab>", "help / close panel / focus back to editor", ""),
+    ]),
+    ("grug-far (search/replace buffer)", [
+        ("<Tab> / <S-Tab>", "jump between input fields (search/replace/files...)", ""),
+        ("<Down> / <Up>", "open next / previous result location in your last window", ""),
+        ("<localleader>i", "preview result location in a float", ""),
+        ("<leader>ha / <leader>hq", "apply replace all / send results to quickfix", "config remaps"),
+        ("<leader>hs / <leader>hl", "sync edited result lines back to files: all / current line", "config remaps"),
+        ("g? / q", "help / close", ""),
+    ]),
+    ("LSP (buffer-local on attach)", [
+        ("gd", "go to definition", ""),
+        ("K", "hover docs", ""),
+        ("gi", "go to implementation", "gri is the builtin twin"),
+        ("<leader>rn / <leader>ca", "rename symbol / code action", "grn/gra are the builtin twins"),
+    ]),
+]
+
+
+def parse_plugin_defaults(_root: Path) -> Tool:
+    return Tool(
+        "nvim plugin defaults",
+        [Section(ctx, rows) for ctx, rows in _PLUGIN_DEFAULTS],
+        notes=["Hand-curated from the pinned plugin versions — the one section not parsed from configs."],
+    )
+
+
 PARSERS: List[Tuple[str, Callable[[Path], Tool]]] = [
     ("tmux", parse_tmux),
     ("shell", parse_shell),
     ("wezterm", parse_wezterm),
     ("nvim", parse_nvim),
+    ("nvim plugin defaults", parse_plugin_defaults),
 ]
 
 
