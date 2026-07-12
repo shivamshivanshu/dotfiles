@@ -31,6 +31,26 @@ return {
 		require("mini.move").setup()
 		require("mini.bufremove").setup()
 
+		-- mini.tabline shows listed buffers in bufnr order, so left/right
+		-- of the current tab is a bufnr comparison
+		local function close_buffers(predicate)
+			local current = vim.api.nvim_get_current_buf()
+			for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+				if info.bufnr ~= current and predicate(info.bufnr, current) then
+					MiniBufremove.delete(info.bufnr)
+				end
+			end
+		end
+		vim.api.nvim_create_user_command("BufCloseOthers", function()
+			close_buffers(function() return true end)
+		end, { desc = "Close all listed buffers except the current one" })
+		vim.api.nvim_create_user_command("BufCloseLeft", function()
+			close_buffers(function(buf, current) return buf < current end)
+		end, { desc = "Close buffers left of the current one in the tabline" })
+		vim.api.nvim_create_user_command("BufCloseRight", function()
+			close_buffers(function(buf, current) return buf > current end)
+		end, { desc = "Close buffers right of the current one in the tabline" })
+
 		require("mini.trailspace").setup()
 		vim.api.nvim_create_user_command("TrimTrailspace", function()
 			MiniTrailspace.trim()
