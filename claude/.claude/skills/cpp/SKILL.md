@@ -12,7 +12,8 @@ For performance-sensitive C++. Prefer the latest standard the code or build tool
 - Prefer `std::optional` over sentinels or try/catch for "maybe" results, and avoid try/catch as control flow. Return `nullopt` and let the caller decide.
 - Enforce invariants with asserts rather than silent fallbacks.
 - Prefer compile-time dispatch over runtime polymorphism: CRTP, `if constexpr`, concepts, `static_assert`, and variadic fan-out over `std::function`. Confirm there is no runtime cost.
-- Constrain templates with concepts where it is straightforward — it makes intent and error messages far clearer.
+- Give templates well-thought names and constrain them with concepts where it is straightforward — it makes intent and error messages far clearer.
+- When a block inside a function does one logical unit of work, wrap it in a well-named local lambda and call it — readers can treat the lambda as a black box.
 - Collapse near-duplicate functions into overloads.
 - Pass per-entity data in a dedicated params struct by `const&`; keep feature-specific fields out of shared or common types, defining them in the owning module.
 - Verify library-feature availability against the `-std` flag. `-std=c++23` does not guarantee an STL feature exists on the toolchain; check before relying on bleeding-edge STL.

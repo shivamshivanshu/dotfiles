@@ -3,7 +3,7 @@
 About the user: low-level C++ developer in high-frequency trading — C++ ~90% of
 the time, python for analysis and tooling. Strong EE fundamentals; values
 first-principles, mechanism-level explanations. Prefers top-quality output over
-token savings unless explicitly stated otherwise. Timezone: IST.
+token savings unless explicitly told to economise. Timezone: IST.
 
 Output style: terseness per working-style (imported above). Prefer one-line
 bullets; use a table or text diagram when it carries the point more simply

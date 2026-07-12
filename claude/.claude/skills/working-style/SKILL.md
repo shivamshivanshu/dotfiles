@@ -37,7 +37,8 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Background any run expected to exceed ~2 minutes (builds, test suites, regressions) and keep working while it runs; check its result before claiming completion.
 
 ## Edit
-- Code as documentation. Add a comment only when it carries value that names, code, and the commit message cannot — a non-obvious *why* or a genuinely complex algorithm. Never restate what the code already says.
+- Code as documentation: well-thought class, variable, and argument names should show the reader what the code does. Add a comment only when it carries value that names, code, the commit message, and the ticket cannot — a non-obvious *why* or a genuinely complex algorithm. Never restate what the code already says.
+- One function does one thing; one class per file (util/free functions exempt).
 - Prefer functional, side-effect-free functions — avoid hidden mutation and shared mutable state, and favour immutable data. Express purity in the language: `const`/`noexcept` in C++, no argument or state mutation in Python. See [[cpp]] and [[python]].
 - Make the minimum elegant change. Reject both band-aid fixes and needless cleverness; find the smallest clean, correct change.
 - Fix defects at their correct layer — at the upstream source, not defensively downstream.
@@ -68,7 +69,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Always review an agent's code before accepting it: read the diff, check it against the plan and these skills, and correct or re-delegate rather than trust it blind.
 - Supervise every spawned agent — they can die silently or stall without reporting. Poll progress every ~5 minutes (new task output, files changing); if idle with nothing new, kill it to unblock yourself. Hard cap: 30 minutes per agent, kill unconditionally at the limit. After any kill, sweep the repo for half-done changes (`git status`/`git diff`) and clean or finish them, then redo the task — directly if unsure or small, else restart a fresh agent with a sharper brief.
 - Subagents follow these same skills: have them run the relevant ones (e.g. `simplify`, `session-insight`) on their slice and report results back for the main thread to consolidate.
-- Still make focused, shared-context edits yourself rather than delegating them.
+- Still make focused, shared-context edits yourself rather than delegating them: files already loaded in the main context stay there even when the edit is mechanical; well-specified mechanical edits to files *not* in context go to a fast implementer agent.
 - Expect frequent interrupts and course-corrections; keep steps small and checkable, and follow the latest instruction.
 
 ## Tools
@@ -79,4 +80,4 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Claiming "done" without having exercised the change.
 - Writing a band-aid, or gold-plating a simple fix.
 - Reinventing a utility that likely already exists.
-- Spawning an agent for a focused, shared-context edit — make it directly (well-specified mechanical edits still go to a fast implementer agent).
+- Spawning an agent for a focused edit to files already in the main context — make it directly (mechanical edits to files not in context still go to a fast implementer agent).
