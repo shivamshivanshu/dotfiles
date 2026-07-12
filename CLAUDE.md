@@ -21,8 +21,10 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - Plugin/keybind swaps promising parity: verify each key's *behaviour* end to end
   (including tmux/pane crossing), not just that the mapping exists.
 - After changing any keybind, alias, or shell function: run `cheatsheet.py --dump`
-  and confirm the change appears (the parsers regex tmux.conf/alias.sh/keys.lua —
-  a config restructure can silently break them); regenerate with `cheatsheet.py`.
+  and confirm the change appears (the regex parsers cover tmux.conf/alias.sh/wezterm
+  keys.lua, while nvim binds/commands are dumped from a headless nvim instance —
+  a config restructure can silently break them; descs must be kept); regenerate
+  with `cheatsheet.py`.
 
 ## nvim LSP gotchas
 - `vim.lsp.config()` merges list fields index-wise with the upstream default —

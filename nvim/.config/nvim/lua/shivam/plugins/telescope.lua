@@ -1,3 +1,87 @@
+local actions = require("shivam.util.actions")
+
+-- Action bodies require() telescope lazily so registration at spec-import
+-- time doesn't force-load the plugin.
+local function builtin(picker, opts_fn)
+	return function()
+		require("telescope.builtin")[picker](opts_fn and opts_fn() or nil)
+	end
+end
+
+local function dir_opts(kind)
+	return function()
+		local dir = require("shivam.util.paths").current_dir()
+		local short = vim.fn.fnamemodify(dir, ":~")
+		return {
+			cwd = dir,
+			prompt_title = string.format("%s in %s", kind, short),
+			results_title = short,
+			path_display = { "smart" },
+		}
+	end
+end
+
+local add = actions.add
+add("telescope.find_files_dir", builtin("find_files", dir_opts("Files")), {
+	desc = "Find files in current (Oil-aware) dir",
+	cmd = "SearchFilesDir",
+})
+add("telescope.live_grep_dir", builtin("live_grep", dir_opts("Grep")), {
+	desc = "Live grep in current (Oil-aware) dir",
+	cmd = "GrepDir",
+})
+add("telescope.grep_word_dir", builtin("grep_string", dir_opts("Grep word")), {
+	desc = "Grep word under cursor in current (Oil-aware) dir",
+	cmd = "GrepWordDir",
+})
+add("telescope.find_files", builtin("find_files"), { desc = "Find files in cwd", cmd = "SearchFiles" })
+add("telescope.live_grep", builtin("live_grep"), { desc = "Live grep in cwd", cmd = "Grep" })
+add("telescope.grep_word", builtin("grep_string"), { desc = "Grep word under cursor in cwd", cmd = "GrepWord" })
+add("telescope.help", builtin("help_tags"), { desc = "Search help tags", cmd = "SearchHelp" })
+add("telescope.keymaps", builtin("keymaps"), { desc = "Search keymaps", cmd = "SearchKeymaps" })
+add("telescope.diagnostics", builtin("diagnostics"), { desc = "Search diagnostics", cmd = "SearchDiagnostics" })
+add("telescope.resume", builtin("resume"), { desc = "Resume last picker", cmd = "SearchResume" })
+add("telescope.picker_history", builtin("pickers"), { desc = "Search picker history", cmd = "SearchPickers" })
+add("telescope.recent_files", builtin("oldfiles"), { desc = "Search recent files", cmd = "SearchRecent" })
+add("telescope.buffers", builtin("buffers"), { desc = "Find existing buffers", cmd = "SearchBuffers" })
+add("telescope.doc_symbols", builtin("lsp_document_symbols"), {
+	desc = "LSP symbols in current buffer",
+	cmd = "SearchSymbols",
+})
+add("telescope.buffer_fuzzy", builtin("current_buffer_fuzzy_find", function()
+	return require("telescope.themes").get_dropdown({ winblend = 10, previewer = false })
+end), { desc = "Fuzzy search in current buffer", cmd = "BufFuzzyFind" })
+add("telescope.grep_open_files", builtin("live_grep", function()
+	return { grep_open_files = true, prompt_title = "Live Grep in Open Files" }
+end), { desc = "Live grep in open files", cmd = "GrepOpenFiles" })
+add("telescope.nvim_config_files", builtin("find_files", function()
+	return { cwd = vim.fn.stdpath("config") }
+end), { desc = "Find files in nvim config", cmd = "SearchNvimConfig" })
+add("actions.picker", actions.picker, {
+	desc = "Fuzzy-find and run any registered action",
+	cmd = "Actions",
+})
+
+local map = actions.map
+map("n", "<leader>so", "telescope.find_files_dir", { desc = "[S]earch Files in current dir" })
+map("n", "<leader>st", "telescope.live_grep_dir", { desc = "[S]earch by Grep in current dir" })
+map("n", "<leader>sW", "telescope.grep_word_dir", { desc = "[S]earch [W]ord in current dir" })
+map("n", "<leader>sh", "telescope.help", { desc = "[S]earch [H]elp" })
+map("n", "<leader>sk", "telescope.keymaps", { desc = "[S]earch [K]eymaps" })
+map("n", "<leader>sf", "telescope.find_files", { desc = "[S]earch [F]iles" })
+map("n", "<leader>sw", "telescope.grep_word", { desc = "[S]earch current [W]ord" })
+map("n", "<leader>sg", "telescope.live_grep", { desc = "[S]earch by [G]rep" })
+map("n", "<leader>sd", "telescope.diagnostics", { desc = "[S]earch [D]iagnostics" })
+map("n", "<leader>sr", "telescope.resume", { desc = "[S]earch [R]esume" })
+map("n", "<leader>sR", "telescope.picker_history", { desc = "[S]earch picker history" })
+map("n", "<leader>s.", "telescope.recent_files", { desc = '[S]earch Recent Files ("." for repeat)' })
+map("n", "<leader><leader>", "telescope.buffers", { desc = "[ ] Find existing buffers" })
+map("n", "<leader>ss", "telescope.doc_symbols", { desc = "[L]SP [S]ymbols in current buffer" })
+map("n", "<leader>/", "telescope.buffer_fuzzy", { desc = "[/] Fuzzily search in current buffer" })
+map("n", "<leader>s/", "telescope.grep_open_files", { desc = "[S]earch [/] in Open Files" })
+map("n", "<leader>sn", "telescope.nvim_config_files", { desc = "[S]earch [N]eovim files" })
+map("n", "<leader>sa", "actions.picker", { desc = "[S]earch [A]ctions" })
+
 return {
 	"nvim-telescope/telescope.nvim",
 	event = "VimEnter",
@@ -34,60 +118,5 @@ return {
 
 		pcall(require("telescope").load_extension, "fzf")
 		pcall(require("telescope").load_extension, "ui-select")
-
-		local builtin = require("telescope.builtin")
-		local map = vim.keymap.set
-
-		local current_dir = require("shivam.util.paths").current_dir
-
-		local function titled_opts(kind, dir)
-			local short = vim.fn.fnamemodify(dir, ":~")
-			return {
-				cwd = dir,
-				prompt_title = string.format("%s in %s", kind, short),
-				results_title = short,
-				path_display = { "smart" },
-			}
-		end
-
-		local function dir_picker(picker, kind)
-			return function()
-				picker(titled_opts(kind, current_dir()))
-			end
-		end
-
-		map("n", "<leader>so", dir_picker(builtin.find_files, "Files"), { desc = "[S]earch Files in current dir" })
-		map("n", "<leader>st", dir_picker(builtin.live_grep, "Grep"), { desc = "[S]earch by Grep in current dir" })
-		map("n", "<leader>sW", dir_picker(builtin.grep_string, "Grep word"), { desc = "[S]earch [W]ord in current dir" })
-
-		map("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
-		map("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-		map("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
-		map("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-		map("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
-		map("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
-		map("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
-		map("n", "<leader>sR", builtin.pickers, { desc = "[S]earch picker history" })
-		map("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-		map("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
-		map("n", "<leader>ss", builtin.lsp_document_symbols, { desc = "[L]SP [S]ymbols in current buffer" })
-
-		map("n", "<leader>/", function()
-			builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-				winblend = 10,
-				previewer = false,
-			}))
-		end, { desc = "[/] Fuzzily search in current buffer" })
-
-		map("n", "<leader>s/", function()
-			builtin.live_grep({
-				grep_open_files = true,
-				prompt_title = "Live Grep in Open Files",
-			})
-		end, { desc = "[S]earch [/] in Open Files" })
-
-		vim.keymap.set("n", "<leader>sn", function()
-			builtin.find_files({ cwd = vim.fn.stdpath("config") })
-		end, { desc = "[S]earch [N]eovim files" })
 	end,
 }

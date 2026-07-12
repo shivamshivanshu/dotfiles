@@ -1,3 +1,46 @@
+local actions = require("shivam.util.actions")
+
+-- mini.tabline shows listed buffers in bufnr order, so left/right
+-- of the current tab is a bufnr comparison
+local function close_buffers(predicate)
+	local current = vim.api.nvim_get_current_buf()
+	for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+		if info.bufnr ~= current and predicate(info.bufnr, current) then
+			require("mini.bufremove").delete(info.bufnr)
+		end
+	end
+end
+
+actions.add("buf.close_others", function()
+	close_buffers(function()
+		return true
+	end)
+end, { desc = "Close all listed buffers except the current one", cmd = "BufCloseOthers" })
+actions.add("buf.close_left", function()
+	close_buffers(function(buf, current)
+		return buf < current
+	end)
+end, { desc = "Close buffers left of the current one in the tabline", cmd = "BufCloseLeft" })
+actions.add("buf.close_right", function()
+	close_buffers(function(buf, current)
+		return buf > current
+	end)
+end, { desc = "Close buffers right of the current one in the tabline", cmd = "BufCloseRight" })
+
+actions.add("edit.trim_trailspace", function()
+	local mini_trailspace = require("mini.trailspace")
+	mini_trailspace.trim()
+	mini_trailspace.trim_last_lines()
+end, { desc = "Trim trailing whitespace and trailing blank lines", cmd = "TrimTrailspace" })
+
+actions.add("toggle.indent_scope", function()
+	vim.g.miniindentscope_disable = not vim.g.miniindentscope_disable
+end, { desc = "Toggle the indent scope line", cmd = "ToggleIndentScope" })
+
+actions.add("toggle.hipatterns", function()
+	require("mini.hipatterns").toggle(0)
+end, { desc = "Toggle TODO/FIXME/hex highlighting in this buffer", cmd = "ToggleHipatterns" })
+
 return {
 	"echasnovski/mini.nvim",
 	event = "VeryLazy",
@@ -31,36 +74,9 @@ return {
 		require("mini.move").setup()
 		require("mini.bufremove").setup()
 
-		-- mini.tabline shows listed buffers in bufnr order, so left/right
-		-- of the current tab is a bufnr comparison
-		local function close_buffers(predicate)
-			local current = vim.api.nvim_get_current_buf()
-			for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
-				if info.bufnr ~= current and predicate(info.bufnr, current) then
-					MiniBufremove.delete(info.bufnr)
-				end
-			end
-		end
-		vim.api.nvim_create_user_command("BufCloseOthers", function()
-			close_buffers(function() return true end)
-		end, { desc = "Close all listed buffers except the current one" })
-		vim.api.nvim_create_user_command("BufCloseLeft", function()
-			close_buffers(function(buf, current) return buf < current end)
-		end, { desc = "Close buffers left of the current one in the tabline" })
-		vim.api.nvim_create_user_command("BufCloseRight", function()
-			close_buffers(function(buf, current) return buf > current end)
-		end, { desc = "Close buffers right of the current one in the tabline" })
-
 		require("mini.trailspace").setup()
-		vim.api.nvim_create_user_command("TrimTrailspace", function()
-			MiniTrailspace.trim()
-			MiniTrailspace.trim_last_lines()
-		end, { desc = "Trim trailing whitespace and trailing blank lines" })
 
 		require("mini.indentscope").setup({ symbol = "│" })
-		vim.api.nvim_create_user_command("ToggleIndentScope", function()
-			vim.g.miniindentscope_disable = not vim.g.miniindentscope_disable
-		end, { desc = "Toggle the indent scope line" })
 
 		local miniclue = require("mini.clue")
 		miniclue.setup({
@@ -101,8 +117,5 @@ return {
 				hex_color = hipatterns.gen_highlighter.hex_color(),
 			},
 		})
-		vim.api.nvim_create_user_command("ToggleHipatterns", function()
-			hipatterns.toggle(0)
-		end, { desc = "Toggle TODO/FIXME/hex highlighting in this buffer" })
 	end,
 }

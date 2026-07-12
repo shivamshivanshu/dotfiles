@@ -88,11 +88,12 @@ vim.opt.sessionoptions = {
 
 -- tmux-resurrect's nvim strategy restores via `nvim -S` only when Session.vim
 -- exists in the pane's cwd; :SessionTrack opts a project in, the autocmd keeps it fresh
-vim.api.nvim_create_user_command("SessionTrack", function()
+local actions = require("shivam.util.actions")
+actions.add("session.track", function()
 	vim.cmd("mksession! Session.vim")
 	vim.notify("Session tracking on (Session.vim)")
-end, {})
-vim.api.nvim_create_user_command("SessionUntrack", function()
+end, { desc = "Track session for auto-restore (mksession! Session.vim)", cmd = "SessionTrack" })
+actions.add("session.untrack", function()
 	if vim.v.this_session == "" then
 		vim.notify("No session being tracked")
 		return
@@ -100,7 +101,7 @@ vim.api.nvim_create_user_command("SessionUntrack", function()
 	os.remove(vim.v.this_session)
 	vim.v.this_session = ""
 	vim.notify("Session tracking off")
-end, {})
+end, { desc = "Stop tracking and remove the current session file", cmd = "SessionUntrack" })
 vim.api.nvim_create_autocmd("VimLeavePre", {
 	group = vim.api.nvim_create_augroup("shivam-session-track", { clear = true }),
 	callback = function()

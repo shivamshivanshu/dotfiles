@@ -1,3 +1,5 @@
+local actions = require("shivam.util.actions")
+
 local M = {}
 
 M.cpp = {
@@ -235,20 +237,22 @@ local function run_with_input()
 end
 
 function M.setup()
-	local cmd = vim.api.nvim_create_user_command
-	cmd("BuildRelease", function()
+	actions.add("runner.build_release", function()
 		M.build("release")
-	end, { desc = "Runner: build .cpp with release flags (-O2)" })
-	cmd("BuildWithDebugInfo", function()
+	end, { desc = "Runner: build .cpp with release flags (-O2)", cmd = "BuildRelease" })
+	actions.add("runner.build_debug", function()
 		M.build("debug")
-	end, { desc = "Runner: build .cpp with debug flags (-O0 -g)" })
-	cmd("Run", function()
+	end, { desc = "Runner: build .cpp with debug flags (-O0 -g)", cmd = "BuildWithDebugInfo" })
+	actions.add("runner.run", function()
 		M.run()
-	end, { desc = "Runner: build (cpp) & run current file" })
-	cmd("RunWithInput", run_with_input, { desc = "Runner: run with input.txt → tee output.txt" })
-	cmd("OpenInput", M.open_input, { desc = "Runner: open input.txt (vsplit)" })
-	cmd("OpenOutput", M.open_output, { desc = "Runner: open output.txt (vsplit)" })
-	cmd("CleanBinary", M.clean, { desc = "Runner: clean built binary" })
+	end, { desc = "Runner: build (cpp) & run current file", cmd = "Run" })
+	actions.add("runner.run_with_input", run_with_input, {
+		desc = "Runner: run with input.txt → tee output.txt",
+		cmd = "RunWithInput",
+	})
+	actions.add("runner.open_input", M.open_input, { desc = "Runner: open input.txt (vsplit)", cmd = "OpenInput" })
+	actions.add("runner.open_output", M.open_output, { desc = "Runner: open output.txt (vsplit)", cmd = "OpenOutput" })
+	actions.add("runner.clean_binary", M.clean, { desc = "Runner: clean built binary", cmd = "CleanBinary" })
 end
 
 return M

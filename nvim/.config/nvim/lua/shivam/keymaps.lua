@@ -1,4 +1,5 @@
 local map = vim.keymap.set
+local actions = require("shivam.util.actions")
 
 -- General
 -- Note: "-" is mapped to Oil in plugins/oil.lua
@@ -7,9 +8,10 @@ map("n", "<C-d>", "<C-d>zz")
 map("n", "<C-u>", "<C-u>zz")
 
 -- Buffers
-map("n", "<leader>bd", function()
+actions.add("buf.delete", function()
 	require("mini.bufremove").delete(0)
-end, { desc = "Delete buffer (keep window layout)" })
+end, { desc = "Delete buffer (keep window layout)", cmd = "BufDelete" })
+actions.map("n", "<leader>bd", "buf.delete")
 map("n", "<Tab>", "<cmd>bnext<CR>", { desc = "Next buffer" })
 map("n", "<S-Tab>", "<cmd>bprevious<CR>", { desc = "Prev buffer" })
 
@@ -23,12 +25,13 @@ map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }) -- Exit t
 
 -- Yanking Keymaps (y/Y already hit the clipboard via clipboard=unnamedplus)
 map("x", "<leader>p", [["_dP]])
-map("n", "<leader>cb", function()
+actions.add("copy.buffer", function()
 	local pos = vim.api.nvim_win_get_cursor(0)
 	vim.cmd("silent %yank +")
 	vim.api.nvim_win_set_cursor(0, pos)
 	vim.notify("Copied buffer to clipboard (" .. vim.api.nvim_buf_line_count(0) .. " lines)")
-end, { desc = "Copy entire buffer to clipboard" })
+end, { desc = "Copy entire buffer to clipboard", cmd = "CopyBuffer" })
+actions.map("n", "<leader>cb", "copy.buffer")
 
 -- Helper: copy path with an optional modifier (":p" absolute, ":." relative)
 local function copy_path(mod, label)
@@ -44,17 +47,19 @@ local function copy_path(mod, label)
 end
 
 -- <leader>cp → copy absolute path
-vim.keymap.set("n", "<leader>cp", function()
+actions.add("copy.path", function()
 	copy_path(":p", "absolute")
-end, { desc = "Copy absolute file/dir path to clipboard" })
+end, { desc = "Copy absolute file/dir path to clipboard", cmd = "CopyPath" })
+actions.map("n", "<leader>cp", "copy.path")
 
 -- <leader>cr → copy path relative to current working directory
-vim.keymap.set("n", "<leader>cr", function()
+actions.add("copy.relative_path", function()
 	copy_path(":.", "relative")
-end, { desc = "Copy relative file/dir path to clipboard" })
+end, { desc = "Copy relative file/dir path to clipboard", cmd = "CopyRelativePath" })
+actions.map("n", "<leader>cr", "copy.relative_path")
 
 -- Copy the commit hash of the current line (blames in the file's own repo)
-vim.api.nvim_create_user_command("CopyCommitHash", function()
+actions.add("copy.commit_hash", function()
 	local file = vim.fn.resolve(vim.fn.expand("%:p"))
 	local line = vim.fn.line(".")
 	local blame = vim.fn.systemlist({
@@ -78,7 +83,7 @@ vim.api.nvim_create_user_command("CopyCommitHash", function()
 	end
 	vim.fn.setreg("+", hash)
 	vim.notify("Copied commit hash: " .. hash)
-end, { desc = "Copy commit hash for current line" })
+end, { desc = "Copy commit hash for current line", cmd = "CopyCommitHash" })
 
 -- Epoch converter
 require("shivam.util.epoch").setup()

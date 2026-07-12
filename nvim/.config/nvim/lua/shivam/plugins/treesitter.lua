@@ -1,3 +1,13 @@
+local actions = require("shivam.util.actions")
+
+actions.add("ts.goto_context", function(args)
+	require("treesitter-context").go_to_context(tonumber(args and args.args) or 1)
+end, {
+	desc = "Jump to the enclosing context line (arg = levels up)",
+	cmd = "GoToContext",
+	cmd_opts = { nargs = "?" },
+})
+
 local parsers = {
 	"lua",
 	"python",
@@ -69,9 +79,6 @@ return {
 		event = require("shivam.util.events").BUF_OPEN,
 		config = function()
 			require("treesitter-context").setup({ max_lines = 4 })
-			vim.api.nvim_create_user_command("GoToContext", function(a)
-				require("treesitter-context").go_to_context(tonumber(a.args) or 1)
-			end, { nargs = "?", desc = "Jump to the enclosing context line (arg = levels up)" })
 		end,
 	},
 

@@ -1,3 +1,5 @@
+local actions = require("shivam.util.actions")
+
 local M = {}
 
 M.config = {
@@ -137,18 +139,24 @@ local function convert_range(args)
 end
 
 function M.setup()
-	vim.api.nvim_create_user_command("Epoch", function(args)
-		if args.args ~= "" then
+	actions.add("epoch.convert", function(args)
+		args = args or {}
+		if args.args and args.args ~= "" then
 			convert(args.args)
-		elseif args.range > 0 then
+		elseif args.range and args.range > 0 then
 			convert_range(args)
 		else
 			vim.notify("Usage: :Epoch <ts|date> or :'<,'>Epoch", vim.log.levels.WARN)
 		end
-	end, { nargs = "?", range = true, desc = "Convert epoch ↔ date/time (arg or visual range)" })
+	end, {
+		desc = "Convert epoch ↔ date/time (arg or visual range)",
+		cmd = "Epoch",
+		cmd_opts = { nargs = "?", range = true },
+	})
 
-	vim.api.nvim_create_user_command("EpochCopy", function(args)
-		if args.range > 0 then
+	actions.add("epoch.copy", function(args)
+		args = args or {}
+		if args.range and args.range > 0 then
 			convert_range(args)
 		end
 		if last_result then
@@ -157,22 +165,27 @@ function M.setup()
 		else
 			vim.notify("No conversion result to copy", vim.log.levels.WARN)
 		end
-	end, { range = true, desc = "Copy conversion result (of range if given)" })
+	end, { desc = "Copy conversion result (of range if given)", cmd = "EpochCopy", cmd_opts = { range = true } })
 
-	vim.api.nvim_create_user_command("EpochSetTimezone", function(args)
-		M.config.timezone_offset = tonumber(args.args) or 0
-		print("Timezone offset: " .. M.config.timezone_offset .. "h")
-	end, { nargs = 1, desc = "Set timezone offset in hours" })
+	actions.add("epoch.set_timezone", function(args)
+		local offset = tonumber(args and args.args)
+		if not offset then
+			vim.notify("Usage: :EpochSetTimezone <hours>", vim.log.levels.WARN)
+			return
+		end
+		M.config.timezone_offset = offset
+		print("Timezone offset: " .. offset .. "h")
+	end, { desc = "Set timezone offset in hours", cmd = "EpochSetTimezone", cmd_opts = { nargs = 1 } })
 
-	vim.api.nvim_create_user_command("EpochSetGranularity", function(args)
-		local granularity = args.args
+	actions.add("epoch.set_granularity", function(args)
+		local granularity = args and args.args
 		if granularity == "ns" or granularity == "us" or granularity == "ms" or granularity == "s" then
 			M.config.granularity = granularity
 			print("Granularity: " .. granularity)
 		else
 			vim.notify("Invalid granularity. Use: ns, us, ms, or s", vim.log.levels.ERROR)
 		end
-	end, { nargs = 1, desc = "Set epoch granularity (ns/us/ms/s)" })
+	end, { desc = "Set epoch granularity (ns/us/ms/s)", cmd = "EpochSetGranularity", cmd_opts = { nargs = 1 } })
 end
 
 return M
