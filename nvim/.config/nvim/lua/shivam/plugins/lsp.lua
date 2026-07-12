@@ -1,19 +1,19 @@
 local actions = require("shivam.util.actions")
 
-actions.add("diagnostics.toggle_virtual_text", function()
+actions.add("toggle.diagnostic_virtual_text", function()
 	local current = vim.diagnostic.config().virtual_text
 	local enabled = current ~= false and current ~= nil
 	vim.diagnostic.config({ virtual_text = not enabled })
 	vim.notify("Diagnostic virtual_text: " .. tostring(not enabled))
 end, { desc = "Toggle LSP diagnostic virtual text", cmd = "ToggleDiagnosticVirtualText" })
 
-actions.add("lsp.toggle_inlay_hints", function()
+actions.add("toggle.inlay_hints", function()
 	local enable = not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
 	vim.lsp.inlay_hint.enable(enable, { bufnr = 0 })
 	vim.notify("Inlay hints: " .. tostring(enable))
 end, { desc = "Toggle LSP inlay hints in this buffer", cmd = "ToggleInlayHints" })
 
-actions.add("diagnostics.toggle", function()
+actions.add("toggle.diagnostics", function()
 	local enable = not vim.diagnostic.is_enabled()
 	vim.diagnostic.enable(enable)
 	vim.notify("Diagnostics: " .. tostring(enable))

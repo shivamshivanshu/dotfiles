@@ -18,6 +18,8 @@ local parsers = {
 	"markdown",
 	"markdown_inline",
 	"yaml",
+	"toml",
+	"gitcommit",
 	"vim",
 	"vimdoc",
 	"starlark",

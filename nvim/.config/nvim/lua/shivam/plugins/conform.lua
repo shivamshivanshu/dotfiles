@@ -2,7 +2,7 @@ local actions = require("shivam.util.actions")
 
 actions.add("format.buffer", function()
 	require("conform").format({ async = true, lsp_format = "fallback" })
-end, { desc = "Format", cmd = "Format" })
+end, { desc = "Format buffer (conform, LSP fallback)", cmd = "Format" })
 
 actions.map({ "n", "x" }, "<leader>f", "format.buffer")
 

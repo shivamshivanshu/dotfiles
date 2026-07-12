@@ -11,6 +11,20 @@ local last_result = nil
 
 local FRAC_DIGITS = { ns = 9, us = 6, ms = 3, s = 0 }
 
+local function report(label, input, result)
+	last_result = result
+	print(
+		string.format(
+			"%s %s → %s (granularity: %s, offset: %+.1fh)",
+			label,
+			input,
+			result,
+			M.config.granularity,
+			M.config.timezone_offset
+		)
+	)
+end
+
 local function frac_digits()
 	return FRAC_DIGITS[M.config.granularity] or 9
 end
@@ -51,16 +65,7 @@ local function epoch_to_readable(epoch_str)
 	local adjusted_time = tonumber(sec_str) + offset_seconds()
 	local date_str = os.date("!%Y-%m-%d %H:%M:%S", adjusted_time)
 	local result = digits > 0 and (date_str .. "." .. frac_str) or date_str
-	last_result = result
-	print(
-		string.format(
-			"Epoch %s → %s (granularity: %s, offset: %+.1fh)",
-			epoch_str,
-			result,
-			M.config.granularity,
-			M.config.timezone_offset
-		)
-	)
+	report("Epoch", epoch_str, result)
 	return result
 end
 
@@ -88,18 +93,8 @@ local function readable_to_epoch(date_str)
 		epoch = epoch .. (frac .. string.rep("0", digits)):sub(1, digits)
 	end
 
-	local result = epoch
-	last_result = result
-	print(
-		string.format(
-			"Date %s → %s (granularity: %s, offset: %+.1fh)",
-			date_str,
-			result,
-			M.config.granularity,
-			M.config.timezone_offset
-		)
-	)
-	return result
+	report("Date", date_str, epoch)
+	return epoch
 end
 
 local function convert(input)

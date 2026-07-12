@@ -1,20 +1,25 @@
 local actions = require("shivam.util.actions")
 
-local add = actions.add
-add("git.preview_hunk", function()
+actions.add("git.preview_hunk", function()
 	require("gitsigns").preview_hunk()
 end, { desc = "Preview Git hunk", cmd = "PreviewHunk" })
-add("git.reset_hunk", function()
+actions.add("git.reset_hunk", function()
 	require("gitsigns").reset_hunk()
 end, { desc = "Reset Git hunk", cmd = "ResetHunk" })
-add("git.next_hunk", function()
+actions.add("git.stage_hunk", function()
+	require("gitsigns").stage_hunk()
+end, { desc = "Stage Git hunk (repeat to unstage)", cmd = "StageHunk" })
+actions.add("toggle.git_blame", function()
+	require("gitsigns").toggle_current_line_blame()
+end, { desc = "Toggle inline Git blame for current line", cmd = "ToggleGitBlame" })
+actions.add("git.next_hunk", function()
 	if vim.wo.diff then
 		vim.cmd.normal({ "]c", bang = true })
 	else
 		require("gitsigns").nav_hunk("next")
 	end
 end, { desc = "Next Git hunk / diff change" })
-add("git.prev_hunk", function()
+actions.add("git.prev_hunk", function()
 	if vim.wo.diff then
 		vim.cmd.normal({ "[c", bang = true })
 	else
@@ -22,11 +27,11 @@ add("git.prev_hunk", function()
 	end
 end, { desc = "Previous Git hunk / diff change" })
 
-local map = actions.map
-map("n", "<leader>gp", "git.preview_hunk")
-map("n", "<leader>gu", "git.reset_hunk")
-map("n", "]c", "git.next_hunk")
-map("n", "[c", "git.prev_hunk")
+actions.map("n", "<leader>gp", "git.preview_hunk")
+actions.map("n", "<leader>gu", "git.reset_hunk")
+actions.map("n", "<leader>gs", "git.stage_hunk")
+actions.map("n", "]c", "git.next_hunk")
+actions.map("n", "[c", "git.prev_hunk")
 
 return {
 	"lewis6991/gitsigns.nvim",

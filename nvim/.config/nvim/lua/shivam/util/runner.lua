@@ -37,7 +37,6 @@ M.cpp = {
 		release = { "-O2" },
 		debug = { "-O0", "-g" },
 	},
-	extra = {},
 	out = "a",
 }
 
@@ -121,7 +120,6 @@ local function build_cpp_args(cc, src, out, mode)
 	vim.list_extend(args, M.cpp.cflags)
 	vim.list_extend(args, M.cpp.sanitizer)
 	vim.list_extend(args, M.cpp.modes[mode] or M.cpp.modes.release)
-	vim.list_extend(args, M.cpp.extra)
 	vim.list_extend(args, { src, "-o", out })
 	return args
 end
@@ -194,9 +192,6 @@ function M.run(opts)
 	end
 
 	local cmd = run_cmd_for(f, opts)
-	if not cmd then
-		return
-	end
 	run_in_term(cmd, f.dir, f.name)
 end
 
@@ -204,18 +199,19 @@ local function open_split(dir, fname, split_cmd)
 	vim.cmd(split_cmd .. " " .. vim.fn.fnameescape(dir .. "/" .. fname))
 end
 
-function M.open_input()
+local function open_io_file(name)
 	local f = require_file()
 	if f then
-		open_split(f.dir, M.term.input_file, "vsplit")
+		open_split(f.dir, name, "vsplit")
 	end
 end
 
+function M.open_input()
+	open_io_file(M.term.input_file)
+end
+
 function M.open_output()
-	local f = require_file()
-	if f then
-		open_split(f.dir, M.term.output_file, "vsplit")
-	end
+	open_io_file(M.term.output_file)
 end
 
 function M.clean()

@@ -16,11 +16,13 @@ return {
 			"mtime",
 		},
 		keymaps = {
-			-- Disable C-h/j/k/l for smart-splits navigation compatibility
+			-- Disable C-h/j/k/l for smart-splits navigation compatibility;
+			-- C-x replaces the lost C-h horizontal-split open
 			["<C-h>"] = false,
 			["<C-j>"] = false,
 			["<C-k>"] = false,
 			["<C-l>"] = false,
+			["<C-x>"] = { "actions.select", opts = { horizontal = true } },
 		},
 	},
 }

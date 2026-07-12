@@ -1,6 +1,6 @@
 local actions = require("shivam.util.actions")
 
-actions.add("markdown.toggle_preview", function()
+actions.add("toggle.markdown_preview", function()
 	if package.loaded["livepreview"] and require("livepreview").is_running() then
 		vim.cmd("LivePreview close")
 	else
