@@ -169,6 +169,13 @@ make CMAKE_BUILD_TYPE=Release \
 make install
 ```
 
+### Split navigation
+
+tmux owns `C-h/j/k/l` everywhere. smart-splits loads eagerly (`lazy = false`)
+on purpose: it must set tmux's `@pane-is-vim` before the first nav key
+arrives, so tmux knows whether to pass the key through — do not lazy-load it
+to shave startup ms (~4 ms is the cost of correctness here).
+
 ### Keybinds Cheatsheet
 
 Leader: `Space`

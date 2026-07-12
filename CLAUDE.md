@@ -41,3 +41,6 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   `.pre-stow` copy if it diverged) so stow can symlink the tracked one.
 - Split navigation: tmux owns panes everywhere; native wezterm splits are unused
   (LEADER binds only) — don't add wezterm-side nav integrations.
+- smart-splits must stay `lazy = false`: it sets tmux's `@pane-is-vim` at
+  startup, before the first nav key arrives. Never lazy/keys-gate it for
+  startup perf — that breaks C-h/j/k/l routing until the plugin loads.
