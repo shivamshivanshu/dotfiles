@@ -126,7 +126,7 @@ def parse_tmux(root: Path) -> Tool:
         sections,
         notes=[
             f"prefix: {prefix}",
-            "TPM plugin binds (vim-tmux-navigator C-h/j/k/l, extrakto prefix+Tab, resurrect) aren't parsed.",
+            "TPM plugin binds (extrakto prefix+Tab, resurrect) aren't parsed.",
         ],
     )
 

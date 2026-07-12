@@ -21,6 +21,8 @@ end
 
 return {
 	"mrjones2014/smart-splits.nvim",
+	-- eager: must set @pane-is-vim at startup, before any nav key arrives from tmux
+	lazy = false,
 	keys = {
 		nav("<c-h>", "left"),
 		nav("<c-j>", "down"),
