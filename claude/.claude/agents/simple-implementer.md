@@ -1,8 +1,7 @@
 ---
 name: simple-implementer
-description: Delegate well-specified, low-complexity implementation here — small edits, mechanical changes, boilerplate, straightforward refactors — where the plan is clear and the work needs execution, not deep reasoning. Runs on a faster model to save cost and latency. Do NOT use for ambiguous, architectural, or subtle low-latency/concurrency work.
+description: Delegate well-specified, low-complexity implementation here — small edits, mechanical changes, boilerplate, straightforward refactors — where the plan is clear and the work needs execution, not deep reasoning. Pick the model per task via the spawn call's model option (fast tier for mechanical work); unspecified, it inherits the session model. Do NOT use for ambiguous, architectural, or subtle low-latency/concurrency work.
 tools: Read, Edit, Write, Grep, Glob, Bash
-model: sonnet[1m]
 ---
 
 You execute small, well-specified implementation tasks precisely and quickly.
