@@ -46,7 +46,7 @@ function M.list()
 		local action = registry[name]
 		local binding = #action.keys > 0 and table.concat(action.keys, " ")
 			or (action.cmd and (":" .. action.cmd) or "")
-		table.insert(items, { name = name, desc = action.desc, fn = action.fn, binding = binding })
+		table.insert(items, { name = name, desc = action.desc, fn = action.fn, cmd = action.cmd, binding = binding })
 	end
 	return items
 end
@@ -84,8 +84,16 @@ function M.picker()
 				telescope_actions.select_default:replace(function()
 					local entry = action_state.get_selected_entry()
 					telescope_actions.close(prompt_bufnr)
-					if entry then
-						entry.value.fn()
+					if not entry then
+						return
+					end
+					local item = entry.value
+					if item.cmd then
+						vim.schedule(function()
+							vim.api.nvim_feedkeys(":" .. item.cmd .. " ", "n", false)
+						end)
+					else
+						item.fn()
 					end
 				end)
 				return true
