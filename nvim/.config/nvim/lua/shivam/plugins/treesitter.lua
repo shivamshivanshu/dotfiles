@@ -32,6 +32,9 @@ local parsers = {
 	"typescript",
 	"tmux",
 	"rust",
+	"go",
+	"gomod",
+	"gosum",
 }
 
 return {

@@ -13,6 +13,7 @@ return {
 		formatters_by_ft = {
 			lua = { "stylua" },
 			python = { "ruff_organize_imports", "ruff_format" },
+			go = { "goimports", "gofumpt" },
 			cpp = { "clang-format" },
 			c = { "clang-format" },
 			cmake = { "cmake_format" },

@@ -44,6 +44,8 @@ return {
 				"prettier",
 				"ruff",
 				"cmakelang", -- provides cmake-format (conform's cmake_format)
+				"gofumpt",
+				"goimports",
 			},
 			auto_update = false,
 		},
@@ -52,7 +54,7 @@ return {
 		"mason-org/mason-lspconfig.nvim",
 		dependencies = { "mason.nvim" },
 		opts = {
-			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "markdown_oxide", "ltex_plus" },
+			ensure_installed = { "lua_ls", "clangd", "cmake", "pyright", "markdown_oxide", "ltex_plus", "gopls" },
 			automatic_enable = false,
 		},
 	},
@@ -136,6 +138,21 @@ return {
 				},
 			})
 
+			vim.lsp.config("gopls", {
+				root_markers = { "go.work", "go.mod", ".git" },
+				settings = {
+					gopls = {
+						analyses = { unusedparams = true },
+						hints = {
+							parameterNames = true,
+							assignVariableTypes = true,
+							compositeLiteralFields = true,
+							functionTypeParameters = true,
+						},
+					},
+				},
+			})
+
 			vim.lsp.config("cmake", {
 				root_markers = { "CMakePresets.json", "CTestConfig.cmake", ".git", "build", "cmake" },
 			})
@@ -173,7 +190,7 @@ return {
 				end,
 			})
 
-			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "markdown_oxide", "ltex_plus", "iwe" })
+			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "markdown_oxide", "ltex_plus", "iwe", "gopls" })
 		end,
 	},
 }
