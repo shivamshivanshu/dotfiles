@@ -26,6 +26,7 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 
 ## Isolation and integration
 - Worktree isolation when agents mutate files concurrently — never let two agents edit the same tree.
+- For N independent features (no shared plan): one branch+worktree each. When done, ask the user whether to rebase onto origin/main; default is to leave each on its worktree branch. If yes, rebase per [[git]], resolve conflicts, and re-verify after the rebase.
 - Review every agent's diff against the plan before accepting ([[working-style]]).
 - The team is for breadth, not for one-file fixes.
 - After integration, run the verify and simplify passes on the combined result — per-agent green does not prove the composition works.
