@@ -132,7 +132,7 @@ def parse_tmux(root: Path) -> Tool:
 
 
 _ALIAS_RE = re.compile(r"""alias\s+([\w.-]+)=(['"])(.*?)\2""")
-_FUNC_RE = re.compile(r"^([A-Za-z_][\w]*)\(\)\s*\{", re.M)
+_FUNC_RE = re.compile(r"^([A-Za-z][\w]*)\(\)\s*\{", re.M)
 _USAGE_RE = re.compile(r"usage:\s*([^\"']+)")
 
 
