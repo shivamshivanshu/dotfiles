@@ -13,7 +13,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - When asked, explain the mechanism — trace the exact chain of calls. The aim is understanding the system, not just producing a diff.
 - Summarise on demand: before acting, or after ~10 tool calls/turns without a checkpoint, give a crisp status.
 - Concede readily. When a fix is challenged as possibly wrong, verify and correct course without defensiveness.
-- Prefer top-quality output over token savings unless explicitly told to economise.
+- Judge the most efficient approach per task — the best balance of output quality against token expenditure; neither burn tokens for marginal polish nor cut corners that hurt quality.
 
 ## Plan and scope
 - Before writing any code, plan first — scale the depth to the change. For a trivial or mechanical edit the gate collapses to a one-line statement of intent; for anything non-trivial or ambiguous it holds in full:
@@ -55,7 +55,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Do not create tickets; record them in a file instead — repo-local `TODO.md` for project work, `$HOME/claude_notes/tickets.md` for cross-project items. Delete entries when done; the file holds only open work.
 
 ## Delegation
-- Keep the main context as small as possible — delegate by default. The main thread holds only synthesis, decisions, focused shared-context edits, and just enough inline scouting to write good briefs; broad searches, bulk file reading, builds/tests, audits, research, and anything multi-step go to subagents or background workflows, which return conclusions, not raw output.
+- Keep the main context small, but decide per task whether delegation earns its cost: it buys context preservation and parallelism at the price of spawn latency, briefing effort, and coordination. Delegate when that price pays off — broad searches, bulk file reading, builds/tests, audits, research, and sizeable multi-step or separable work go to subagents or background workflows, which return conclusions, not raw output. Do the work inline when briefing it would cost more than doing it — focused edits, quick lookups, and tightly-coupled changes. The main thread holds synthesis, decisions, focused shared-context edits, and just enough inline scouting to write good briefs.
 - The main thread acts as the engineering lead: organise, plan, take the user's instruction, and choose the execution shape. Agents do the work; the lead manages it.
 - For large, parallelisable work, orchestrate multi-agent Workflows (`ultracode`) by intent: [[fan-n]] to average out variance on one question, [[stochastic-consensus]] to explore and debate an open problem, [[agent-team]] to execute a separable implementation plan. Trivial edits and quick lookups stay solo — the fan-out cost is not worth it there.
 - Assign each subtask a model tier by complexity: discover the session's tiers from the model options of the subagent-spawning tool (Agent/Task — name varies by harness version) and rank them — never hardcode model names in skills or prompts (agent-definition frontmatter is config and may pin one). The ladder:
@@ -64,7 +64,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
   - High-level — brainstorming, design, proposing solutions, fan-in/dedup synthesis, final review: strongest tiers.
   - When unsure, omit the override and inherit the session model.
   - Wherever a model is named and the surface accepts it (settings, agent frontmatter, `/model`), request the 1M-context variant with the `[1m]` suffix.
-- Code review and simplify passes always fan out to multiple agents — never a single reviewer; pattern in [[fan-n]].
+- For non-trivial changes, code review and simplify passes fan out to multiple agents rather than a single reviewer; pattern in [[fan-n]].
 - Before parallelising implementation, build a dependency tree of the changes and delegate by it — mechanics in [[agent-team]]. Trivial, tightly-scoped, or tangled work stays sequential in one context; the tree is for work that is both sizeable and cleanly separable.
 - Always review an agent's code before accepting it: read the diff, check it against the plan and these skills, and correct or re-delegate rather than trust it blind.
 - Supervise every spawned agent — they can die silently or stall without reporting. Poll progress every ~5 minutes (new task output, files changing); if idle with nothing new, kill it to unblock yourself. Hard cap: 30 minutes per agent, kill unconditionally at the limit. After any kill, sweep the repo for half-done changes (`git status`/`git diff`) and clean or finish them, then redo the task — directly if unsure or small, else restart a fresh agent with a sharper brief.
