@@ -62,6 +62,8 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
   - Janitor/mechanical — run tools, collect output, apply well-specified edits: fastest tier; spawn fast and often.
   - Mid-level — code scraping, summarising code or lower agents' output: middle tiers, effort high.
   - High-level — brainstorming, design, proposing solutions, fan-in/dedup synthesis, final review: strongest tiers.
+  - Bias toward the cheaper, faster tiers (currently Haiku- and Sonnet-class) and reach for them often: trivial checks, routine commands, well-specified refactors, and bulk scraping are cheap there and usually good enough — don't default to the strongest tier out of caution.
+  - Escalate, don't restart: when a cheap-tier result is unsatisfactory, summarise its findings and hand them up to a strongest-tier agent (Opus-class) to refine and improve, rather than re-running the whole task on the expensive model.
   - When unsure, omit the override and inherit the session model.
   - Wherever a model is named and the surface accepts it (settings, agent frontmatter, `/model`), request the 1M-context variant with the `[1m]` suffix.
 - For non-trivial changes, code review and simplify passes fan out to multiple agents rather than a single reviewer; pattern in [[fan-n]].
