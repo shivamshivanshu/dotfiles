@@ -42,7 +42,9 @@ add("telescope.keymaps", builtin("keymaps"), { desc = "Search keymaps", cmd = "S
 add("telescope.diagnostics", builtin("diagnostics"), { desc = "Search diagnostics", cmd = "SearchDiagnostics" })
 add("telescope.resume", builtin("resume"), { desc = "Resume last picker", cmd = "SearchResume" })
 add("telescope.picker_history", builtin("pickers"), { desc = "Search picker history", cmd = "SearchPickers" })
-add("telescope.recent_files", builtin("oldfiles"), { desc = "Search recent files", cmd = "SearchRecent" })
+add("telescope.recent_files", builtin("oldfiles", function()
+	return { cwd_only = true }
+end), { desc = "Search recent files in cwd", cmd = "SearchRecent" })
 add("telescope.buffers", builtin("buffers"), { desc = "Find existing buffers", cmd = "SearchBuffers" })
 add("telescope.doc_symbols", builtin("lsp_document_symbols"), {
 	desc = "LSP symbols in current buffer",
