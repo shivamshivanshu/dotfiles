@@ -3,7 +3,7 @@ local actions = require("shivam.util.actions")
 local M = {}
 
 M.config = {
-	timezone_offset = 0.0,
+	timezone_offset = 5.5,
 	granularity = "ns",
 }
 
