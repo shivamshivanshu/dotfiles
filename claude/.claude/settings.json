@@ -4,12 +4,13 @@
     "VISUAL": "nvim",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
-  "teammateMode": "in-process",
   "permissions": {
     "defaultMode": "auto",
-    "additionalDirectories": ["~/claude_notes"]
+    "additionalDirectories": [
+      "~/claude_notes"
+    ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
@@ -83,5 +84,6 @@
   },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "skipWorkflowUsageWarning": true
+  "skipWorkflowUsageWarning": true,
+  "teammateMode": "in-process"
 }
