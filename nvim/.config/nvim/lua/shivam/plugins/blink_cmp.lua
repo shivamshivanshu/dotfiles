@@ -8,6 +8,15 @@ return {
 		"saghen/blink.lib",
 		"rafamadriz/friendly-snippets",
 	},
+	-- lazy.nvim's build hook doesn't reliably rerun after a plugin update bumps the
+	-- commit, leaving the native lib stale; self-heal here instead of relying on it.
+	config = function(_, opts)
+		local blink = require("blink.cmp")
+		if not blink.library_available() then
+			blink.build():pwait()
+		end
+		blink.setup(opts)
+	end,
 	---@module 'blink.cmp'
 	---@type blink.cmp.Config
 	opts = {
