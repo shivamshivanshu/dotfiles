@@ -80,7 +80,8 @@
     ]
   },
   "enabledPlugins": {
-    "clangd-lsp@claude-plugins-official": true
+    "clangd-lsp@claude-plugins-official": true,
+    "time-reminder@imc-claude-plugins": true
   },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
