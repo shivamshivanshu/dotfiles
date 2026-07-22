@@ -55,7 +55,7 @@
     b = branch
     d = diff
     p = push
-    s = status
+    s = status --porcelain
     l = log --oneline --graph
     u = reset HEAD --
     aa = add .
@@ -71,6 +71,7 @@
     pr = pull --rebase
     wt = worktree
     rt = restore
+    ss = status
     pow = push origin HEAD:refs/for/main%wip
     can = commit --amend --no-edit
     wip = commit -m "wip"
