@@ -10,6 +10,7 @@ Git conventions for any repository.
 ## Worktrees
 - Default to one worktree per feature for isolation; several may be active at once. Prefer a worktree over switching branches in place.
 - Keep all worktrees under one central root, `$LOCAL_WORKTREE_ROOT` (default `$HOME/worktree`), named `<repo_name>/<worktree_name>` — every repo's worktrees in one place, not scattered beside each repo. The `gwt` / `gwts` / `gwtrm` shell helpers create, switch, and remove them following this scheme.
+- The native `EnterWorktree` tool ignores this convention — it hardcodes `<repo>/.claude/worktrees/<name>` and has no location knob. To honour the layout, do NOT create with `EnterWorktree({name})`; instead create under the root first (`git worktree add "$LOCAL_WORKTREE_ROOT/<repo>/<name>" ...`, or the `gwt` helper), then switch the session in with `EnterWorktree({path})`. `ExitWorktree` won't auto-remove a worktree entered by `path` — clean up with `gwtrm` / `git worktree remove`.
 
 ## Commit lifecycle
 - Prefer atomic commits — one logical change each. Never combine unrelated work into a large commit; use `git rebase -i` to squash or reorder later.

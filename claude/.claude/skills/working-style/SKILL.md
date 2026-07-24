@@ -49,6 +49,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Shell code must run on both macOS (BSD userland) and Linux — `bash -n`/`zsh -n` will not catch divergence. Known traps: `sed -i ''` (BSD) vs `sed -i` (GNU), `stat -f` vs `stat -c`, no `date -d`, `readlink -f`, or `grep -P` on macOS. Prefer portable forms (`perl -pi -e`, `python3`, `$(cd dir && pwd)`) or branch on `uname`.
 
 ## Git and safety
+- When a task will change a git repo *other* than the one Claude Code is running in, offer to first create a worktree of that repo and make all edits there rather than in the checked-out main repo — wait for the user's go-ahead before creating it. Create it under the `$LOCAL_WORKTREE_ROOT/<repo>/<name>` convention, not the native tool's `.claude/worktrees/` default — see [[git]].
 - Commit autonomously at checkpoints: when a coherent unit of work is done and verified, commit it without being asked. Push only when asked; never deploy or push to production without explicit approval — dry-run first.
 - After a non-trivial commit, run the `simplify` skill (delegated to subagents) to refactor, clean up, and fold easy improvements into that commit, then amend — before moving on. The amend is part of the commit and needs no separate approval; the push gate above still holds.
 - Keep commit messages concise and ticketed — see [[git]].
