@@ -30,6 +30,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 ## Verify — a core value
 - Never claim completion without evidence; exercise or trace the change end to end.
 - Do not assume call behaviour — trace it.
+- The same applies to your own behaviour: why a skill fired or didn't, why you took a path. Introspection there is a hypothesis, not evidence — measure it, or say plainly that it is a guess.
 - Write tests that prove the behaviour or bug, not tests for ceremony. If a test costs more than it is worth, say so.
 - When touching behaviour, evaluate adding a test: if test infrastructure already exists or the setup is light plumbing, add one; skip only when the cost clearly outweighs the value.
 - After a refactor or conflict resolution, audit that behaviour is unchanged against the original intent.
