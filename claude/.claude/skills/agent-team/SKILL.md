@@ -18,6 +18,7 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 ## Shape the team from the dependency tree
 - Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
 - In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents.
+- Write the tree into the day's scratchpad plan file (per [[working-style]]) with a status per slice and keep it current — it survives a restart, and the teardown rule above depends on knowing which slices have landed. This is the lead's record, not a claim file: native teammates already self-claim from the shared task list, and a plain file has no atomicity, so two readers can claim the same slice.
 - Scale honestly: per [[working-style]], trivial, tightly-scoped, or tangled work stays in one context (often yourself) — the tree is for work that is both sizeable and cleanly separable.
 
 ## Brief each agent completely

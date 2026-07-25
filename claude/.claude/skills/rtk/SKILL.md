@@ -9,6 +9,7 @@ Token-optimised CLI proxy (60–90% savings on dev operations). Most commands ar
 
 ## Gotchas
 - rtk may silently truncate long output (e.g. `git log`); when a verification depends on completeness or counting, bypass it: `rtk proxy <cmd>` or `command git …`.
+- `grep` is proxied too, and `rtk grep` carries its own flags (`-l/--max-len`, `-m/--max`, `-t/--file-type`), so grep flags it doesn't share get misread — `grep -h pattern files` hits rtk's own `-h` and prints usage instead of matches. Reach for `command grep` or `awk` when exact grep semantics matter.
 
 ## Meta commands (run rtk directly)
 - `rtk gain` — token-savings analytics; `rtk gain --history` for usage history with savings.
