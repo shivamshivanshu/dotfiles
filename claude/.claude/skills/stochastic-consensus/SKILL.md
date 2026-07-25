@@ -20,6 +20,6 @@ Map the approach space with independent solvers, then let them argue. For identi
 - Concession flow is the convergence signal: concessions drying up early means stop; still flowing at the end means the steps were well spent.
 
 ## Fan in
-- One synthesizer on the strongest tier gets the ranked list, final positions, and concession log.
+- One fan-in agent on the strongest tier gets the ranked list, final positions, and concession log.
 - Output: adopt / defer with gating question / rejected **with reasons** (prevents re-litigation) / surviving outliers.
 - Each debate step is a barrier by nature; everything else pipelines. Tolerate dead agents — a lost solver still leaves its lens debatable from the shared list.

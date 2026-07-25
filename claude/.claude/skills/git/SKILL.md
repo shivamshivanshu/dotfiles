@@ -18,7 +18,7 @@ Git conventions for any repository.
 - Update with `git pull -r`, resolving conflicts during the rebase.
 - Fixups and autosquash: `git commit --fixup=<sha>`, then `git rebase --autosquash -i <sha>~1` (non-interactive: `GIT_SEQUENCE_EDITOR=true`).
 - Squash without interactive rebase (when `-i` is unavailable): note the old head, `git reset --mixed <base>`, re-stage and re-commit in logical groups, then prove content is unchanged with `git diff <old-head> HEAD` (must be empty). Unpushed branches only.
-- With several changes in flight, keep each in its correct parent commit so it squashes cleanly, and split unrelated concerns into separate commits.
+- With several changes in flight, keep each in its correct parent commit so it squashes cleanly.
 - For large refactors: expand–migrate–contract (add the new path, move callers over, remove the old), keeping mechanical and semantic changes in separate commits.
 - Preserve `Change-Id` across every amend and rebase; drop a duplicate when two commits share one ticket.
 - `git stash` to shelve unrelated in-progress work before staging, so each commit stays atomic.
@@ -36,6 +36,6 @@ Git conventions for any repository.
 - After addressing feedback, re-audit for correctness and refine the commit message against the ticket.
 
 ## Safety
-- Commit autonomously when a coherent unit of work is done and verified, then run the post-commit simplify+amend pass per [[working-style]]. Push only when explicitly asked.
+- Commit autonomously when a coherent unit of work is done and verified, then run the post-commit simplify+amend pass per [[working-style]] if the change was non-trivial. Push only when explicitly asked.
 - Prefer `--amend` or a fixup over `reset` plus a new commit. Never drop commits or Change-Ids.
 - Before `--amend` or any history rewrite, check the commit isn't on a remote branch (`git branch -r --contains <sha>` must be empty); if it is, make a new commit instead — rewriting pushed history needs a force-push. Exception: Gerrit-style `refs/for/*` reviews, where amending the pushed change is the workflow.

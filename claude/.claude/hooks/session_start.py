@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """SessionStart hook: provision today's scratchpad and surface resumable state.
 
-Emits additionalContext pointing at scratchpad notes, a fresh handoff, and any
-/wip checkpoint matching the current repo+branch — state the native --resume
-index never surfaces.
+Emits additionalContext pointing at scratchpad notes, a fresh handoff, any
+/wip checkpoint matching the current repo+branch, and the installed output
+styles — state and capabilities the native --resume index never surfaces.
 """
 import json
 import subprocess
@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 NOTES = Path.home() / "claude_notes"
+STYLES = Path.home() / ".claude" / "output-styles"
 HANDOFF_MAX_AGE = timedelta(hours=48)
 MAX_NOTES = 8
 
@@ -85,6 +86,12 @@ def main():
     if notes:
         lines.append(
             "Recent scratchpad notes/plans: " + ", ".join(map(str, notes[:MAX_NOTES]))
+        )
+    styles = sorted(p.stem for p in STYLES.glob("*.md")) if STYLES.is_dir() else []
+    if styles:
+        lines.append(
+            "Output styles installed (switch with /output-style <name>): "
+            + ", ".join(styles)
         )
 
     context = (

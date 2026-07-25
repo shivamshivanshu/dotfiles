@@ -11,7 +11,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Be terse and mirror the user's brevity. Lead with the answer, not preamble.
 - Explain the *why* before any non-trivial change, and justify tradeoffs concretely rather than asserting them. Expect to be asked "why?".
 - When asked, explain the mechanism — trace the exact chain of calls. The aim is understanding the system, not just producing a diff.
-- Summarise on demand: before acting, or after ~10 tool calls/turns without a checkpoint, give a crisp status.
+- Summarise on demand: before acting, or after ~10 tool calls/turns without one, give a crisp status.
 - Concede readily. When a fix is challenged as possibly wrong, verify and correct course without defensiveness.
 - Judge the most efficient approach per task — the best balance of output quality against token expenditure; neither burn tokens for marginal polish nor cut corners that hurt quality.
 
@@ -19,7 +19,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Before writing any code, plan first — scale the depth to the change. For a trivial or mechanical edit the gate collapses to a one-line statement of intent; for anything non-trivial or ambiguous it holds in full:
   1. Investigate and gather context; state the root cause or mechanism.
   2. Surface every design question and clarification, and ask them — wait for the answers. If the request itself is ambiguous, open with a sharpened restatement to confirm intent before spawning agents or starting any real work.
-  3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Durable notes (plans, designs, recon) always go in this dated folder — never `/tmp` or the harness session scratchpad, which are for ephemeral tool output only. (Permanent learning writeups still live at `$HOME/claude_notes/<slug>.md` per [[teacher]].)
+  3. Write the implementation plan — and any design/scratch notes for the task — under that day's scratchpad: `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md`. Durable notes (plans, designs, recon) always go in this dated folder — never `/tmp` or the harness session scratchpad, which are for ephemeral tool output only. (Two exceptions live outside it: permanent learning writeups at `$HOME/claude_notes/<slug>.md` per [[teacher]], and session handoffs at `$HOME/claude_notes/exports/<YYYYMMDD>/` per [[handoff]].)
   4. Ask for a review of that plan, and revise until approved.
   5. Only then implement.
 - Auto permission mode's bias to proceed does not override this gate: for non-trivial or ambiguous work, still stop and ask; auto mode only removes permission prompts for mechanical, low-risk steps.
@@ -51,12 +51,13 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 
 ## Git and safety
 - When a task will change a git repo *other* than the one Claude Code is running in, offer to first create a worktree of that repo and make all edits there rather than in the checked-out main repo — wait for the user's go-ahead before creating it. Create it under the `$LOCAL_WORKTREE_ROOT/<repo>/<name>` convention, not the native tool's `.claude/worktrees/` default — see [[git]].
-- Commit autonomously at checkpoints: when a coherent unit of work is done and verified, commit it without being asked. Push only when asked; never deploy or push to production without explicit approval — dry-run first.
+- Commit autonomously at natural stopping points: when a coherent unit of work is done and verified, commit it without being asked. Push only when asked; never deploy or push to production without explicit approval — dry-run first.
 - After a non-trivial commit, run the `simplify` skill (delegated to subagents) to refactor, clean up, and fold easy improvements into that commit, then amend — before moving on. The amend is part of the commit and needs no separate approval; the push gate above still holds.
 - Keep commit messages concise and ticketed — see [[git]].
 - Do not create tickets; record them in a file instead — repo-local `TODO.md` for project work, `$HOME/claude_notes/tickets.md` for cross-project items. Delete entries when done; the file holds only open work.
 
 ## Delegation
+- Three kinds of worker, kept distinct because they differ in lifetime and cost: a **subagent** is a one-shot stateless spawn that reports back and disappears; a **teammate** is a persistent in-process member that self-claims from a shared task list ([[agent-team]]); a **Workflow agent** is one step in a deterministic script. A **fan-in agent** is whichever of these merges the others' output. Name the one you mean.
 - Keep the main context small, but decide per task whether delegation earns its cost: it buys context preservation and parallelism at the price of spawn latency, briefing effort, and coordination. Delegate when that price pays off — broad searches, bulk file reading, builds/tests, audits, research, and sizeable multi-step or separable work go to subagents or background workflows, which return conclusions, not raw output. Do the work inline when briefing it would cost more than doing it — focused edits, quick lookups, and tightly-coupled changes. The main thread holds synthesis, decisions, focused shared-context edits, and just enough inline scouting to write good briefs.
 - The main thread acts as the engineering lead: organise, plan, take the user's instruction, and choose the execution shape. Agents do the work; the lead manages it.
 - For large, parallelisable work, orchestrate multi-agent Workflows (`ultracode`) by intent: [[fan-n]] to average out variance on one question, [[stochastic-consensus]] to explore and debate an open problem, [[agent-team]] to execute a separable implementation plan. Trivial edits and quick lookups stay solo — the fan-out cost is not worth it there.
@@ -66,7 +67,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
   - High-level — brainstorming, design, proposing solutions, fan-in/dedup synthesis, final review: strongest tiers.
   - Bias toward the cheaper, faster tiers (currently Haiku- and Sonnet-class) and reach for them often: trivial checks, routine commands, well-specified refactors, and bulk scraping are cheap there and usually good enough — don't default to the strongest tier out of caution.
   - Escalate, don't restart: when a cheap-tier result is unsatisfactory, summarise its findings and hand them up to a strongest-tier agent (Opus-class) to refine and improve, rather than re-running the whole task on the expensive model.
-  - When unsure, omit the override and inherit the session model.
+  - When unsure, omit the override and inherit the session model — but inheritance is only the cheap default when the session model is itself a cheap tier. With a strong model pinned, inheriting is the expensive choice, so name a cheaper tier explicitly for anything mechanical rather than falling through.
   - Wherever a model is named and the surface accepts it (settings, agent frontmatter, `/model`), request the 1M-context variant with the `[1m]` suffix.
 - Pick the narrowest agent type that fits, not the catch-all: read-only searching goes to a purpose-built explorer rather than a general-purpose agent with full tool access. The catch-all takes more turns to reach the same answer, and every extra turn re-reads the whole context — agent choice moves cost more than model choice does.
 - For non-trivial changes, code review and simplify passes fan out to multiple agents rather than a single reviewer; pattern in [[fan-n]]. Scale the fan to the diff — a small or mechanical commit gets one reviewer, not a panel.

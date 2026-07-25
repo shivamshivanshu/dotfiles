@@ -24,8 +24,10 @@ Idioms and preferences for Python. Pair with [[working-style]].
 - Latest-per-group: `sort_values(sortcol).groupby(keys, as_index=False).last()` with `na_position="first"`, so a NaN/NaT never reads as most recent.
 - Filter NaN rows before `.map(fn)` (`df[df[col].notna()]`), and use `.to_dict("records")` for JSON-safe detail.
 
-## Datetime and concurrency
+## Datetime
 - Keep datetimes timezone-aware everywhere via `zoneinfo.ZoneInfo(...)`; never use naive datetimes. Represent `date_id` as `int(strftime("%Y%m%d"))`.
+
+## Concurrency and async
 - Use `ThreadPoolExecutor` for independent blocking I/O (the GIL is released during network I/O), and be ready to say whether work is GIL-bound or genuinely parallel.
 - For async pubsub, prefer non-blocking `get_message()` with `await asyncio.sleep()` over blocking `listen()`, and perform I/O outside the state lock. Use atomic `SET NX EX` for locks and cooldowns to avoid TOCTOU.
 
