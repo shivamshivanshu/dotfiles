@@ -10,9 +10,10 @@ Deterministic orchestration for implementation. The plan decides; agents execute
 ## Native agent teams (interactive teammates)
 Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-process` → teammates live in the main TUI: ↑/↓ select, Enter view/message, `x` stop, Ctrl+T task list; tmux split panes proved flaky). Reach for a native team instead of Workflow orchestration when the work is *interactive and long-lived*: parallel development across worktrees/repos where each teammate holds durable context the user converses with. Fire-and-forget stages stay in Workflows.
 - Teams provide no filesystem isolation — give each teammate its own worktree (`gwt`, per [[git]]) before it edits anything.
-- Coordinate through the shared task list with dependencies; let teammates self-claim; message by name (SendMessage).
+- Coordinate through the shared task list with dependencies; let teammates self-claim; message by name (SendMessage). Keep it stocked and dependency-ordered so members unblock incrementally — an empty or fully-blocked list idles every teammate at once, and each one then notifies.
 - Known edges: `/resume` does not restore in-process teammates; one team per session; teammates cannot nest teams or spawn background subagents; all inherit the lead's permission mode at spawn; context cost scales linearly per teammate.
-- The lead stays a synthesizer — per [[working-style]], per-repo context lives in the teammates, not the lead.
+- The lead stays a synthesizer — per [[working-style]], per-repo context lives in the teammates, not the lead. This is also what makes wake-ups cheap: an idle notification costs the lead's whole context, not a ping.
+- Tear down as you go: stop each teammate (`x`) once its slice has landed and been reviewed, and spawn only for work that exists. A finished member left parked keeps idle-notifying, and every notification is a full lead turn — measured at ~18M tokens each, mostly re-read context.
 
 ## Shape the team from the dependency tree
 - Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
