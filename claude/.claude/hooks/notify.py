@@ -36,19 +36,19 @@ def format_toast(event, message):
     return f"{title}: {text}"
 
 
-def terminal_sequence(toast):
+def desktop_toast(toast):
     # An ESC or BELL inside the text would close the escape sequence early.
     safe = toast.replace(ESC, "").replace(BELL, "")
-    desktop_toast = f"{DESKTOP_TOAST_START}{safe}{DESKTOP_TOAST_END}"
+    return f"{DESKTOP_TOAST_START}{safe}{DESKTOP_TOAST_END}"
+
+
+def terminal_sequence(toast):
+    osc = desktop_toast(toast)
     if os.environ.get("TMUX"):
         # tmux only forwards the OSC when wrapped in its passthrough envelope
         # (needs allow-passthrough on), with every inner ESC doubled.
-        desktop_toast = (
-            TMUX_PASSTHROUGH_START
-            + desktop_toast.replace(ESC, ESC + ESC)
-            + TMUX_PASSTHROUGH_END
-        )
-    return desktop_toast
+        osc = TMUX_PASSTHROUGH_START + osc.replace(ESC, ESC + ESC) + TMUX_PASSTHROUGH_END
+    return osc
 
 
 def tmux(*args):
@@ -60,6 +60,28 @@ def tmux_pane():
     pane = os.environ.get("TMUX_PANE")
     ok = pane and os.environ.get("TMUX") and shutil.which("tmux")
     return pane if ok else None
+
+
+def client_tty():
+    pane = tmux_pane()
+    if not pane:
+        return None
+    return tmux("display", "-p", "-t", pane, "#{client_tty}").strip() or None
+
+
+def emit_toast(toast):
+    # A hook may run without a controlling terminal, which makes /dev/tty raise
+    # and lose the toast silently. tmux knows the attached client's tty, and
+    # writing there goes straight to the terminal — no passthrough envelope, so
+    # no dependency on allow-passthrough either. /dev/tty stays as the fallback
+    # for a session outside tmux.
+    target = client_tty()
+    payload = desktop_toast(toast) if target else terminal_sequence(toast)
+    try:
+        with open(target or "/dev/tty", "w") as out:
+            out.write(payload)
+    except OSError:
+        pass
 
 
 def user_is_watching():
@@ -95,14 +117,9 @@ def main():
     set_tmux_window_state(message or "waiting")
     if message in ("busy", "clear") or user_is_watching():
         return
-    toast = format_toast(read_event(), message)
-    # Hook stdout is captured by Claude Code, so write to the controlling tty;
-    # the bytes travel through tmux/ssh to the local terminal.
-    try:
-        with open("/dev/tty", "w") as tty:
-            tty.write(terminal_sequence(toast))
-    except OSError:
-        pass
+    # Hook stdout is captured by Claude Code, so the toast goes to a tty; the
+    # bytes travel through tmux/ssh to the local terminal.
+    emit_toast(format_toast(read_event(), message))
 
 
 if __name__ == "__main__":

@@ -17,7 +17,11 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - claude hooks: `python3 -m py_compile claude/.claude/hooks/*.py` first.
 - `session_start.py`: pipe sample event JSON in, check emitted additionalContext
   on stdout. `notify.py`: stdout is captured — verify via the `@claude_state`
-  tmux window option (and tty escape output), not stdout.
+  tmux window option, not stdout. Its desktop toast goes to tmux's
+  `#{client_tty}`, never `/dev/tty`: a hook can run with no controlling
+  terminal, and the old `/dev/tty` open failed with ENXIO and was swallowed,
+  losing the toast silently. Writing to the client tty also means the OSC needs
+  no tmux passthrough wrapping.
 - Plugin/keybind swaps promising parity: verify each key's *behaviour* end to end
   (including tmux/pane crossing), not just that the mapping exists.
 - After changing any keybind, alias, or shell function: run `cheatsheet.py --dump`
