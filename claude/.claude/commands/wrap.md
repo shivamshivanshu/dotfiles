@@ -7,3 +7,4 @@ Close out this session:
 2. Run the [[session-insight]] skill.
 3. Run the [[teacher]] skill.
 4. Finish with one line per artifact written: what and where.
+5. If the work is done, say so plainly and suggest closing the session rather than leaving it parked — a session resumed after the prompt-cache TTL re-pays cache creation over the whole context.

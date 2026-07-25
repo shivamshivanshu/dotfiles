@@ -1,8 +1,7 @@
 {
   "env": {
     "EDITOR": "nvim",
-    "VISUAL": "nvim",
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "VISUAL": "nvim"
   },
   "permissions": {
     "defaultMode": "auto",
@@ -85,7 +84,8 @@
     "skill-creator@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "time-reminder@imc-claude-plugins": true,
-    "imc-auto-mode@imc-claude-plugins": true
+    "imc-auto-mode@imc-claude-plugins": true,
+    "sub-agent-delegator@imc-claude-plugins": false
   },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
