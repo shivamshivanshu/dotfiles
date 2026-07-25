@@ -10,7 +10,7 @@
       "~/claude_notes"
     ]
   },
-  "model": "sonnet",
+  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -81,7 +81,11 @@
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
-    "time-reminder@imc-claude-plugins": true
+    "pyright-lsp@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "time-reminder@imc-claude-plugins": true,
+    "imc-auto-mode@imc-claude-plugins": true
   },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
