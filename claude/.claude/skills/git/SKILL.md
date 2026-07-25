@@ -22,6 +22,7 @@ Git conventions for any repository.
 - For large refactors: expand–migrate–contract (add the new path, move callers over, remove the old), keeping mechanical and semantic changes in separate commits.
 - Preserve `Change-Id` across every amend and rebase; drop a duplicate when two commits share one ticket.
 - `git stash` to shelve unrelated in-progress work before staging, so each commit stays atomic.
+- A commit that aborts because `pre-commit` reformatted files is the hook working, not a failure: re-stage the rewritten files and commit again. Never reach for `--no-verify`, and re-read a rewritten file before editing it further — the formatter has changed it under you.
 
 ## Commit messages
 - Concise: capture what and why; cut boilerplate and the obvious.
