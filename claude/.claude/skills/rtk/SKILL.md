@@ -1,6 +1,6 @@
 ---
 name: rtk
-description: Use when working with rtk (the token-optimising CLI proxy) — its meta commands, install verification, and hook-based command rewriting. Keywords: Rust Token Killer, token savings, rtk gain, rtk discover, rtk proxy.
+description: 'Use when working with rtk (the token-optimising CLI proxy) — its meta commands, install verification, and hook-based command rewriting. Keywords: Rust Token Killer, token savings, rtk gain, rtk discover, rtk proxy.'
 ---
 
 # rtk — Rust Token Killer

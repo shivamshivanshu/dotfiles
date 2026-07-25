@@ -1,6 +1,6 @@
 ---
 name: perf-investigation
-description: Use when investigating latency, throughput, CPU hotspots, or a performance regression — profiling tools, measurement discipline, and the usual culprits. Keywords: perf, flamegraph, cache miss, false sharing, TSC, rdtsc, benchmark.
+description: 'Use when investigating latency, throughput, CPU hotspots, or a performance regression — profiling tools, measurement discipline, and the usual culprits. Keywords: perf, flamegraph, cache miss, false sharing, TSC, rdtsc, benchmark.'
 ---
 
 # Performance Investigation

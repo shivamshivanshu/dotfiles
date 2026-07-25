@@ -1,6 +1,6 @@
 ---
 name: stochastic-consensus
-description: Use when exploring an open problem with a subagent team — independent solutions ranked into consensus + outliers, then structured debate rounds where each agent incorporates all others' reasoning. Keywords: stochastic consensus, debate, subagent team, panel, jury, cross-examine, multi-agent review, approach space.
+description: 'Use when exploring an open problem with a subagent team — independent solutions ranked into consensus + outliers, then structured debate rounds where each agent incorporates all others'' reasoning. Keywords: stochastic consensus, debate, subagent team, panel, jury, cross-examine, multi-agent review, approach space.'
 ---
 
 # Stochastic Consensus & Debate

@@ -1,6 +1,6 @@
 ---
 name: concurrency
-description: Use when writing or reviewing multithreaded or lock-free code, shared-memory IPC, or reasoning about memory ordering and data races. Keywords: concurrency, atomics, false sharing, SPSC, MPSC, ring buffer, mutex, happens-before, TSan.
+description: 'Use when writing or reviewing multithreaded or lock-free code, shared-memory IPC, or reasoning about memory ordering and data races. Keywords: concurrency, atomics, false sharing, SPSC, MPSC, ring buffer, mutex, happens-before, TSan.'
 ---
 
 # Concurrency

@@ -1,6 +1,6 @@
 ---
 name: agent-team
-description: Use when executing a sizeable, separable implementation with a team of subagents — dependency-tree delegation, per-agent briefs and verify steps, worktree isolation, tiered models. Keywords: agent team, parallel implementation, delegate, orchestrate, worktree, subagent implementation, migration.
+description: 'Use when executing a sizeable, separable implementation with a team of subagents — dependency-tree delegation, per-agent briefs and verify steps, worktree isolation, tiered models. Keywords: agent team, parallel implementation, delegate, orchestrate, worktree, subagent implementation, migration.'
 ---
 
 # Agent Team

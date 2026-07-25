@@ -1,6 +1,6 @@
 ---
 name: working-style
-description: Use when starting any coding task and before proposing a plan, writing code, or claiming work is done — standing preferences for how Claude should communicate, plan, verify, edit, and commit. Keywords: working style, preferences, terse, explain why, verify, no comments, minimum change, don't overengineer, auto-commit checkpoints, push only when asked.
+description: 'Use when starting any coding task and before proposing a plan, writing code, or claiming work is done — standing preferences for how Claude should communicate, plan, verify, edit, and commit. Keywords: working style, preferences, terse, explain why, verify, no comments, minimum change, don''t overengineer, auto-commit checkpoints, push only when asked.'
 ---
 
 # Working Style

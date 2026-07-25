@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Use when writing a session handoff so a fresh Claude instance (no memory of the conversation) can fully resume the work — preserve every important finding, decision, investigation result, and state, not a terse summary. Keywords: handoff, resume context, context dump, carry over, pick up where we left off.
+description: 'Use when writing a session handoff so a fresh Claude instance (no memory of the conversation) can fully resume the work — preserve every important finding, decision, investigation result, and state, not a terse summary. Keywords: handoff, resume context, context dump, carry over, pick up where we left off.'
 ---
 
 # Handoff

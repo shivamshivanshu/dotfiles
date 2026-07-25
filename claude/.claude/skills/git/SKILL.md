@@ -1,6 +1,6 @@
 ---
 name: git
-description: Use when committing, amending, rebasing, squashing fixups, resolving rebase/merge conflicts, managing git worktrees, or addressing code-review comments. Keywords: autosquash, Change-Id, Gerrit review, concise commit message.
+description: 'Use when committing, amending, rebasing, squashing fixups, resolving rebase/merge conflicts, managing git worktrees, or addressing code-review comments. Keywords: autosquash, Change-Id, Gerrit review, concise commit message.'
 ---
 
 # Git Workflow

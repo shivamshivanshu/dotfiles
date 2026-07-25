@@ -1,6 +1,6 @@
 ---
 name: teacher
-description: Use when a task has just completed (never mid-task) to grow the user's software knowledge — surface a few transferable, worth-knowing concepts that came up, ranked by the learning priorities below, with a one-line agenda each, and offer to deep-dive now or defer. Keywords: teach, study, knowledge base, transferable skill, explain concept, upskill.
+description: 'Use when a task has just completed (never mid-task) to grow the user''s software knowledge — surface a few transferable, worth-knowing concepts that came up, ranked by the learning priorities below, with a one-line agenda each, and offer to deep-dive now or defer. Keywords: teach, study, knowledge base, transferable skill, explain concept, upskill.'
 ---
 
 # Teacher

@@ -1,6 +1,6 @@
 ---
 name: design-doc
-description: Use when writing a design doc, RFC, technical proposal, or architecture decision record — structure, tradeoff discipline, and terse style. Keywords: design doc, RFC, proposal, ADR, architecture decision, tradeoffs, options considered.
+description: 'Use when writing a design doc, RFC, technical proposal, or architecture decision record — structure, tradeoff discipline, and terse style. Keywords: design doc, RFC, proposal, ADR, architecture decision, tradeoffs, options considered.'
 ---
 
 # Design Doc

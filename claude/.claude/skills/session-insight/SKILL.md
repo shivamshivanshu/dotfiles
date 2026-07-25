@@ -1,6 +1,6 @@
 ---
 name: session-insight
-description: Use when the wrap command reaches its insight step, or the user explicitly asks for a session retro ("session insight"). Treat wrap-up phrases ("I'm done", "wrap up") as the wrap command, not this skill directly. Reflects on the session, coaches better prompting, and proposes concrete improvements to the skill/knowledge repos. Keywords: session summary, retro, improve skills, capture insight, prompt feedback, better prompts.
+description: 'Use when the wrap command reaches its insight step, or the user explicitly asks for a session retro ("session insight"). Treat wrap-up phrases ("I''m done", "wrap up") as the wrap command, not this skill directly. Reflects on the session, coaches better prompting, and proposes concrete improvements to the skill/knowledge repos. Keywords: session summary, retro, improve skills, capture insight, prompt feedback, better prompts.'
 ---
 
 # Session Insight

@@ -1,6 +1,6 @@
 ---
 name: cpp
-description: Use when writing, reviewing, building, testing, or debugging C++ — idioms, Bazel/GoogleTest workflow, low-latency patterns, and debugging habits. Keywords: std::optional, CRTP, constexpr, EXPECT_THAT, gdb, coredump, perf, clangd.
+description: 'Use when writing, reviewing, building, testing, or debugging C++ — idioms, Bazel/GoogleTest workflow, low-latency patterns, and debugging habits. Keywords: std::optional, CRTP, constexpr, EXPECT_THAT, gdb, coredump, perf, clangd.'
 ---
 
 # C++ Insights

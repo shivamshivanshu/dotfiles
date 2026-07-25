@@ -1,6 +1,6 @@
 ---
 name: fan-n
-description: Use when one sample of a task isn't trustworthy — fan N identical agents over the same prompt to average out run-to-run variance, then a fan-in agent on a stronger model ranks consensus vs outliers. Keywords: fan out, fan in, N agents, sampling, repeated trials, majority vote, averaging.
+description: 'Use when one sample of a task isn''t trustworthy — fan N identical agents over the same prompt to average out run-to-run variance, then a fan-in agent on a stronger model ranks consensus vs outliers. Keywords: fan out, fan in, N agents, sampling, repeated trials, majority vote, averaging.'
 ---
 
 # Fan-N
