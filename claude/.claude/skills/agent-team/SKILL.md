@@ -13,12 +13,13 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 - Coordinate through the shared task list with dependencies; let teammates self-claim; message by name (SendMessage). Keep it stocked and dependency-ordered so members unblock incrementally — an empty or fully-blocked list idles every teammate at once, and each one then notifies.
 - Known edges: `/resume` does not restore in-process teammates; one team per session; teammates cannot nest teams or spawn background subagents; all inherit the lead's permission mode at spawn; context cost scales linearly per teammate.
 - The lead only synthesizes — per [[working-style]], per-repo context lives in the teammates, not the lead. This is also what makes wake-ups cheap: an idle notification costs the lead's whole context, not a ping.
-- Tear down as you go: stop each teammate (`x`) once its slice has landed and been reviewed, and spawn only for work that exists. A finished member left parked keeps idle-notifying, and every notification is a full lead turn — measured at ~18M tokens each, mostly re-read context.
+- Reuse a live teammate for the next slice in its area rather than stopping and respawning — its accumulated context is the whole reason to run a team, and a fresh spawn pays the briefing and the rebuild again. Spawn only for work that exists.
+- Stop a teammate (`x`) when nothing in its area is left on the list, or the team is winding down. A member parked with no remaining work only idle-notifies, and each notification is a full lead turn — measured at ~18M tokens, which is the lead's context being re-read. If wake-ups cost that much, the lead is carrying too much; fix that first rather than culling teammates that still have work coming.
 
 ## Shape the team from the dependency tree
 - Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
 - In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents.
-- Write the tree into the day's scratchpad plan file (per [[working-style]]) with a status per slice and keep it current — it survives a restart, and the teardown rule above depends on knowing which slices have landed. This is the lead's record, not a claim file: native teammates already self-claim from the shared task list, and a plain file has no atomicity, so two readers can claim the same slice.
+- Write the tree into the day's scratchpad plan file (per [[working-style]]) with a status per slice and keep it current — it survives a restart, and the stop rule above reads it to tell whether an area still has work coming. This is the lead's record, not a claim file: native teammates already self-claim from the shared task list, and a plain file has no atomicity, so two readers can claim the same slice.
 - Scale honestly: per [[working-style]], trivial, tightly-scoped, or tangled work stays in one context (often yourself) — the tree is for work that is both sizeable and cleanly separable.
 
 ## Brief each agent completely
