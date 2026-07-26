@@ -5,10 +5,10 @@ description: 'Use when exploring an open problem with a subagent team — indepe
 
 # Stochastic Consensus & Debate
 
-Map the approach space with independent solvers, then let them argue. For identical-prompt sampling see [[fan-n]]; for executing the winning plan see [[agent-team]]. Run the whole pipeline as a background Workflow — only the final synthesis returns to the main context. The main thread scouts context inline first and embeds it in every prompt; only phase-1 agents touch the repo, later phases work purely from passed text.
+Map the approach space with independent solvers, then let them argue. For variance sampling over equivalent prompts see [[fan-n]]; for executing the winning plan see [[agent-team]]. Run the whole pipeline as a background Workflow — only the final synthesis returns to the main context. The main thread scouts context inline first and embeds it in every prompt; only phase-1 agents touch the repo, later phases work purely from passed text.
 
 ## Phase 1 — independent solutions
-- Each agent solves the problem alone, blind to the others. Distinct lenses when perspectives should differ; identical prompts when only the model's stochasticity should vary.
+- Each agent solves the problem alone, blind to the others. Distinct lenses when perspectives should differ; equivalent prompts, varied only in wording, when the spread should come from the model rather than the framing.
 - Rank the merged results statistically: the solution most agents converged on is the consensus candidate; support count across independent agents is the significance signal.
 - Keep outliers as first-class output — they map the *different approaches*, and an outlier regularly ends as the champion once debated. Never let ranking bury them.
 

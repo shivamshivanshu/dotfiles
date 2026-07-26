@@ -25,7 +25,7 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 ## Brief each agent completely
 - Its plan slice, the context it needs (paths, conventions, constraints) embedded in the prompt, the skills it must follow, what it waits for, and what it must produce.
 - Include the verify command in the brief — build, test, or regression — so the agent self-checks before reporting. A report without evidence is not done.
-- Assign model tiers by subtask complexity per [[working-style]]; omit the override when unsure.
+- Assign model tiers by subtask complexity per [[working-style]] — name a cheaper tier for mechanical slices rather than letting them inherit a strong session model.
 
 ## Isolation and integration
 - Worktree isolation when agents mutate files concurrently — never let two agents edit the same tree.
