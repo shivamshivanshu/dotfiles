@@ -19,6 +19,11 @@ DESKTOP_TOAST_END = BELL
 TMUX_PASSTHROUGH_START = f"{ESC}Ptmux;"
 TMUX_PASSTHROUGH_END = f"{ESC}\\"
 STATE_GLYPHS = {"busy": "●", "done": "✓", "waiting": "◐"}
+STATE_STYLES = {
+    "busy": "fg=#282828,bg=#d79921,bold",
+    "done": "fg=#282828,bg=#689d6a,bold",
+    "waiting": "fg=#282828,bg=#cc241d,bold",
+}
 GLYPH_FRAGMENT = "#{?#{@claude_state}, #{@claude_state},}"
 
 
@@ -107,9 +112,15 @@ def set_tmux_window_state(message):
         return
     if message == "clear":
         tmux("set-option", "-w", "-t", pane, "-u", "@claude_state")
+        tmux("set-option", "-w", "-t", pane, "-u", "window-status-style")
+        tmux("set-option", "-w", "-t", pane, "-u", "window-status-current-style")
         return
     ensure_glyph_rendered()
     tmux("set-option", "-w", "-t", pane, "@claude_state", STATE_GLYPHS.get(message, ""))
+    style = STATE_STYLES.get(message)
+    if style:
+        tmux("set-option", "-w", "-t", pane, "window-status-style", style)
+        tmux("set-option", "-w", "-t", pane, "window-status-current-style", style)
 
 
 def main():

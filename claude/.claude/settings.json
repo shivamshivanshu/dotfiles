@@ -10,7 +10,6 @@
       "~/claude_notes"
     ]
   },
-  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
