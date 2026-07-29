@@ -370,6 +370,7 @@ Commands: `:MDListItemBelow`, `:MDListItemAbove`, `:MDTaskToggle` (list/checkbox
 | Command | Action |
 |---------|--------|
 | `:Epoch <ts>` / `:'<,'>Epoch` | Convert timestamp arg or visual range |
+| `:Epoch` | Popup: type a timestamp/date, `<CR>` converts, `y` yanks result, `q` closes |
 | `:'<,'>EpochCopy` / `:EpochCopy` | Convert range and copy / copy last result |
 | `:EpochSetTimezone <h>` | Set timezone offset |
 | `:EpochSetGranularity <unit>` | Set unit (ns/us/ms/s) |

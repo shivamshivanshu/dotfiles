@@ -11,20 +11,6 @@ local last_result = nil
 
 local FRAC_DIGITS = { ns = 9, us = 6, ms = 3, s = 0 }
 
-local function report(label, input, result)
-	last_result = result
-	print(
-		string.format(
-			"%s %s → %s (granularity: %s, offset: %+.1fh)",
-			label,
-			input,
-			result,
-			M.config.granularity,
-			M.config.timezone_offset
-		)
-	)
-end
-
 local function frac_digits()
 	return FRAC_DIGITS[M.config.granularity] or 9
 end
@@ -43,11 +29,6 @@ local function utc_time(parts)
 end
 
 local function epoch_to_readable(epoch_str)
-	if not epoch_str:match("^%d+$") then
-		vim.notify("Invalid epoch timestamp", vim.log.levels.ERROR)
-		return nil
-	end
-
 	-- Split off the sub-second portion textually: full ns epochs (~1.7e18)
 	-- exceed double exactness, so arithmetic only touches the small seconds part.
 	local digits = frac_digits()
@@ -64,16 +45,13 @@ local function epoch_to_readable(epoch_str)
 
 	local adjusted_time = tonumber(sec_str) + offset_seconds()
 	local date_str = os.date("!%Y-%m-%d %H:%M:%S", adjusted_time)
-	local result = digits > 0 and (date_str .. "." .. frac_str) or date_str
-	report("Epoch", epoch_str, result)
-	return result
+	return digits > 0 and (date_str .. "." .. frac_str) or date_str
 end
 
 local function readable_to_epoch(date_str)
 	local year, month, day, hour, min, sec, frac = date_str:match("(%d+)-(%d+)-(%d+)%s+(%d+):(%d+):(%d+)[.:]?(%d*)")
 	if not year then
-		vim.notify("Invalid format. Use: YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.frac", vim.log.levels.ERROR)
-		return nil
+		return nil, "Invalid format. Use: YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.frac"
 	end
 
 	local seconds = utc_time({
@@ -93,18 +71,44 @@ local function readable_to_epoch(date_str)
 		epoch = epoch .. (frac .. string.rep("0", digits)):sub(1, digits)
 	end
 
-	report("Date", date_str, epoch)
 	return epoch
 end
 
 local function convert(input)
-	input = input:match("^%s*(.-)%s*$")
+	input = vim.trim(input)
 
+	local result, err
 	if input:match("^%d+$") then
-		return epoch_to_readable(input)
+		result, err = epoch_to_readable(input)
 	else
-		return readable_to_epoch(input)
+		result, err = readable_to_epoch(input)
 	end
+
+	if result then
+		last_result = result
+	end
+	return result, err
+end
+
+local function convert_and_print(input)
+	input = vim.trim(input)
+	local result, err = convert(input)
+	if not result then
+		vim.notify(err, vim.log.levels.ERROR)
+		return nil
+	end
+
+	print(
+		string.format(
+			"%s %s → %s (granularity: %s, offset: %+.1fh)",
+			input:match("^%d+$") and "Epoch" or "Date",
+			input,
+			result,
+			M.config.granularity,
+			M.config.timezone_offset
+		)
+	)
+	return result
 end
 
 local function convert_selection()
@@ -121,7 +125,7 @@ local function convert_selection()
 		text = text:sub(start_pos[3], end_pos[3])
 	end
 
-	return convert(text)
+	return convert_and_print(text)
 end
 
 -- Marks are charwise-precise but may be stale; trust them only when they
@@ -130,21 +134,89 @@ local function convert_range(args)
 	if args.line1 == vim.fn.line("'<") and args.line2 == vim.fn.line("'>") then
 		return convert_selection()
 	end
-	return convert(table.concat(vim.fn.getline(args.line1, args.line2), "\n"))
+	return convert_and_print(table.concat(vim.fn.getline(args.line1, args.line2), "\n"))
+end
+
+local STATUS_NS = vim.api.nvim_create_namespace("shivam.epoch")
+local FLOAT_WIDTH = 44
+local FLOAT_HEIGHT = 2
+
+local function float_title()
+	return string.format(" Epoch (%s, %+.1fh) ", M.config.granularity, M.config.timezone_offset)
+end
+
+local function render_status(buf, text, hl)
+	vim.api.nvim_buf_clear_namespace(buf, STATUS_NS, 0, -1)
+	vim.api.nvim_buf_set_extmark(buf, STATUS_NS, 0, 0, { virt_lines = { { { text, hl } } } })
+end
+
+local function convert_in_float(buf)
+	local input = vim.trim(vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or "")
+	if input == "" then
+		return
+	end
+
+	local result, err = convert(input)
+	if result then
+		render_status(buf, "→ " .. result, "String")
+	else
+		render_status(buf, "✗ " .. err, "ErrorMsg")
+	end
+end
+
+local function yank_result()
+	if not last_result then
+		vim.notify("No conversion result to copy", vim.log.levels.WARN)
+		return
+	end
+	vim.fn.setreg("+", last_result)
+	vim.notify("Copied: " .. last_result)
+end
+
+local function open_float()
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.bo[buf].bufhidden = "wipe"
+
+	local win = vim.api.nvim_open_win(buf, true, {
+		relative = "editor",
+		width = FLOAT_WIDTH,
+		height = FLOAT_HEIGHT,
+		row = math.floor((vim.o.lines - FLOAT_HEIGHT) / 2),
+		col = math.floor((vim.o.columns - FLOAT_WIDTH) / 2),
+		style = "minimal",
+		border = "rounded",
+		title = float_title(),
+		title_pos = "center",
+		footer = " <CR> convert · y yank · q close ",
+		footer_pos = "center",
+	})
+
+	render_status(buf, "  timestamp or YYYY-MM-DD HH:MM:SS[.frac]", "Comment")
+
+	-- Mapped in insert mode too, so <CR> never splits the single input line.
+	vim.keymap.set({ "n", "i" }, "<CR>", function()
+		convert_in_float(buf)
+	end, { buffer = buf, desc = "Convert input" })
+	vim.keymap.set("n", "y", yank_result, { buffer = buf, desc = "Yank conversion result" })
+	vim.keymap.set("n", "q", function()
+		vim.api.nvim_win_close(win, true)
+	end, { buffer = buf, desc = "Close epoch window" })
+
+	vim.cmd.startinsert()
 end
 
 function M.setup()
 	actions.add("epoch.convert", function(args)
 		args = args or {}
 		if args.args and args.args ~= "" then
-			convert(args.args)
+			convert_and_print(args.args)
 		elseif args.range and args.range > 0 then
 			convert_range(args)
 		else
-			vim.notify("Usage: :Epoch <ts|date> or :'<,'>Epoch", vim.log.levels.WARN)
+			open_float()
 		end
 	end, {
-		desc = "Convert epoch ↔ date/time (arg or visual range)",
+		desc = "Convert epoch ↔ date/time (arg, visual range, or popup)",
 		cmd = "Epoch",
 		cmd_opts = { nargs = "?", range = true },
 	})
@@ -154,12 +226,7 @@ function M.setup()
 		if args.range and args.range > 0 then
 			convert_range(args)
 		end
-		if last_result then
-			vim.fn.setreg("+", last_result)
-			print("Copied: " .. last_result)
-		else
-			vim.notify("No conversion result to copy", vim.log.levels.WARN)
-		end
+		yank_result()
 	end, { desc = "Copy conversion result (of range if given)", cmd = "EpochCopy", cmd_opts = { range = true } })
 
 	actions.add("epoch.set_timezone", function(args)
