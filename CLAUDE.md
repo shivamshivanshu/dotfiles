@@ -13,6 +13,9 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - Shell: `bash -n <file>` and `zsh -n <file>`; source in a subshell to confirm no errors.
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
 - tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t`.
+- ssh: capture `ssh -G <host>` for every configured host before and after; the diff must show
+  only the intended keyword deltas. `~/.ssh` must stay a real dir with keys and known_hosts
+  untouched — only `config` is a symlink into the repo.
 - install script: `bash -n install_dotfiles.sh`, then `./install_dotfiles.sh link`.
 - claude hooks: `python3 -m py_compile claude/.claude/hooks/*.py` first.
 - `session_start.py`: pipe sample event JSON in, check emitted additionalContext
