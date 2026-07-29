@@ -102,9 +102,10 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 | `teacher` | meta | task done — offer transferable concepts to learn (notes in `$HOME/claude_notes/`) |
 | `handoff` | meta | `/handoff [name]` — save a resumable context handoff for a fresh instance |
 
-**Agents** (`agents/`, also tracked): `simple-implementer` (Sonnet-pinned, for
-simple well-specified subtasks) and `verifier` (build / test / regression,
-reports PASS/FAIL with evidence).
+**Agents** (`agents/`, also tracked): `simple-implementer` (simple well-specified
+subtasks, model picked per spawn), `verifier` (build / test / regression, reports
+PASS/FAIL with evidence), and `codex` (bridge to the OpenAI Codex CLI for an
+independent second opinion — explicit request only, needs `codex login`).
 
 **Output styles** (`output-styles/`): `terse` — lead with the answer, structured
 and scannable. `teaching` — example-led explanations with mechanism traces, for
