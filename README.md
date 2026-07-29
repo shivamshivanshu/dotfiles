@@ -19,6 +19,7 @@ zsh/.zshrc.user                  → ~/.zshrc.user
 zsh/.zshrc.d/                    → ~/.zshrc.d/
 shell/.config/shell/             → ~/.config/shell/
 scripts/.local/bin/              → ~/.local/bin/  (cheatsheet.py — keybind cheatsheet)
+ssh/.ssh/config                  → ~/.ssh/config  (work/machine hosts: untracked ~/.ssh/config.local)
 claude/.claude/CLAUDE.md         → ~/.claude/CLAUDE.md
 claude/.claude/skills/           → ~/.claude/skills/
 claude/.claude/agents/           → ~/.claude/agents/

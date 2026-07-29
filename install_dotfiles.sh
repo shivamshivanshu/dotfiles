@@ -69,7 +69,7 @@ CARGO_PACKAGES=(
   "cargo-install-update:cargo-update"
 )
 
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts ssh)
 # dnf config is Fedora-only; skip it elsewhere so we don't litter ~/.config
 [[ -f /etc/fedora-release ]] && STOW_PACKAGES+=(dnf)
 
@@ -201,33 +201,48 @@ install_cargo_packages() {
   done
 }
 
+# A real (non-symlink) file at the stow target would abort `stow`: drop it when it
+# matches the tracked copy, else move it to <file>.pre-stow so the tracked one links.
+preserve_pre_stow() {
+  local live="$1" tracked="$2"
+  [[ -f "$live" && ! -L "$live" ]] || return 0
+  if cmp -s "$live" "$tracked"; then
+    rm "$live"
+  else
+    echo "→ preserving $(basename "$live") as $(basename "$live").pre-stow"
+    mv "$live" "$live.pre-stow"
+  fi
+}
+
+# ~/.ssh must stay a real dir (keys, known_hosts), never a folded symlink into the repo.
+prepare_ssh() {
+  mkdir -p "$HOME/.ssh/sockets"
+  chmod 700 "$HOME/.ssh" "$HOME/.ssh/sockets"
+  preserve_pre_stow "$HOME/.ssh/config" "$DOTFILES_DIR/ssh/.ssh/config"
+}
+
+# Claude Code writes a real ~/.claude/settings.json at runtime that shadows the tracked
+# one; clear a dangling symlink, then drop/preserve any real file so the tracked links.
+prepare_claude() {
+  local live="$HOME/.claude/settings.json"
+  [[ -L "$live" && ! -e "$live" ]] && rm "$live"
+  preserve_pre_stow "$live" "$DOTFILES_DIR/claude/.claude/settings.json"
+}
+
 stow_packages() {
   if ! command -v stow &>/dev/null; then
     echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto')." >&2
     exit 1
   fi
   mkdir -p "$HOME/.config"
-  # Claude Code writes a real ~/.claude/settings.json at runtime that shadows the
-  # tracked one and would make `stow claude` abort; drop it (keeping a .pre-stow
-  # copy if it diverged) so the tracked file links.
-  local claude_settings="$HOME/.claude/settings.json"
-  local tracked_settings="$DOTFILES_DIR/claude/.claude/settings.json"
-  if [[ -f "$claude_settings" && ! -L "$claude_settings" ]]; then
-    if cmp -s "$claude_settings" "$tracked_settings"; then
-      rm "$claude_settings"
-    else
-      echo "→ preserving runtime settings.json as settings.json.pre-stow"
-      mv "$claude_settings" "$claude_settings.pre-stow"
-    fi
-  elif [[ -L "$claude_settings" && ! -e "$claude_settings" ]]; then
-    rm "$claude_settings"
-  fi
+  prepare_claude
+  prepare_ssh
   for pkg in "${STOW_PACKAGES[@]}"; do
     echo "→ stow $pkg"
     local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
-    # Never fold ~/.claude: Claude Code writes runtime state (credentials,
-    # sessions) there, which a folded dir symlink would land inside the repo
-    [[ "$pkg" == claude ]] && flags+=(--no-folding)
+    # Never fold ~/.claude or ~/.ssh: both hold runtime state / secrets that a
+    # folded dir symlink would land inside the repo
+    [[ "$pkg" == claude || "$pkg" == ssh ]] && flags+=(--no-folding)
     stow "${flags[@]}" "$pkg"
   done
 }
