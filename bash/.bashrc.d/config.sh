@@ -15,3 +15,6 @@ unset _f _p
 _cache_init zoxide "$HOME/.cache/zoxide-init.bash" zoxide init bash
 
 PROMPT_COMMAND='printf "\e[1 q"'"${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+
+#### direnv
+_cache_init direnv "$HOME/.cache/direnv-init.bash" direnv hook bash

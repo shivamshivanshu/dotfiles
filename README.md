@@ -130,7 +130,7 @@ scripts), `keybindings.json`, and `settings.json` (universal config; see above).
 ## Shell
 
 zsh and bash both source modular config from `.{z,b}shrc.d/`. Order-dependent
-setup (prompt, fzf, zoxide, autosuggestions, atuin) lives in a single
+setup (prompt, fzf, zoxide, direnv, autosuggestions, atuin) lives in a single
 `config.{zsh,sh}`; aliases and history options stay separate.
 
 ### Tools
@@ -140,7 +140,14 @@ setup (prompt, fzf, zoxide, autosuggestions, atuin) lives in a single
 | [atuin](https://github.com/atuinsh/atuin) | SQLite-backed history with fuzzy search | ✓ | — |
 | [fzf](https://github.com/junegunn/fzf) | Fuzzy file / cd picker | ✓ | ✓ |
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart `cd` (`z <pattern>`, `zi` for picker) | ✓ | ✓ |
+| [direnv](https://direnv.net/) | Load/unload approved project environments | ✓ | ✓ |
 | zsh-autosuggestions | Inline command suggestions | ✓ | — |
+
+### Project environments
+
+Direnv is installed and enabled in both shells. Add an `.envrc` to a project and
+run `direnv allow` to approve it. Keep secrets in an ignored file such as
+`.env.local`, then load it from `.envrc` with `dotenv_if_exists .env.local`.
 
 ### Keybinds (zsh)
 

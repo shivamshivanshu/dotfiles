@@ -60,6 +60,7 @@ SYSTEM_PACKAGES=(
 	"git:git"
 	"tmux:tmux"
 	"fzf:fzf"
+	"direnv:direnv"
 	"stow:stow"
 	"wezterm:wezterm"
 	"zsh:zsh"
