@@ -1,6 +1,6 @@
 #### Paths
 for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
-  [[ -d "$d" && ":$PATH:" != *":$d:"* ]] && PATH="$d:$PATH"
+	[[ -d "$d" && ":$PATH:" != *":$d:"* ]] && PATH="$d:$PATH"
 done
 export PATH
 

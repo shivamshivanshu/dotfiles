@@ -1,9 +1,9 @@
 #### fzf x fd
 # Use fd to walk files/dirs (honours .gitignore, includes dotfiles, skips .git).
 if command -v fd &>/dev/null; then
-  export FZF_DEFAULT_COMMAND='fd --type f --hidden --strip-cwd-prefix --exclude .git'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND='fd --type d --hidden --strip-cwd-prefix --exclude .git'
+	export FZF_DEFAULT_COMMAND='fd --type f --hidden --strip-cwd-prefix --exclude .git'
+	export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+	export FZF_ALT_C_COMMAND='fd --type d --hidden --strip-cwd-prefix --exclude .git'
 fi
 
 #### fzf appearance + preview
@@ -21,6 +21,6 @@ export FZF_TMUX_OPTS='-p 80%,80%'
 
 #### less
 if command -v bat &>/dev/null; then
-  export LESSOPEN='| bat --color=always --style=plain --paging=never %s'
-  export LESS='-R'
+	export LESSOPEN='| bat --color=always --style=plain --paging=never %s'
+	export LESS='-R'
 fi

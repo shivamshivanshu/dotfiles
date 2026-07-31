@@ -12,7 +12,7 @@ return {
 	opts = {
 		formatters_by_ft = {
 			lua = { "stylua" },
-			python = { "ruff_organize_imports", "ruff_format" },
+			python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
 			go = { "goimports", "gofumpt" },
 			cpp = { "clang-format" },
 			c = { "clang-format" },

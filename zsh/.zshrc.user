@@ -13,12 +13,15 @@ autoload -Uz compinit && compinit -C -d "$_zcompdump"
 unset _zcompdump
 # Self-removing stub: no-ops the machine ~/.zshrc's redundant second compinit,
 # then restores the real autoload for manual use.
-compinit() { unfunction compinit; autoload -Uz compinit; }
+compinit() {
+	unfunction compinit
+	autoload -Uz compinit
+}
 
 #### Source modular configs
 if [[ -d ~/.zshrc.d ]]; then
-  for rc in ~/.zshrc.d/*(N); do
-    [[ -f "$rc" ]] && source "$rc"
-  done
-  unset rc
+	for rc in ~/.zshrc.d/*(N); do
+		[[ -f "$rc" ]] && source "$rc"
+	done
+	unset rc
 fi

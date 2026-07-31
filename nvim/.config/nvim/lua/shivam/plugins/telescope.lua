@@ -42,23 +42,39 @@ add("telescope.keymaps", builtin("keymaps"), { desc = "Search keymaps", cmd = "S
 add("telescope.diagnostics", builtin("diagnostics"), { desc = "Search diagnostics", cmd = "SearchDiagnostics" })
 add("telescope.resume", builtin("resume"), { desc = "Resume last picker", cmd = "SearchResume" })
 add("telescope.picker_history", builtin("pickers"), { desc = "Search picker history", cmd = "SearchPickers" })
-add("telescope.recent_files", builtin("oldfiles", function()
-	return { cwd_only = true }
-end), { desc = "Search recent files in cwd", cmd = "SearchRecent" })
+add(
+	"telescope.recent_files",
+	builtin("oldfiles", function()
+		return { cwd_only = true }
+	end),
+	{ desc = "Search recent files in cwd", cmd = "SearchRecent" }
+)
 add("telescope.buffers", builtin("buffers"), { desc = "Find existing buffers", cmd = "SearchBuffers" })
 add("telescope.doc_symbols", builtin("lsp_document_symbols"), {
 	desc = "LSP symbols in current buffer",
 	cmd = "SearchSymbols",
 })
-add("telescope.buffer_fuzzy", builtin("current_buffer_fuzzy_find", function()
-	return require("telescope.themes").get_dropdown({ winblend = 10, previewer = false })
-end), { desc = "Fuzzy search in current buffer", cmd = "BufFuzzyFind" })
-add("telescope.grep_open_files", builtin("live_grep", function()
-	return { grep_open_files = true, prompt_title = "Live Grep in Open Files" }
-end), { desc = "Live grep in open files", cmd = "GrepOpenFiles" })
-add("telescope.nvim_config_files", builtin("find_files", function()
-	return { cwd = vim.fn.stdpath("config") }
-end), { desc = "Find files in nvim config", cmd = "SearchNvimConfig" })
+add(
+	"telescope.buffer_fuzzy",
+	builtin("current_buffer_fuzzy_find", function()
+		return require("telescope.themes").get_dropdown({ winblend = 10, previewer = false })
+	end),
+	{ desc = "Fuzzy search in current buffer", cmd = "BufFuzzyFind" }
+)
+add(
+	"telescope.grep_open_files",
+	builtin("live_grep", function()
+		return { grep_open_files = true, prompt_title = "Live Grep in Open Files" }
+	end),
+	{ desc = "Live grep in open files", cmd = "GrepOpenFiles" }
+)
+add(
+	"telescope.nvim_config_files",
+	builtin("find_files", function()
+		return { cwd = vim.fn.stdpath("config") }
+	end),
+	{ desc = "Find files in nvim config", cmd = "SearchNvimConfig" }
+)
 add("actions.picker", actions.picker, {
 	desc = "Fuzzy-find and run any registered action",
 	cmd = "Actions",

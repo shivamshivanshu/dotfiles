@@ -68,6 +68,13 @@ kill $(lsof -ti :36969) 2>/dev/null; cheatsheet --serve --port 36969 >/dev/null 
 `auto` installs WezTerm. Alacritty's configuration is linked too, but its
 binary is deliberately supplied by the operating system rather than this script.
 
+### Git hooks
+
+`auto` and `link` enable this repository's managed pre-commit hook. It formats
+staged Lua files with `stylua` and shell files with `shfmt`. When formatting
+changes a file, the hook stops the commit so you can review, `git add`, and
+commit the formatted result.
+
 ### Managing symlinks manually
 
 ```bash

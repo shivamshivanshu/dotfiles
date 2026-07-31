@@ -1,7 +1,12 @@
 #### Prompt
 autoload -Uz vcs_info
 autoload -Uz add-zsh-hook
-_prompt_precmd() { vcs_info; printf '\e[1 q' }
+# Git is the only VCS in use; skip probing every other vcs_info backend per prompt.
+zstyle ':vcs_info:*' enable git
+_prompt_precmd() {
+	vcs_info
+	printf '\e[1 q'
+}
 add-zsh-hook precmd _prompt_precmd
 zstyle ':vcs_info:git:*' formats ' %F{blue}git:(%F{red}%b%F{blue})%f'
 zstyle ':vcs_info:git:*' actionformats ' %F{blue}git:(%F{red}%b|%a%F{blue})%f'
@@ -16,8 +21,8 @@ unset _shell_init_cache
 _cache_init fzf "$HOME/.cache/fzf-init.zsh" fzf --zsh
 
 for _f in fzf alias worktree; do
-  _p="${XDG_CONFIG_HOME:-$HOME/.config}/shell/$_f.sh"
-  [[ -r "$_p" ]] && source "$_p"
+	_p="${XDG_CONFIG_HOME:-$HOME/.config}/shell/$_f.sh"
+	[[ -r "$_p" ]] && source "$_p"
 done
 unset _f _p
 
@@ -26,8 +31,8 @@ _cache_init zoxide "$HOME/.cache/zoxide-init.zsh" zoxide init zsh
 
 #### autosuggestions
 if [[ -f "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-  source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+	source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+	ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 fi
 
 #### atuin

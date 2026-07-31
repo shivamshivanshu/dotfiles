@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+formatted=()
+before_format=()
+
+require_formatter() {
+	local formatter="$1" install_hint="$2"
+	if ! command -v "$formatter" >/dev/null 2>&1; then
+		echo "pre-commit: $formatter is required to format staged files." >&2
+		echo "Run './install_dotfiles.sh auto' or install $install_hint, then retry." >&2
+		exit 1
+	fi
+}
+
+while IFS= read -r -d '' file; do
+	[[ -f "$file" ]] || continue
+
+	case "$file" in
+	*.lua)
+		require_formatter stylua stylua
+		before_format+=("$(cksum "$file")")
+		stylua "$file"
+		formatted+=("$file")
+		;;
+	*.sh | *.bash | *.zsh | */.bashrc* | */.zshrc* | .githooks/*)
+		require_formatter shfmt shfmt
+		before_format+=("$(cksum "$file")")
+		shfmt -w "$file"
+		formatted+=("$file")
+		;;
+	esac
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+[[ ${#formatted[@]} -gt 0 ]] || exit 0
+
+changed=()
+for i in "${!formatted[@]}"; do
+	[[ "$(cksum "${formatted[$i]}")" == "${before_format[$i]}" ]] || changed+=("${formatted[$i]}")
+done
+
+[[ ${#changed[@]} -eq 0 ]] && exit 0
+
+echo "pre-commit: formatted staged files:" >&2
+printf '  %s\n' "${changed[@]}" >&2
+echo "Review the changes, stage them with 'git add', then commit again." >&2
+exit 1

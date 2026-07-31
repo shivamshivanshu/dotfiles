@@ -74,6 +74,10 @@ return {
 					if not client then
 						return
 					end
+					-- Pyright remains the source of Python type information and hover text.
+					if client.name == "ruff" then
+						client.server_capabilities.hoverProvider = false
+					end
 
 					local map = function(mode, lhs, rhs, desc)
 						vim.keymap.set(mode, lhs, rhs, { buffer = args.buf, desc = desc })
@@ -138,6 +142,12 @@ return {
 				},
 			})
 
+			vim.lsp.config("ruff", {
+				cmd = { "ruff", "server" },
+				filetypes = { "python" },
+				root_markers = { "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" },
+			})
+
 			vim.lsp.config("gopls", {
 				root_markers = { "go.work", "go.mod", ".git" },
 				settings = {
@@ -190,7 +200,17 @@ return {
 				end,
 			})
 
-			vim.lsp.enable({ "lua_ls", "clangd", "pyright", "cmake", "markdown_oxide", "ltex_plus", "iwe", "gopls" })
+			vim.lsp.enable({
+				"lua_ls",
+				"clangd",
+				"pyright",
+				"ruff",
+				"cmake",
+				"markdown_oxide",
+				"ltex_plus",
+				"iwe",
+				"gopls",
+			})
 		end,
 	},
 }
