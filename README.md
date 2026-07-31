@@ -58,9 +58,15 @@ kill $(lsof -ti :36969) 2>/dev/null; cheatsheet --serve --port 36969 >/dev/null 
 # Only create symlinks (packages already installed)
 ./install_dotfiles.sh link
 
-# Just list what would be installed
+# List every required dependency
 ./install_dotfiles.sh manual
+
+# Verify every command required by this setup is available
+./install_dotfiles.sh check
 ```
+
+`auto` installs WezTerm. Alacritty's configuration is linked too, but its
+binary is deliberately supplied by the operating system rather than this script.
 
 ### Managing symlinks manually
 

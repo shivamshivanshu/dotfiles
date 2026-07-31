@@ -3,13 +3,14 @@ set -euo pipefail
 
 usage() {
   cat <<EOF
-Usage: $0 <manual|auto|link> [package-manager]
+Usage: $0 <manual|auto|link|check> [package-manager]
 
 Modes:
-  manual                  List packages (no install, no symlinks)
-  auto [pkg-manager]      Install packages and symlink via GNU Stow
+  manual                  List the required command/dependency manifest (no changes)
+  auto [pkg-manager]      Install every required dependency and symlink via GNU Stow
                           (pkg-manager auto-detected if omitted)
   link                    Only create symlinks via GNU Stow (skip package install)
+  check                   Verify every required command is available (no changes)
 
 Supported package managers: brew, apt, dnf, pacman, yay
 EOF
@@ -23,7 +24,7 @@ MODE="${1:-}"
 
 PKG_MANAGER=""
 case "$MODE" in
-  manual|link) ;;
+  manual|link|check) ;;
   auto)
     PKG_MANAGER="${1:-}"
     [[ $# -gt 0 ]] && shift
@@ -41,15 +42,21 @@ case "$MODE" in
   *) usage ;;
 esac
 
-DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+[[ $# -eq 0 ]] || { echo "Error: unexpected argument: $1" >&2; usage; }
 
-# "binary:package-name" pairs — colon-delimited because macOS bash 3.2 lacks associative arrays.
-PACKAGES=(
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+export PATH="$HOME/.local/bin:$PATH"
+
+# Required commands and their package names; Bash 3.2 has no associative arrays.
+SYSTEM_PACKAGES=(
+  "curl:curl"
   "nvim:neovim"
   "git:git"
   "tmux:tmux"
   "fzf:fzf"
   "stow:stow"
+  "wezterm:wezterm"
+  "zsh:zsh"
 )
 
 CARGO_PACKAGES=(
@@ -69,9 +76,13 @@ CARGO_PACKAGES=(
   "cargo-install-update:cargo-update"
 )
 
+# Alacritty is provided by the OS; only its config is linked.
 STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts ssh)
-# dnf config is Fedora-only; skip it elsewhere so we don't litter ~/.config
+# Fedora only.
 [[ -f /etc/fedora-release ]] && STOW_PACKAGES+=(dnf)
+
+MIN_NVIM_VERSION="0.12.0"
+MIN_TMUX_VERSION="3.2.0"
 
 detect_pkg_manager() {
   case "$(uname -s)" in
@@ -102,6 +113,33 @@ refresh_pkg_index() {
   esac
 }
 
+version_at_least() {
+  local actual required a_major a_minor a_patch r_major r_minor r_patch
+  actual="$(printf '%s' "$1" | sed -E 's/^[^0-9]*//; s/[^0-9.].*$//')"
+  required="$2"
+  IFS=. read -r a_major a_minor a_patch <<< "$actual"
+  IFS=. read -r r_major r_minor r_patch <<< "$required"
+  a_major="${a_major:-0}"; a_minor="${a_minor:-0}"; a_patch="${a_patch:-0}"
+  r_major="${r_major:-0}"; r_minor="${r_minor:-0}"; r_patch="${r_patch:-0}"
+
+  (( a_major > r_major ||
+    (a_major == r_major && a_minor > r_minor) ||
+    (a_major == r_major && a_minor == r_minor && a_patch >= r_patch) ))
+}
+
+nvim_version() { NVIM_LOG_FILE=/dev/null nvim --version | sed -n '1s/.*v\([^ ]*\).*/\1/p'; }
+tmux_version() { tmux -V | sed -E 's/^[^0-9]*//'; }
+
+tool_is_current() {
+  local bin="$1"
+  command -v "$bin" &>/dev/null || return 1
+  case "$bin" in
+    nvim) version_at_least "$(nvim_version)" "$MIN_NVIM_VERSION" ;;
+    tmux) version_at_least "$(tmux_version)" "$MIN_TMUX_VERSION" ;;
+    *) true ;;
+  esac
+}
+
 install_package() {
   local pm="$1" pkg="$2"
   case "$pm" in
@@ -113,21 +151,48 @@ install_package() {
   esac
 }
 
-install_packages() {
-  echo "Mode: $MODE"
-  if [[ "$MODE" == auto ]]; then
-    echo "Package manager: $PKG_MANAGER"
-    refresh_pkg_index "$PKG_MANAGER"
+install_or_upgrade_package() {
+  local pkg="$1"
+  if [[ "$PKG_MANAGER" == brew ]] && brew list --versions "$pkg" &>/dev/null; then
+    brew upgrade "$pkg"
+  else
+    install_package "$PKG_MANAGER" "$pkg"
   fi
-  for entry in "${PACKAGES[@]}"; do
+}
+
+list_requirements() {
+  echo "Required system packages:"
+  for entry in "${SYSTEM_PACKAGES[@]}"; do
+    local bin="${entry%%:*}"
+    local pkg="${entry#*:}"
+    echo "  $pkg ($bin)"
+  done
+
+  echo "Required Cargo packages (installed to ~/.local):"
+  for entry in "${CARGO_PACKAGES[@]}"; do
+    local bin="${entry%%:*}"
+    local crate="${entry#*:}"
+    echo "  $crate ($bin)"
+  done
+
+  echo "Alacritty: config is linked, binary is provided by the operating system."
+}
+
+install_system_packages() {
+  echo "Package manager: $PKG_MANAGER"
+  refresh_pkg_index "$PKG_MANAGER"
+  for entry in "${SYSTEM_PACKAGES[@]}"; do
     local bin="${entry%%:*}"
     local pkg="${entry#*:}"
     echo "→ $bin ($pkg)"
-    if [[ "$MODE" == auto ]]; then
-      if command -v "$bin" &>/dev/null; then
-        echo "   already installed"
-      else
-        install_package "$PKG_MANAGER" "$pkg"
+    if tool_is_current "$bin"; then
+      echo "   already installed"
+    else
+      command -v "$bin" &>/dev/null && echo "   upgrading to the required version..."
+      install_or_upgrade_package "$pkg"
+      if ! tool_is_current "$bin"; then
+        echo "Error: $bin is still missing or below the required version after installing $pkg." >&2
+        exit 1
       fi
     fi
   done
@@ -141,68 +206,81 @@ install_tpm() {
     echo "Installing TPM..."
     git clone https://github.com/tmux-plugins/tpm "$tpm_dir"
   fi
-  if [[ -x "$tpm_dir/bin/install_plugins" ]]; then
-    "$tpm_dir/bin/install_plugins" || echo "TPM plugin install failed (run tmux and press prefix+I)"
-  fi
+  [[ -x "$tpm_dir/bin/install_plugins" ]] || {
+    echo "Error: TPM is incomplete: $tpm_dir/bin/install_plugins is missing." >&2
+    exit 1
+  }
+  "$tpm_dir/bin/install_plugins"
 }
 
 install_zsh_plugins() {
   local plugin_dir="$HOME/.zsh"
+  local repo="zsh-users/zsh-autosuggestions"
+  local target="$plugin_dir/zsh-autosuggestions"
+  [[ -d "$target" ]] && { echo "→ zsh plugin zsh-autosuggestions already cloned"; return; }
   mkdir -p "$plugin_dir"
-  local repos=(
-    "zsh-users/zsh-autosuggestions"
-  )
-  for repo in "${repos[@]}"; do
-    local name="${repo##*/}"
-    if [[ -d "$plugin_dir/$name" ]]; then
-      echo "→ zsh plugin $name already cloned"
-    else
-      echo "→ cloning $repo"
-      git clone --depth 1 "https://github.com/$repo" "$plugin_dir/$name"
-    fi
-  done
+  echo "→ cloning $repo"
+  git clone --depth 1 "https://github.com/$repo" "$target"
 }
 
 ensure_cargo() {
   if command -v cargo &>/dev/null; then
     return
   fi
-  if [[ "$MODE" == auto ]]; then
-    echo "→ cargo not found; bootstrapping rustup..."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --no-modify-path
-    [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-    command -v cargo &>/dev/null || { echo "Error: rustup install failed; cargo still not found" >&2; exit 1; }
-  else
-    echo "Error: cargo not found. CARGO_PACKAGES require cargo (rustup provides it)." >&2
-    echo "       Run '$0 auto' to bootstrap rustup, or install manually:" >&2
-    echo "       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh" >&2
-    exit 1
-  fi
+  echo "→ cargo not found; bootstrapping rustup..."
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --no-modify-path
+  # shellcheck source=/dev/null
+  [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+  command -v cargo &>/dev/null || { echo "Error: rustup install failed; cargo still not found" >&2; exit 1; }
 }
 
 install_cargo_packages() {
-  [[ "$MODE" == auto ]] && ensure_cargo
+  ensure_cargo
   for entry in "${CARGO_PACKAGES[@]}"; do
     local bin="${entry%%:*}"
     local crate="${entry#*:}"
     echo "→ $bin (cargo: $crate)"
-    if [[ "$MODE" == auto ]]; then
-      if command -v "$bin" &>/dev/null; then
-        echo "   already installed"
+    if command -v "$bin" &>/dev/null; then
+      echo "   already installed"
+    else
+      echo "   installing via cargo (may take several minutes)..."
+      if [[ "$crate" == git+* ]]; then
+        cargo install --git "${crate#git+}" --root "$HOME/.local" --locked
       else
-        echo "   installing via cargo (may take several minutes)..."
-        if [[ "$crate" == git+* ]]; then
-          cargo install --git "${crate#git+}" --root "$HOME/.local" --locked
-        else
-          cargo install "$crate" --root "$HOME/.local" --locked
-        fi
+        cargo install "$crate" --root "$HOME/.local" --locked
       fi
     fi
   done
 }
 
-# A real (non-symlink) file at the stow target would abort `stow`: drop it when it
-# matches the tracked copy, else move it to <file>.pre-stow so the tracked one links.
+check_requirements() {
+  local missing=0
+  local entry bin
+
+  echo "Checking required commands:"
+  for entry in "${SYSTEM_PACKAGES[@]}" "${CARGO_PACKAGES[@]}"; do
+    bin="${entry%%:*}"
+    if tool_is_current "$bin"; then
+      echo "✓ $bin"
+    elif command -v "$bin" &>/dev/null; then
+      case "$bin" in
+        nvim) echo "✗ nvim $(nvim_version) is too old (need >= $MIN_NVIM_VERSION)" >&2 ;;
+        tmux) echo "✗ tmux $(tmux_version) is too old (need >= $MIN_TMUX_VERSION)" >&2 ;;
+      esac
+      missing=1
+    else
+      echo "✗ $bin is missing" >&2
+      missing=1
+    fi
+  done
+
+  if (( missing )); then
+    echo "Run '$0 auto' to install missing dependencies." >&2
+    return 1
+  fi
+}
+
+# Preserve a divergent real file; remove one already identical to the tracked file.
 preserve_pre_stow() {
   local live="$1" tracked="$2"
   [[ -f "$live" && ! -L "$live" ]] || return 0
@@ -214,15 +292,14 @@ preserve_pre_stow() {
   fi
 }
 
-# ~/.ssh must stay a real dir (keys, known_hosts), never a folded symlink into the repo.
+# Keep ~/.ssh real for keys and known_hosts.
 prepare_ssh() {
   mkdir -p "$HOME/.ssh/sockets"
   chmod 700 "$HOME/.ssh" "$HOME/.ssh/sockets"
   preserve_pre_stow "$HOME/.ssh/config" "$DOTFILES_DIR/ssh/.ssh/config"
 }
 
-# Claude Code writes a real ~/.claude/settings.json at runtime that shadows the tracked
-# one; clear a dangling symlink, then drop/preserve any real file so the tracked links.
+# Claude can replace this symlink with a real settings file.
 prepare_claude() {
   local live="$HOME/.claude/settings.json"
   [[ -L "$live" && ! -e "$live" ]] && rm "$live"
@@ -240,30 +317,35 @@ stow_packages() {
   for pkg in "${STOW_PACKAGES[@]}"; do
     echo "→ stow $pkg"
     local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
-    # Never fold ~/.claude or ~/.ssh: both hold runtime state / secrets that a
-    # folded dir symlink would land inside the repo
+    # Keep runtime state and secrets outside the repo.
     [[ "$pkg" == claude || "$pkg" == ssh ]] && flags+=(--no-folding)
     stow "${flags[@]}" "$pkg"
   done
 }
 
-# === Main ===
 if [[ "$MODE" == auto && -z "$PKG_MANAGER" ]]; then
   PKG_MANAGER="$(detect_pkg_manager)"
 fi
 
-if [[ "$MODE" != "link" ]]; then
-  install_packages
-  install_cargo_packages
-fi
-
-if [[ "$MODE" != "manual" ]]; then
-  stow_packages
-fi
-
-if [[ "$MODE" == "auto" ]]; then
-  install_tpm
-  install_zsh_plugins
-fi
-
-echo "Dotfiles setup complete!"
+case "$MODE" in
+  manual)
+    list_requirements
+    ;;
+  auto)
+    install_system_packages
+    install_cargo_packages
+    stow_packages
+    install_tpm
+    install_zsh_plugins
+    check_requirements
+    echo "Dotfiles setup complete!"
+    ;;
+  link)
+    stow_packages
+    echo "Dotfiles linked!"
+    ;;
+  check)
+    check_requirements
+    echo "All required commands are available."
+    ;;
+esac
