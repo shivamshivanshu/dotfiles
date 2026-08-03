@@ -15,6 +15,7 @@ wezterm/.config/wezterm/...      → ~/.config/wezterm/...
 tmux/.tmux.conf                  → ~/.tmux.conf
 git/.gitconfig                   → ~/.gitconfig
 dnf/.config/dnf/dnf.conf         → ~/.config/dnf/dnf.conf  (Fedora only)
+aerospace/.config/aerospace/     → ~/.config/aerospace/  (macOS only, i3-style tiling WM)
 bash/.bashrc.user                → ~/.bashrc.user
 bash/.bashrc.d/                  → ~/.bashrc.d/
 zsh/.zshrc.user                  → ~/.zshrc.user

@@ -8,7 +8,7 @@ local function nav(key, dir)
 	}
 end
 
--- <A-hjkl> belongs to mini.move, so resizing lives on Alt+arrows
+-- AeroSpace owns <A-hjkl> on macOS, so resizing lives on Alt+arrows
 local function resize(key, dir)
 	return {
 		key,

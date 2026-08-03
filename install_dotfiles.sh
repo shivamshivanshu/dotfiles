@@ -50,9 +50,14 @@ esac
 	usage
 }
 
+##### Manifest #####
+
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
+
+MIN_NVIM_VERSION="0.12.0"
+MIN_TMUX_VERSION="3.2.0"
 
 # Required commands and their package names; Bash 3.2 has no associative arrays.
 SYSTEM_PACKAGES=(
@@ -90,36 +95,42 @@ GO_PACKAGES=(
 	"shfmt:mvdan.cc/sh/v3/cmd/shfmt@latest"
 )
 
-# Each package is tagged with the platform it applies to: all, linux, darwin or fedora.
 # Alacritty is provided by the OS; only its config is linked.
-STOW_PACKAGES=(
-	"nvim:all"
-	"tmux:all"
-	"git:all"
-	"alacritty:all"
-	"wezterm:all"
-	"bash:all"
-	"zsh:all"
-	"claude:all"
-	"shell:all"
-	"scripts:all"
-	"ssh:all"
-	"dnf:fedora"
-)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts ssh)
 
-MIN_NVIM_VERSION="0.12.0"
-MIN_TMUX_VERSION="3.2.0"
-
-platform_matches() {
-	case "$1" in
-	all) ;;
-	linux) [[ "$OS" == Linux ]] ;;
-	darwin) [[ "$OS" == Darwin ]] ;;
-	fedora) [[ -f /etc/fedora-release ]] ;;
-	*)
-		echo "Error: unknown platform tag: $1" >&2
-		exit 1
+# Platform-specific requirements. Registering them up front (rather than while
+# installing) keeps 'manual' and 'check' honest about what this host needs.
+register_platform_packages() {
+	case "$OS" in
+	Darwin)
+		SYSTEM_PACKAGES+=("aerospace:nikitabobko/tap/aerospace")
+		STOW_PACKAGES+=(aerospace)
 		;;
+	Linux)
+		if [[ -f /etc/fedora-release ]]; then
+			STOW_PACKAGES+=(dnf)
+		fi
+		;;
+	esac
+}
+
+register_platform_packages
+
+##### Platform #####
+
+# Extra package sources the manifest depends on; run before installing anything.
+pre_install_setup_mac() {
+	brew tap nikitabobko/tap
+}
+
+pre_install_setup_linux() {
+	: # no extra package sources needed yet
+}
+
+pre_install_setup() {
+	case "$OS" in
+	Darwin) pre_install_setup_mac ;;
+	Linux) pre_install_setup_linux ;;
 	esac
 }
 
@@ -158,6 +169,8 @@ refresh_pkg_index() {
 	esac
 }
 
+##### Version checks #####
+
 version_at_least() {
 	local actual required a_major a_minor a_patch r_major r_minor r_patch
 	actual="$(printf '%s' "$1" | sed -E 's/^[^0-9]*//; s/[^0-9.].*$//')"
@@ -189,6 +202,8 @@ tool_is_current() {
 	esac
 }
 
+##### System packages #####
+
 install_package() {
 	local pm="$1" pkg="$2"
 	case "$pm" in
@@ -201,8 +216,8 @@ install_package() {
 }
 
 system_package_name() {
-	local bin="$1" pkg="$2"
-	case "$bin:$PKG_MANAGER" in
+	local pm="$1" bin="$2" pkg="$3"
+	case "$bin:$pm" in
 	go:apt) echo "golang-go" ;;
 	go:dnf) echo "golang" ;;
 	*) echo "$pkg" ;;
@@ -210,35 +225,29 @@ system_package_name() {
 }
 
 install_or_upgrade_package() {
-	local pkg="$1"
-	if [[ "$PKG_MANAGER" == brew ]] && brew list --versions "$pkg" &>/dev/null; then
+	local pm="$1" pkg="$2"
+	if [[ "$pm" == brew ]] && brew list --versions "$pkg" &>/dev/null; then
 		brew upgrade "$pkg"
 	else
-		install_package "$PKG_MANAGER" "$pkg"
+		install_package "$pm" "$pkg"
 	fi
 }
 
 list_requirements() {
+	local entry
 	echo "Required system packages:"
 	for entry in "${SYSTEM_PACKAGES[@]}"; do
-		local bin="${entry%%:*}"
-		local pkg="${entry#*:}"
-		pkg="$(system_package_name "$bin" "$pkg")"
-		echo "  $pkg ($bin)"
+		echo "  $(system_package_name "$PKG_MANAGER" "${entry%%:*}" "${entry#*:}") (${entry%%:*})"
 	done
 
 	echo "Required Cargo packages (installed to ~/.local):"
 	for entry in "${CARGO_PACKAGES[@]}"; do
-		local bin="${entry%%:*}"
-		local crate="${entry#*:}"
-		echo "  $crate ($bin)"
+		echo "  ${entry#*:} (${entry%%:*})"
 	done
 
 	echo "Required Go packages (installed to ~/.local):"
 	for entry in "${GO_PACKAGES[@]}"; do
-		local bin="${entry%%:*}"
-		local module="${entry#*:}"
-		echo "  $module ($bin)"
+		echo "  ${entry#*:} (${entry%%:*})"
 	done
 
 	echo "Alacritty: config is linked, binary is provided by the operating system."
@@ -246,24 +255,79 @@ list_requirements() {
 
 install_system_packages() {
 	echo "Package manager: $PKG_MANAGER"
+	pre_install_setup
 	refresh_pkg_index "$PKG_MANAGER"
+	local entry bin pkg
 	for entry in "${SYSTEM_PACKAGES[@]}"; do
-		local bin="${entry%%:*}"
-		local pkg="${entry#*:}"
-		pkg="$(system_package_name "$bin" "$pkg")"
+		bin="${entry%%:*}"
+		pkg="$(system_package_name "$PKG_MANAGER" "$bin" "${entry#*:}")"
 		echo "→ $bin ($pkg)"
 		if tool_is_current "$bin"; then
 			echo "   already installed"
-		else
-			command -v "$bin" &>/dev/null && echo "   upgrading to the required version..."
-			install_or_upgrade_package "$pkg"
-			if ! tool_is_current "$bin"; then
-				echo "Error: $bin is still missing or below the required version after installing $pkg." >&2
-				exit 1
-			fi
+			continue
+		fi
+		command -v "$bin" &>/dev/null && echo "   upgrading to the required version..."
+		install_or_upgrade_package "$PKG_MANAGER" "$pkg"
+		if ! tool_is_current "$bin"; then
+			echo "Error: $bin is still missing or below the required version after installing $pkg." >&2
+			exit 1
 		fi
 	done
 }
+
+##### Local packages (~/.local) #####
+
+# Installs one entry per missing binary; "$installer <spec>" does the actual work.
+install_missing() {
+	local kind="$1" installer="$2"
+	shift 2
+	local entry bin
+	for entry in "$@"; do
+		bin="${entry%%:*}"
+		echo "→ $bin ($kind: ${entry#*:})"
+		if command -v "$bin" &>/dev/null; then
+			echo "   already installed"
+		else
+			"$installer" "${entry#*:}"
+		fi
+	done
+}
+
+ensure_cargo() {
+	if command -v cargo &>/dev/null; then
+		return
+	fi
+	echo "→ cargo not found; bootstrapping rustup..."
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --no-modify-path
+	# shellcheck source=/dev/null
+	[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+	command -v cargo &>/dev/null || {
+		echo "Error: rustup install failed; cargo still not found" >&2
+		exit 1
+	}
+}
+
+cargo_install() {
+	local crate="$1"
+	echo "   installing via cargo (may take several minutes)..."
+	if [[ "$crate" == git+* ]]; then
+		cargo install --git "${crate#git+}" --root "$HOME/.local" --locked
+	else
+		cargo install "$crate" --root "$HOME/.local" --locked
+	fi
+}
+
+go_install() {
+	GOBIN="$HOME/.local/bin" go install "$1"
+}
+
+install_local_packages() {
+	ensure_cargo
+	install_missing cargo cargo_install "${CARGO_PACKAGES[@]}"
+	install_missing go go_install "${GO_PACKAGES[@]}"
+}
+
+##### Plugins and git hooks #####
 
 install_tpm() {
 	local tpm_dir="$HOME/.tmux/plugins/tpm"
@@ -297,51 +361,12 @@ install_git_hooks() {
 	git -C "$DOTFILES_DIR" config core.hooksPath .githooks
 }
 
-ensure_cargo() {
-	if command -v cargo &>/dev/null; then
-		return
-	fi
-	echo "→ cargo not found; bootstrapping rustup..."
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --no-modify-path
-	# shellcheck source=/dev/null
-	[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-	command -v cargo &>/dev/null || {
-		echo "Error: rustup install failed; cargo still not found" >&2
-		exit 1
-	}
+install_plugins() {
+	install_tpm
+	install_zsh_plugins
 }
 
-install_cargo_packages() {
-	ensure_cargo
-	for entry in "${CARGO_PACKAGES[@]}"; do
-		local bin="${entry%%:*}"
-		local crate="${entry#*:}"
-		echo "→ $bin (cargo: $crate)"
-		if command -v "$bin" &>/dev/null; then
-			echo "   already installed"
-		else
-			echo "   installing via cargo (may take several minutes)..."
-			if [[ "$crate" == git+* ]]; then
-				cargo install --git "${crate#git+}" --root "$HOME/.local" --locked
-			else
-				cargo install "$crate" --root "$HOME/.local" --locked
-			fi
-		fi
-	done
-}
-
-install_go_packages() {
-	for entry in "${GO_PACKAGES[@]}"; do
-		local bin="${entry%%:*}"
-		local module="${entry#*:}"
-		echo "→ $bin (go: $module)"
-		if command -v "$bin" &>/dev/null; then
-			echo "   already installed"
-		else
-			GOBIN="$HOME/.local/bin" go install "$module"
-		fi
-	done
-}
+##### Verification #####
 
 check_requirements() {
 	local missing=0
@@ -369,6 +394,8 @@ check_requirements() {
 		return 1
 	fi
 }
+
+##### Stow #####
 
 # Preserve a divergent real file; remove one already identical to the tracked file.
 preserve_pre_stow() {
@@ -404,13 +431,7 @@ stow_packages() {
 	mkdir -p "$HOME/.config"
 	prepare_claude
 	prepare_ssh
-	for entry in "${STOW_PACKAGES[@]}"; do
-		local pkg="${entry%%:*}"
-		local platform="${entry#*:}"
-		if ! platform_matches "$platform"; then
-			echo "→ skip $pkg ($platform only)"
-			continue
-		fi
+	for pkg in "${STOW_PACKAGES[@]}"; do
 		echo "→ stow $pkg"
 		local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
 		# Keep runtime state and secrets outside the repo.
@@ -418,6 +439,8 @@ stow_packages() {
 		stow "${flags[@]}" "$pkg"
 	done
 }
+
+##### Dispatch #####
 
 if [[ "$MODE" == auto && -z "$PKG_MANAGER" ]]; then
 	PKG_MANAGER="$(detect_pkg_manager)"
@@ -429,12 +452,10 @@ manual)
 	;;
 auto)
 	install_system_packages
-	install_cargo_packages
-	install_go_packages
+	install_local_packages
 	stow_packages
 	install_git_hooks
-	install_tpm
-	install_zsh_plugins
+	install_plugins
 	check_requirements
 	echo "Dotfiles setup complete!"
 	;;
