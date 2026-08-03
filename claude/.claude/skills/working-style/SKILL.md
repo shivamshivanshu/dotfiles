@@ -47,6 +47,7 @@ Standing preferences for how the user wants Claude to work. Read at task start; 
 - Reuse first (DRY): search for an existing utility before writing a new one.
 - Match the naming and style conventions of the surrounding files; when editing an existing file, keep its conventions even where you would choose differently.
 - Clean up as you go; remove redundant or unused parameters.
+- When the repo pins its formatters/linters (`.pre-commit-config.yaml`, a lint config with a pinned version), run them through that pin (`pre-commit run --files ...`) rather than a globally-installed one; a newer version reformats untouched files and pollutes the diff. With no repo pin, a global tool is fine.
 - Shell code must run on both macOS (BSD userland) and Linux — `bash -n`/`zsh -n` will not catch divergence. Known traps: `sed -i ''` (BSD) vs `sed -i` (GNU), `stat -f` vs `stat -c`, no `date -d`, `readlink -f`, or `grep -P` on macOS. Prefer portable forms (`perl -pi -e`, `python3`, `$(cd dir && pwd)`) or branch on `uname`.
 
 ## Git and safety
