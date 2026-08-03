@@ -51,6 +51,7 @@ esac
 }
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 # Required commands and their package names; Bash 3.2 has no associative arrays.
@@ -89,16 +90,41 @@ GO_PACKAGES=(
 	"shfmt:mvdan.cc/sh/v3/cmd/shfmt@latest"
 )
 
+# Each package is tagged with the platform it applies to: all, linux, darwin or fedora.
 # Alacritty is provided by the OS; only its config is linked.
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts ssh)
-# Fedora only.
-[[ -f /etc/fedora-release ]] && STOW_PACKAGES+=(dnf)
+STOW_PACKAGES=(
+	"nvim:all"
+	"tmux:all"
+	"git:all"
+	"alacritty:all"
+	"wezterm:all"
+	"bash:all"
+	"zsh:all"
+	"claude:all"
+	"shell:all"
+	"scripts:all"
+	"ssh:all"
+	"dnf:fedora"
+)
 
 MIN_NVIM_VERSION="0.12.0"
 MIN_TMUX_VERSION="3.2.0"
 
+platform_matches() {
+	case "$1" in
+	all) ;;
+	linux) [[ "$OS" == Linux ]] ;;
+	darwin) [[ "$OS" == Darwin ]] ;;
+	fedora) [[ -f /etc/fedora-release ]] ;;
+	*)
+		echo "Error: unknown platform tag: $1" >&2
+		exit 1
+		;;
+	esac
+}
+
 detect_pkg_manager() {
-	case "$(uname -s)" in
+	case "$OS" in
 	Darwin)
 		command -v brew &>/dev/null && {
 			echo "brew"
@@ -378,7 +404,13 @@ stow_packages() {
 	mkdir -p "$HOME/.config"
 	prepare_claude
 	prepare_ssh
-	for pkg in "${STOW_PACKAGES[@]}"; do
+	for entry in "${STOW_PACKAGES[@]}"; do
+		local pkg="${entry%%:*}"
+		local platform="${entry#*:}"
+		if ! platform_matches "$platform"; then
+			echo "→ skip $pkg ($platform only)"
+			continue
+		fi
 		echo "→ stow $pkg"
 		local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
 		# Keep runtime state and secrets outside the repo.

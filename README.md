@@ -2,7 +2,9 @@
 
 Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level
 directory is a Stow package whose internal tree mirrors where files land in
-`$HOME`.
+`$HOME`. `STOW_PACKAGES` in `install_dotfiles.sh` tags every package with the
+platform it applies to (`all`, `linux`, `darwin` or `fedora`); packages that do
+not match the host are skipped when linking.
 
 ### Layout
 
