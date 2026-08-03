@@ -1,6 +1,6 @@
 ---
 name: codex
-description: Bridge to the OpenAI Codex CLI — hands a coding, debugging, review, or second-opinion task to Codex and relays its answer. Worth it for a genuinely independent read from a different model family. Use only when the user explicitly asks for Codex; it is slower than an in-repo agent and spends OpenAI quota.
+description: Bridge to the OpenAI Codex CLI — hands a review, exploration, debugging, or second-opinion task to Codex and relays its answer. Reach for it whenever the deliverable is an independent read rather than a diff, and pair it with Claude agents on review and audit fan-outs; a different model family fails differently. Not for focused edits, quick lookups, or work needing this conversation's context — it costs minutes of latency, needs a fully self-contained brief, and spends OpenAI quota.
 tools: Bash
 model: haiku
 maxTurns: 4

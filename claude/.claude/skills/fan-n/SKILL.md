@@ -28,4 +28,5 @@ Review and simplify passes go a step further: the prompts differ in what they *e
 - Most agents get full context, each prompted to emphasise a different concern.
 - Spawn a few with no context at all — inferring purely from the diff and commit messages; blind eyes catch what briefed ones assume away.
 - Give every agent MCP/tool access.
+- Include at least one `codex` leg — a different model family de-correlates errors in a way paraphrasing cannot. Its brief must be self-contained (it sees neither the conversation nor these skills), and the fan-in treats a codex-only finding as an outlier to judge, not to drop.
 - Fan in through a strongest-tier fan-in agent that dedups, merges findings, and summarises; the main thread only organises the result and decides.
