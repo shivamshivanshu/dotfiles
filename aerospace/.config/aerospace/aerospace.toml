@@ -1,6 +1,9 @@
 # i3-compatible keymap; alt is $mod (i3's Mod1). See CLAUDE.md for the Alt reservation
 # and the deliberate divergences from i3.
 
+config-version = 2
+
+# No persistent-workspaces: like i3, a workspace exists only while it holds windows.
 start-at-login = true
 
 default-root-container-layout = 'tiles'

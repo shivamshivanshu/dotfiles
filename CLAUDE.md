@@ -13,6 +13,10 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 - Shell: `bash -n <file>` and `zsh -n <file>`; source in a subshell to confirm no errors.
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
 - tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t`.
+- aerospace: `aerospace reload-config --dry-run` validates command spellings and unknown
+  keys, but only with AeroSpace.app running — there is no offline config check, so a
+  `tomllib`/`--dry-run` pair is the most you can do. `aerospace config --get <key>` only
+  introspects the keys listed by `--major-keys` (`.` and the mode tables), not `gaps` etc.
 - ssh: capture `ssh -G <host>` for every configured host before and after; the diff must show
   only the intended keyword deltas. `~/.ssh` must stay a real dir with keys and known_hosts
   untouched — only `config` is a symlink into the repo.
