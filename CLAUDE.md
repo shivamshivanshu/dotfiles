@@ -64,6 +64,11 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   would collide with that resize binding), `alt-w` is accordion because AeroSpace has no
   tabbed layout, no `split h`/`split v` (no such command — `join-with` is the inverse),
   and no `$mod+d` launcher (cmd-space covers it).
+- An unpinned aerospace workspace attaches to the *main* monitor, not the focused one, so
+  `workspace-to-monitor-force-assignment` is what keeps windows off the laptop screen.
+  Use case-insensitive name substrings with `'main'` as a second pattern for the undocked
+  fallback — never the numeric monitor patterns, which are left-to-right positions and
+  renumber on undock.
 - smart-splits must stay `lazy = false`: it sets tmux's `@pane-is-vim` at
   startup, before the first nav key arrives. Never lazy/keys-gate it for
   startup perf — that breaks C-h/j/k/l routing until the plugin loads.
