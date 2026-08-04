@@ -1,15 +1,16 @@
-# i3-compatible keymap; alt is $mod (i3's Mod1). See CLAUDE.md for the Alt reservation
-# and the deliberate divergences from i3.
+### ──────────────── General ────────────────
+# i3-compatible keymap; alt is $mod (i3's Mod1). Alt reservation and the deliberate
+# divergences from i3 are documented in CLAUDE.md.
 
-config-version = 2
+config-version = 2 # v2 drops inferred persistent-workspaces: a workspace lives only while occupied, like i3
 
-# No persistent-workspaces: like i3, a workspace exists only while it holds windows.
 start-at-login = true
 
 default-root-container-layout = 'tiles'
-default-root-container-orientation = 'auto'
+default-root-container-orientation = 'auto' # vertical monitors get a vertical split
 accordion-padding = 30
 
+### ──────────────── Gaps ────────────────
 [gaps]
 inner.horizontal = 6
 inner.vertical = 6
@@ -18,20 +19,24 @@ outer.right = 6
 outer.top = 6
 outer.bottom = 6
 
+### ──────────────── Workspaces per monitor ────────────────
+# Numbers increase left to right across the physical layout. Never use the numeric
+# monitor patterns here: they are left-to-right positions and renumber on undock.
 [workspace-to-monitor-force-assignment]
-1 = ['built-in', 'main']
+1 = ['built-in', 'main'] # laptop; 'main' is the undocked fallback for every entry
 2 = ['built-in', 'main']
-3 = ['p32p', 'main']
+3 = ['p32p', 'main'] # vertical panel
 4 = ['p32p', 'main']
-5 = ['dell', 'main']
+5 = ['dell', 'main'] # wide panel
 6 = ['dell', 'main']
 7 = ['dell', 'main']
 8 = ['dell', 'main']
 9 = ['dell', 'main']
 10 = ['dell', 'main']
 
+### ──────────────── Focus & move ($mod+hjkl) ────────────────
 [mode.main.binding]
-alt-h = 'focus --boundaries all-monitors-outer-frame left'
+alt-h = 'focus --boundaries all-monitors-outer-frame left' # boundaries: focus crosses monitors, not just the workspace
 alt-j = 'focus --boundaries all-monitors-outer-frame down'
 alt-k = 'focus --boundaries all-monitors-outer-frame up'
 alt-l = 'focus --boundaries all-monitors-outer-frame right'
@@ -41,6 +46,7 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
+### ──────────────── Workspaces ────────────────
 alt-1 = 'workspace 1'
 alt-2 = 'workspace 2'
 alt-3 = 'workspace 3'
@@ -64,24 +70,25 @@ alt-shift-9 = 'move-node-to-workspace 9'
 alt-shift-0 = 'move-node-to-workspace 10'
 
 alt-tab = 'workspace-back-and-forth'
-# i3's $mod+shift+< and $mod+shift+> (move workspace to output left/right)
-alt-shift-comma = 'move-workspace-to-monitor --wrap-around prev'
-alt-shift-period = 'move-workspace-to-monitor --wrap-around next'
 
+### ──────────────── Monitors ────────────────
+alt-shift-comma = 'move-workspace-to-monitor --wrap-around prev'  # i3's $mod+shift+< (workspace to output left)
+alt-shift-period = 'move-workspace-to-monitor --wrap-around next' # i3's $mod+shift+> (workspace to output right)
+
+### ──────────────── Layout ────────────────
 alt-f = 'fullscreen'
-# toggle the container's split orientation, i3's $mod+e
-alt-e = 'layout tiles horizontal vertical'
-# accordion stands in for i3's tabbed layout ($mod+w)
-alt-w = 'layout accordion horizontal vertical'
+alt-e = 'layout tiles horizontal vertical'     # i3's $mod+e: toggle split orientation
+alt-w = 'layout accordion horizontal vertical' # i3's $mod+w: accordion stands in for tabbed
 alt-shift-space = 'layout floating tiling'
 
+### ──────────────── Windows & config ────────────────
 alt-enter = 'exec-and-forget open -na WezTerm'
 alt-shift-q = 'close'
 alt-shift-c = 'reload-config'
 
+### ──────────────── Modes ────────────────
 alt-r = 'mode resize'
-# housekeeping mode: reload, flatten tree, join containers
-alt-shift-semicolon = 'mode service'
+alt-shift-semicolon = 'mode service' # housekeeping: reload, flatten tree, join containers
 
 [mode.resize.binding]
 h = 'resize width -50'
