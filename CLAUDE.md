@@ -62,8 +62,9 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   or wezterm. Alt+arrows is the one exception, reserved for smart-splits resize.
   The gaps versus i3 are deliberate, not oversights: no alt-arrow focus aliases (they
   would collide with that resize binding), `alt-w` is accordion because AeroSpace has no
-  tabbed layout, no `split h`/`split v` (no such command — `join-with` is the inverse),
-  and no `$mod+d` launcher (cmd-space covers it).
+  tabbed layout, no `split h`/`split v` (the `split` command exists but is i3-compat only
+  and `enable-normalization-flatten-containers` undoes it — use `join-with`), and no
+  `$mod+d` launcher (cmd-space covers it).
 - An unpinned aerospace workspace attaches to the *main* monitor, not the focused one, so
   `workspace-to-monitor-force-assignment` is what keeps windows off the laptop screen.
   Use case-insensitive name substrings with `'main'` as a second pattern for the undocked
