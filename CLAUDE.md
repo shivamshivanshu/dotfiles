@@ -12,7 +12,19 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 ## Verify a change before claiming done
 - Shell: `bash -n <file>` and `zsh -n <file>`; source in a subshell to confirm no errors.
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
-- tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t`.
+- tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t` only proves the
+  file parses. Unknown options do *not* abort parsing (later lines still apply), so a typo or a
+  too-new option silently no-ops. Check resolved values on a scratch socket
+  (`tmux -L t -f tmux/.tmux.conf new-session -d`) and diff `show -g`, `-gw` and `-s` before and
+  after. A value set in the file is not the final value: TPM runs at the *bottom*, so a plugin's
+  unconditional `set` beats anything set earlier (this is how tmux-sensible silently held
+  `status-keys` at emacs for months).
+- TPM builds its plugin list by `cat`ing `~/.tmux.conf` off disk, not by reading tmux options, so
+  `tmux -f /tmp/other.conf` still loads whatever the *stowed* config lists. Isolating a plugin by
+  editing a copy does not work — edit the real file (it is symlinked, so the change is live).
+- Terminal capabilities (`Ms`, `terminal-features`) are built when a client **attaches**.
+  `source-file`/`prefix r` does not rebuild them, so nothing clipboard-related is verified until
+  the client detaches and re-attaches — on the remote host too, not just locally.
 - aerospace: `aerospace reload-config --dry-run` validates command spellings and unknown
   keys, but only with AeroSpace.app running — there is no offline config check, so a
   `tomllib`/`--dry-run` pair is the most you can do. `aerospace config --get <key>` only
@@ -47,6 +59,31 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   a reordered `root_markers` gets mangled; control roots with a `root_dir` function.
 - Unmatched `root_markers` still attach the server in single-file mode; the only
   reliable scope gate is a `root_dir` callback that skips `on_dir`.
+
+## tmux clipboard (OSC 52) — do not "simplify" this
+- The `Ms` override in `tmux.conf` looks redundant with tmux's builtin `clipboard`
+  terminal-feature. It is not, and both halves of it are load-bearing:
+  - It must reference **both** `%p1` and `%p2`. tmux 3.7 started passing the selection through
+    `Ms`'s first parameter, and a capability that ignores `%p1` makes tmux emit *nothing at all*
+    — no error, no escape, for every TERM. The old `\E]52;c;%p2%s\007` was dead for this reason.
+  - The selection field must stay **non-empty**. Dropping the override and using the builtin
+    feature emits `\e]52;;<b64>`, which mosh-client 1.4.0 silently drops on the floor. The
+    conditional (`%?%p1%l%t%p1%s%ec%;`) keeps it at `c` when tmux passes no flags and forwards an
+    app's own flags untouched, so a nested `\e]52;c;` does not become `\e]52;cc;` (mosh drops that
+    too).
+- Direction matters. Copy (remote → Mac) goes over OSC 52 and is what the above fixes. Paste
+  (Mac → remote) is ⌘V, which WezTerm injects as bracketed-paste *keystrokes* — a different path
+  entirely, and it has always worked. Do not "fix" paste.
+- WezTerm accepts OSC 52 writes but never answers OSC 52 **reads**, and has no option to enable
+  them. So leave `get-clipboard` at its 3.7b default of `buffer`; `request`/`both` returns nothing
+  and is a strict regression. A remote app cannot query the Mac clipboard from here.
+- Capturing what tmux actually emits needs a pty with a real winsize. macOS `script` gives 0x0,
+  which makes mosh-client die with `Error: vector` and yields empty captures that look like
+  "no escape emitted". Use a `python3` `openpty` + `TIOCSWINSZ` harness. mosh can be exercised
+  locally without sshd: `mosh-server new -i 127.0.0.1 -- <cmd>`, then `MOSH_KEY=... mosh-client`.
+- Floating panes (3.7, `prefix *`) break `@continuum-restore`: they add a `<...>` segment to
+  `window_layout` that `select-layout` then rejects as invalid, so the whole window's layout fails
+  to restore. Leave them alone until upstream round-trips the layout.
 
 ## Conventions
 - Shared shell logic lives in `shell/.config/shell/` and is sourced by both bash
