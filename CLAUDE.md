@@ -81,9 +81,31 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   which makes mosh-client die with `Error: vector` and yields empty captures that look like
   "no escape emitted". Use a `python3` `openpty` + `TIOCSWINSZ` harness. mosh can be exercised
   locally without sshd: `mosh-server new -i 127.0.0.1 -- <cmd>`, then `MOSH_KEY=... mosh-client`.
-- Floating panes (3.7, `prefix *`) break `@continuum-restore`: they add a `<...>` segment to
-  `window_layout` that `select-layout` then rejects as invalid, so the whole window's layout fails
-  to restore. Leave them alone until upstream round-trips the layout.
+## tmux floating panes — deliberately unused, and why
+`prefix *` (`new-pane`, 3.7) is a tmux default binding we leave unused. It is not an oversight;
+two things break, both measured. If a future session wants to enable it, re-check both first —
+they are upstream bugs/gaps, so the fix is a tmux upgrade, not a config change here.
+- **Breaks `@continuum-restore`.** A floating pane adds a `<...>` segment to `window_layout`, and
+  `select-layout` rejects the very string tmux just emitted (`invalid layout: ...<40x6,4,2,1>`).
+  tmux-resurrect saves `window_layout` and restores via `select-layout`, so the *whole* window's
+  layout fails to restore, not just the float. Re-test with: create a float, save
+  `#{window_layout}`, kill the float, feed the string back to `select-layout`. Enable only once
+  that round-trips.
+- **Outside our vi navigation model.** `select-pane -L/-D/-U/-R` (what `C-h/j/k/l` run) walks the
+  tiled layout geometry, which a float is not part of. Measured: directional keys never reach the
+  float from a tiled pane, and from inside the float all four are no-ops in every direction — so
+  it is a dead end both ways, whether it runs a shell (smart-splits' `@pane-is-vim` guard is
+  false, `select-pane` no-ops) or nvim (guard true, nvim asks tmux, `select-pane` no-ops). Escape
+  hatches that do work: `prefix o` (`select-pane -t :.+`, cycles through the float) and
+  `prefix ;` (`last-pane`). Enabling the feature would mean binding one of those, or a
+  `#{pane_floating_flag}`-aware nav binding, so focus is never trapped.
+- Not blockers, just current limits: mouse-only move/resize, no `resize-pane`, no swap, no
+  float↔tile conversion.
+- What *does* work inside a float: copy mode with `mode-keys vi`, vi motions, selection and copy —
+  verified. The problem is only getting focus in and out.
+- `prefix Enter` (`display-popup -E`) already covers the throwaway-scratch-shell case and has none
+  of this: it is a client overlay, not a pane (never in `list-panes`, `#{window_panes}` unchanged),
+  so resurrect never sees it and navigation never has to reach it.
 
 ## Conventions
 - Shared shell logic lives in `shell/.config/shell/` and is sourced by both bash
