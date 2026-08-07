@@ -82,10 +82,23 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   "no escape emitted". Use a `python3` `openpty` + `TIOCSWINSZ` harness. mosh can be exercised
   locally without sshd: `mosh-server new -i 127.0.0.1 -- <cmd>`, then `MOSH_KEY=... mosh-client`.
 ## tmux copy mode
-- `copy-mode-line-numbers` (3.7) stays **off**. The gutter is drawn in screen columns, so a mouse
-  drag sweeps the line numbers into the copied text. Keyboard selections (`select-line`, rectangle)
-  are content-space and stay clean, which makes this easy to "verify" as safe and ship anyway —
-  if you test it, test a *mouse* drag while the numbers are visible.
+- `copy-mode-line-numbers` is **on** (`hybrid`), and the gutter is display-only — it does not end
+  up in copied text. Verified by injecting real SGR mouse events into a client: the gutter renders
+  as a 4-column prefix (`  3 ALPHA-ONE`), yet a drag from column 1, single-line or multi-line,
+  yields exactly the same buffer as with numbers off. tmux maps mouse columns through the offset.
+- The one gesture that *does* capture the gutter is **shift-drag**. We do not set
+  `bypass_mouse_reporting_modifiers`, so WezTerm's default lets Shift+drag bypass tmux's mouse
+  reporting and make a WezTerm-local, screen-space selection — that grabs the line numbers, along
+  with pane borders and adjacent panes' text if it spans a split. It also goes straight to the Mac
+  clipboard without OSC 52, so it works over ssh regardless of the `Ms` capability. Use a plain
+  drag (tmux copy mode) when you need exact text.
+- The other source of line numbers in copied text is the application drawing its own gutter (nvim
+  `number`/`relativenumber`, `less -N`, `bat`): tmux copy mode copies rendered screen text, so
+  those are real characters in the pane and no tmux setting will strip them.
+- Driving mouse input for a test: write SGR sequences to the client pty
+  (`\e[<0;COL;ROWM` press, `\e[<32;COL;ROWM` motion, `\e[<0;COL;ROWm` release). Beware that these
+  contain `;` — a harness that splits its script on `;` will silently mangle them into no-ops and
+  produce empty buffers that look like "the drag selected nothing".
 
 ## tmux floating panes — deliberately unused, and why
 `prefix *` (`new-pane`, 3.7) is a tmux default binding we leave unused. It is not an oversight;
