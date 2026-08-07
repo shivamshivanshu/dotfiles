@@ -81,6 +81,12 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   which makes mosh-client die with `Error: vector` and yields empty captures that look like
   "no escape emitted". Use a `python3` `openpty` + `TIOCSWINSZ` harness. mosh can be exercised
   locally without sshd: `mosh-server new -i 127.0.0.1 -- <cmd>`, then `MOSH_KEY=... mosh-client`.
+## tmux copy mode
+- `copy-mode-line-numbers` (3.7) stays **off**. The gutter is drawn in screen columns, so a mouse
+  drag sweeps the line numbers into the copied text. Keyboard selections (`select-line`, rectangle)
+  are content-space and stay clean, which makes this easy to "verify" as safe and ship anyway —
+  if you test it, test a *mouse* drag while the numbers are visible.
+
 ## tmux floating panes — deliberately unused, and why
 `prefix *` (`new-pane`, 3.7) is a tmux default binding we leave unused. It is not an oversight;
 two things break, both measured. If a future session wants to enable it, re-check both first —
