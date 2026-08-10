@@ -82,6 +82,10 @@ its only repo tie is `source ~/.zshrc.user`. There is no `/etc/zshenv` or `/etc/
 nothing runs after us.
 - `~/.zsh/` holds the zsh-autosuggestions checkout that `zsh/.zshrc.d/config.zsh` sources — it is
   live, not a stray. Only `~/.oh-my-zsh` was unreferenced, and it is gone.
+- `~/.zcompcache/` also looks like a stray but is live: Homebrew's completion writes it, and
+  nothing here sets `cache-path`, so it stays at the zsh default. The real dump lives at
+  `~/.cache/zsh/zcompdump{,.zwc}` per `.zshrc.user`; a `~/.zcompdump` in `$HOME` would be the
+  stale one. `~/.zsh_sessions/` was Terminal.app's and is gone — it returns if Terminal.app runs.
 
 ## nvim LSP gotchas
 - `vim.lsp.config()` merges list fields index-wise with the upstream default — a reordered
