@@ -1,5 +1,5 @@
 #### Paths
-for d in "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
+for d in "$HOME/.krew/bin" "$HOME/.local/bin" "$HOME/bin" "$HOME/.cargo/bin"; do
 	[[ -d "$d" ]] || continue
 	_p=":$PATH:"
 	while [[ "$_p" == *":$d:"* ]]; do _p="${_p//:$d:/:}"; done

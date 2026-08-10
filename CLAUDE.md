@@ -49,25 +49,39 @@ GNU Stow-managed dotfiles for macOS + Linux. One package per tool; the package t
 ## Shell startup files — who owns what
 zsh order: `/etc/zshenv`, `~/.zshenv`, `/etc/zprofile`, `~/.zprofile`, `~/.zshrc`, `/etc/zlogin`,
 `~/.zlogin`. We own `~/.zshenv`, `~/.zshrc.user`, `~/.zshrc.d/`, `~/.bashrc.user`, `~/.bashrc.d/`.
-- `~/.zshrc`, `~/.zprofile`, `~/.bashrc`, `~/.bash_profile` are DevEnv-managed and **rewritten on
-  every login shell** (verified: their mtimes move after one `zsh -lic`). Editing them is
-  pointless and they can never be stowed — hook in via the `.user` files.
-- `shell/env.sh` is deliberately sourced **twice** on zsh (`.zshenv` + `.zshrc.user`): macOS
-  `/etc/zprofile` runs `path_helper` *after* `.zshenv` and demotes our dirs below `/usr/bin`, and
-  the second pass re-promotes them. Do not "simplify" either call away.
+- `shell/env.sh` is deliberately sourced **twice** on zsh (`.zshenv` + `.zshrc.user`) because
+  something always demotes our dirs after `.zshenv`: `path_helper` from `/etc/zprofile`
+  everywhere, plus `brew shellenv` in `~/.zprofile` on macOS. The second pass re-promotes them.
+  Do not "simplify" either call away.
 - Hence its PATH loop **strips then prepends** — skipping dirs already present can fix absence
   but never ordering. The strip is a `while` loop because one `${p//:d:/:}` pass misses *adjacent*
   duplicates, which DevEnv's init really does create.
 - `~/.zshenv` must stay silent and cheap: it runs for every zsh including non-interactive ones,
   and stray stdout breaks `scp`/`sftp`.
+- Bash gets nothing non-interactively (`bash -c` reads no startup file without `BASH_ENV`), and on
+  a box with no `~/.bash_profile` login bash falls through to `~/.profile` and never reaches
+  `~/.bashrc` → `.bashrc.user`. Both are known and unfixed.
+- Stray `~/*.old` / `*.bak` files mislabel their source (`.zshrc.user.old` held `~/.zshrc`).
+  Always `cmp` against the live file before assuming a backup holds your config.
+
+**DevEnv Linux only.** `~/.zshrc`, `~/.zprofile`, `~/.bashrc`, `~/.bash_profile` are
+DevEnv-managed and **rewritten on every login shell** (verified: mtimes move after one
+`zsh -lic`). Editing them is pointless and they can never be stowed — hook in via the `.user`
+files.
 - DevEnv's `~/.zprofile` sources `~/.zshrc` itself, so `~/.zshrc` and everything under it runs
   **twice** in login shells — and tmux panes are login shells (`default-command ''` → argv
   `-zsh`). Not fixable from our side.
 - `/etc/zlogin.d/devenv_init.d/*` prepends `~/.npm/bin` and `~/.local/bin` after our last chance
   to run, so login PATH leads with `~/.npm/bin` and keeps one duplicate `~/.local/bin`. Accepted;
   a tracked `~/.zlogin` re-sourcing `env.sh` would take the last word back if it ever matters.
-- Stray `~/*.old` / `*.bak` files mislabel their source (`.zshrc.user.old` held `~/.zshrc`).
-  Always `cmp` against the live file before assuming a backup holds your config.
+
+**macOS only.** No DevEnv: `~/.zshrc` and `~/.zprofile` are hand-written and ours, and are *not*
+rewritten (verified — mtimes unmoved across `zsh -lic`). `~/.zshrc` is deliberately left untracked
+as the machine-local hook, since it carries host-specific aliases that must not enter this repo;
+its only repo tie is `source ~/.zshrc.user`. There is no `/etc/zshenv` or `/etc/zlogin.d`, so
+nothing runs after us.
+- `~/.zsh/` holds the zsh-autosuggestions checkout that `zsh/.zshrc.d/config.zsh` sources — it is
+  live, not a stray. Only `~/.oh-my-zsh` was unreferenced, and it is gone.
 
 ## nvim LSP gotchas
 - `vim.lsp.config()` merges list fields index-wise with the upstream default — a reordered
