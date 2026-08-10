@@ -11,6 +11,10 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
 
 ## Verify a change before claiming done
 - Shell: `bash -n <file>` and `zsh -n <file>`; source in a subshell to confirm no errors.
+- PATH changes: snapshot `$PATH` for all six modes (`zsh`/`bash` × `-lic`/`-ic`/`-c`) before and
+  after, under `env -i HOME=$HOME` — an inherited PATH from the calling process makes every
+  measurement meaningless. Diff entry-by-entry: nothing may be lost, and each of our dirs must
+  appear exactly once.
 - nvim: `nvim --headless "+lua require('shivam.<mod>')" +qa` must load clean.
 - tmux: `tmux -f tmux/.tmux.conf new-session -d -s _t \; kill-session -t _t` only proves the
   file parses. Unknown options do *not* abort parsing (later lines still apply), so a typo or a
@@ -53,6 +57,30 @@ tree mirrors `$HOME` (e.g. `nvim/.config/nvim/` → `~/.config/nvim/`).
   keys.lua, while nvim binds/commands are dumped from a headless nvim instance —
   a config restructure can silently break them; descs must be kept); regenerate
   with `cheatsheet.py`.
+
+## zsh startup files — who owns what
+
+Read order: `/etc/zshenv`, `~/.zshenv`, `/etc/zprofile`, `~/.zprofile`, `~/.zshrc`,
+`/etc/zlogin`, `~/.zlogin`. We own `~/.zshenv`, `~/.zshrc.user` and `~/.zshrc.d/` only —
+`~/.zprofile` and `~/.zshrc` are DevEnv-managed and say "DO NOT MODIFY"; hook in via
+`.zshrc.user`.
+
+- `shell/env.sh` is sourced **twice** on zsh (from `.zshenv` and from `.zshrc.user`) and that is
+  deliberate. macOS `/etc/zprofile` runs `path_helper`, which rebuilds PATH with `/etc/paths`
+  first and runs *after* `.zshenv`; the `.zshrc.user` pass is what re-promotes our dirs. Do not
+  "simplify" either call away.
+- For the same reason its PATH loop **strips then prepends** rather than skipping dirs already
+  present — a skip cannot repair ordering, only absence. The strip is a `while` loop because a
+  single `${p//:d:/:}` pass misses *adjacent* duplicates, which DevEnv's init really does create.
+- `~/.zshenv` must stay silent and cheap: it runs for every zsh, including non-interactive ones,
+  and stray output on stdout breaks `scp`/`sftp`.
+- DevEnv's `~/.zprofile` sources `~/.zshrc` itself, so `~/.zshrc` (and everything under it) runs
+  **twice** in login shells — and tmux panes are login shells (`default-command ''` → pane argv
+  `-zsh`). Not fixable from our side; don't chase it.
+- `/etc/zlogin.d/devenv_init.d/*` prepends `~/.npm/bin` and `~/.local/bin` *after* our last
+  chance to run, so login-shell PATH leads with `~/.npm/bin` and keeps one duplicate
+  `~/.local/bin`. Known and accepted. A tracked `~/.zlogin` re-sourcing `env.sh` would take the
+  last word back if it ever matters.
 
 ## nvim LSP gotchas
 - `vim.lsp.config()` merges list fields index-wise with the upstream default —

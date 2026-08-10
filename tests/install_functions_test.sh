@@ -13,6 +13,8 @@ sed '/^##### Dispatch #####/,$d' "$REPO/install_dotfiles.sh" >"$FUNCS"
 set -- check
 # shellcheck source=/dev/null
 source "$FUNCS"
+# The prelude derives this from $0, which is this script, not the repo root.
+DOTFILES_DIR="$REPO"
 
 pass=0
 fail=0
@@ -108,6 +110,27 @@ STOW_PACKAGES=(nvim)
 OS=FreeBSD
 register_platform_packages
 ok "unknown OS registers nothing extra" "${SYSTEM_PACKAGES[*]} / ${STOW_PACKAGES[*]}" "git:git / nvim"
+
+# prepare_zsh runs against a live ~/.zshenv, so it must never destroy a divergent one.
+exists() { [[ -e "$1" ]] && echo yes || echo no; }
+REAL_HOME="$HOME"
+SANDBOX_HOME="$(mktemp -d)"
+trap 'rm -f "$FUNCS"; rm -rf "$SANDBOX_HOME"' EXIT
+HOME="$SANDBOX_HOME"
+printf 'machine local\n' >"$HOME/.zshenv"
+prepare_zsh >/dev/null
+ok "divergent .zshenv is kept as .pre-stow" "$(cat "$HOME/.zshenv.pre-stow")" "machine local"
+ok "divergent .zshenv frees the stow target" "$(exists "$HOME/.zshenv")" "no"
+
+rm -f "$HOME/.zshenv.pre-stow"
+cp "$REPO/zsh/.zshenv" "$HOME/.zshenv"
+prepare_zsh >/dev/null
+ok "identical .zshenv is dropped outright" "$(exists "$HOME/.zshenv")/$(exists "$HOME/.zshenv.pre-stow")" "no/no"
+
+ln -s "$REPO/zsh/.zshenv" "$HOME/.zshenv"
+prepare_zsh >/dev/null
+ok "already-stowed .zshenv is left alone" "$(readlink "$HOME/.zshenv")" "$REPO/zsh/.zshenv"
+HOME="$REAL_HOME"
 
 echo
 echo "passed=$pass failed=$fail"

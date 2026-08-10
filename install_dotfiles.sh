@@ -423,6 +423,11 @@ prepare_claude() {
 	preserve_pre_stow "$live" "$DOTFILES_DIR/claude/.claude/settings.json"
 }
 
+# DevEnv boxes ship a hand-written ~/.zshenv.
+prepare_zsh() {
+	preserve_pre_stow "$HOME/.zshenv" "$DOTFILES_DIR/zsh/.zshenv"
+}
+
 stow_packages() {
 	if ! command -v stow &>/dev/null; then
 		echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto')." >&2
@@ -431,6 +436,7 @@ stow_packages() {
 	mkdir -p "$HOME/.config"
 	prepare_claude
 	prepare_ssh
+	prepare_zsh
 	for pkg in "${STOW_PACKAGES[@]}"; do
 		echo "→ stow $pkg"
 		local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
