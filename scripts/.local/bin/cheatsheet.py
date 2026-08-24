@@ -170,6 +170,15 @@ def parse_shell(root: Path) -> Tool:
         fzf_vars = sorted(set(re.findall(r"\b(FZF_\w+)=", fzf_text)))
         notes.append("fzf defaults (fzf.sh sets env only, no key binds): " + ", ".join(fzf_vars))
 
+    zsh_binds = re.findall(
+        r"^\s*bindkey\s+.*$",
+        (root / "zsh" / ".zshrc.d" / "keybinds.zsh").read_text(),
+        re.M,
+    )
+    sections.append(
+        Section("zsh binds (keybinds.zsh)", [(b.strip(), "", "") for b in zsh_binds])
+    )
+
     return Tool("shell", sections, notes=notes)
 
 
