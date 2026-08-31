@@ -10,6 +10,7 @@
       "~/claude_notes"
     ]
   },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -85,10 +86,15 @@
     "claude-md-management@claude-plugins-official": true,
     "time-reminder@imc-claude-plugins": true,
     "imc-auto-mode@imc-claude-plugins": true,
-    "sub-agent-delegator@imc-claude-plugins": false
+    "sub-agent-delegator@imc-claude-plugins": false,
+    "working-with-git@imc-claude-plugins": true,
+    "gerrit@imc-claude-plugins": true,
+    "sparing-commenting@imc-claude-plugins": true,
+    "teamcity@imc-claude-plugins": true
   },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
+  "switchModelsOnFlag": false,
   "teammateMode": "in-process"
 }
