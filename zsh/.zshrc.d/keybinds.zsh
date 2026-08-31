@@ -2,6 +2,11 @@
 # Sourced after config.zsh so these win over atuin's bindings.
 # ^O and ^P are free at every layer: tmux takes C-a/h/j/k/l/\, wezterm takes
 # C-m, atuin takes ^R, and history nav here runs off the arrows and vicmd j/k.
+# Pin vi mode. Without this zsh infers the keymap from $EDITOR containing the
+# substring "vi", so renaming the editor would silently flip the shell to emacs
+# keys. The binds below name their keymaps, so they survive either way.
+bindkey -v
+
 autoload -Uz edit-command-line
 zle -N edit-command-line
 
