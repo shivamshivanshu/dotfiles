@@ -1,4 +1,5 @@
 return {
-	"mbbill/undotree",
-	cmd = { "UndotreeToggle", "UndotreeShow", "UndotreeFocus", "UndotreeHide" },
+	dir = vim.env.VIMRUNTIME .. "/pack/dist/opt/nvim.undotree",
+	name = "nvim.undotree",
+	cmd = "Undotree",
 }
