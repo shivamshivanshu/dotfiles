@@ -131,3 +131,11 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave
 		end
 	end,
 })
+
+local ok_ui2, ui2 = pcall(require, "vim._core.ui2")
+if ok_ui2 then
+	ui2.enable({ enable = true })
+	actions.add("toggle.ui2", function()
+		ui2.enable({ enable = not ui2.cfg.enable })
+	end, { desc = "Toggle the experimental message/cmdline UI", cmd = "ToggleUi2" })
+end
