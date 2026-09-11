@@ -2,9 +2,9 @@
 
 Managed with [GNU Stow](https://www.gnu.org/software/stow/). Each top-level
 directory is a Stow package whose internal tree mirrors where files land in
-`$HOME`. `STOW_PACKAGES` in `install_dotfiles.sh` tags every package with the
-platform it applies to (`all`, `linux`, `darwin` or `fedora`); packages that do
-not match the host are skipped when linking.
+`$HOME`. `STOW_PACKAGES` in `install_dotfiles.sh` lists the cross-platform
+packages; platform-specific ones (`aerospace` on macOS, `dnf` on Fedora) are
+appended by `register_platform_packages()` only on matching hosts.
 
 ### Layout
 
@@ -125,7 +125,9 @@ independent second opinion — explicit request only, needs `codex login`).
 
 **Output styles** (`output-styles/`): `terse` — lead with the answer, structured
 and scannable. `teaching` — example-led explanations with mechanism traces, for
-deep-dives rather than routine work. Activate with `/output-style <name>`.
+deep-dives rather than routine work. `learning` — active recall: Claude builds
+the scaffolding and hands over the deciding code, for upskilling rather than
+shipping. Activate with `/output-style <name>`.
 
 **Also tracked**: `commands/` (custom slash commands), `hooks/` (event hook
 scripts), `keybindings.json`, and `settings.json` (universal config; see above).
@@ -245,6 +247,7 @@ Leader: `Space`
 |------|--------|
 | `<Tab>` | Next buffer |
 | `<S-Tab>` | Previous buffer |
+| `<leader>bd` | Delete buffer (keep window layout) |
 
 ### Telescope (`<leader>s`)
 
@@ -265,6 +268,7 @@ Leader: `Space`
 | `<leader>st` | Grep in current dir (Oil dir, file's dir, or cwd) |
 | `<leader>sW` | Grep word in current dir |
 | `<leader>s/` | Grep in open files |
+| `<leader>sa` | Search actions (registered command palette) |
 | `<leader>/` | Fuzzy search current buffer |
 | `<leader><leader>` | Find buffers |
 
@@ -284,10 +288,11 @@ Leader: `Space`
 | Keys | Action |
 |------|--------|
 | `]c` / `[c` | Next / prev hunk (native jump in diff windows) |
+| `<leader>gs` | Stage hunk (repeat to unstage) |
 | `<leader>gp` | Preview hunk |
 | `<leader>gu` | Reset hunk |
 
-Commands: `:Gitsigns toggle_current_line_blame`, `:CopyCommitHash` (hash of current line).
+Commands: `:ToggleGitBlame` (inline blame for current line), `:CopyCommitHash` (hash of current line).
 
 ### Treesitter Text Objects
 
@@ -334,7 +339,7 @@ Commands: `:Gitsigns toggle_current_line_blame`, `:CopyCommitHash` (hash of curr
 
 ### Undotree
 
-`:UndotreeToggle`
+`:Undotree`
 
 ### Comments
 
@@ -360,7 +365,7 @@ Launch with `:GrugFar`. Inside the panel:
 | `<leader>ht` | Open search history |
 | `q` | Close |
 
-### Completion (nvim-cmp)
+### Completion (blink.cmp)
 
 | Keys | Action |
 |------|--------|
@@ -375,8 +380,7 @@ Launch with `:GrugFar`. Inside the panel:
 |------|--------|
 | `gsb` | Toggle **bold** |
 | `gsi` | Toggle *italic* |
-| `gsc` | Toggle `code` |
-| `gss` | Toggle ~~strikethrough~~ |
+| `gss` + key | Toggle emphasis on current line (`gssb` = bold line) |
 | `gsd` + key | Delete surrounding (`gsdb` = remove bold) |
 | `gsc` + old + new | Change surrounding (`gscbi` = bold → italic) |
 | `gl` | Add link |
@@ -384,6 +388,9 @@ Launch with `:GrugFar`. Inside the panel:
 | `]]` / `[[` | Next / prev heading |
 | `]p` | Parent heading |
 | `]h` | Current heading |
+
+Code and strikethrough toggles (`gs` + `c`/`s`) are shadowed by the
+change/line-toggle maps above.
 
 Commands: `:MDListItemBelow`, `:MDListItemAbove`, `:MDTaskToggle` (list/checkbox ops),
 `:LivePreview start|close` (browser preview), `:RenderMarkdown toggle` (in-buffer rendering).
