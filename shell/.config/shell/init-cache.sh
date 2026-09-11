@@ -2,6 +2,15 @@
 # Cache a tool's generated shell-init script and regenerate it when the binary
 # is newer than the cache or the init command line changed (stamped in line 1),
 # so startup doesn't shell out to the tool every time.
+_source_shell_modules() { # $@ = module names under ~/.config/shell/, without .sh
+	local _f _p
+	for _f in "$@"; do
+		_p="${XDG_CONFIG_HOME:-$HOME/.config}/shell/$_f.sh"
+		[[ -r "$_p" ]] && source "$_p"
+	done
+	return 0
+}
+
 _cache_init() { # $1=tool  $2=cache-file  then the init command + args
 	local bin
 	bin="$(command -v "$1")" || return
