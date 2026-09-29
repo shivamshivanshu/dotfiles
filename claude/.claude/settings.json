@@ -96,5 +96,6 @@
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "switchModelsOnFlag": false,
-  "teammateMode": "in-process"
+  "teammateMode": "in-process",
+  "outputStyle": "learning"
 }
