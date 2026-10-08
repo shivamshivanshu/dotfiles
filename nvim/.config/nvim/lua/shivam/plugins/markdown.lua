@@ -20,17 +20,25 @@ local function md_cmd(cmd)
 end
 
 actions.add("markdown.list_item_below", md_cmd("MDListItemBelow"), { desc = "Insert list item below" })
-actions.map("n", "<leader>ml", "markdown.list_item_below")
-
 actions.add("markdown.list_item_above", md_cmd("MDListItemAbove"), { desc = "Insert list item above" })
-actions.map("n", "<leader>mL", "markdown.list_item_above")
-
 actions.add("markdown.task_toggle", md_cmd("MDTaskToggle"), { desc = "Toggle task checkbox" })
-actions.map("n", "<leader>mt", "markdown.task_toggle")
-vim.keymap.set("x", "<leader>mt", ":MDTaskToggle<CR>", { desc = "Toggle task checkboxes (range)" })
-
 actions.add("markdown.renumber_list", md_cmd("MDResetListNumbering"), { desc = "Renumber ordered list" })
-actions.map("n", "<leader>mn", "markdown.renumber_list")
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "markdown",
+	group = vim.api.nvim_create_augroup("shivam-markdown-keys", { clear = true }),
+	callback = function(ev)
+		local opts = { buffer = ev.buf }
+		actions.map("n", "<localleader>l", "markdown.list_item_below", opts)
+		actions.map("n", "<localleader>L", "markdown.list_item_above", opts)
+		actions.map("n", "<localleader>t", "markdown.task_toggle", opts)
+		actions.map("n", "<localleader>n", "markdown.renumber_list", opts)
+		vim.keymap.set("x", "<localleader>t", ":MDTaskToggle<CR>", {
+			buffer = ev.buf,
+			desc = "Toggle task checkboxes (range)",
+		})
+	end,
+})
 
 return {
 	{

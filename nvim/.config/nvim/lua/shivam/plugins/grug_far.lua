@@ -1,5 +1,10 @@
 local actions = require("shivam.util.actions")
 
+actions.add("grug.open", function()
+	require("grug-far").open()
+end, { desc = "Search/replace project-wide" })
+actions.map("n", "<leader>hh", "grug.open")
+
 actions.add("grug.word", function()
 	require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
 end, { desc = "Search/replace the word under cursor project-wide", cmd = "GrugFarWord" })
@@ -19,13 +24,7 @@ return {
 		prefills = { flags = "--ignore-case --hidden" },
 		history = { maxHistoryLines = 1000 },
 		keymaps = {
-			replace = { n = "<leader>ha" },
-			qflist = { n = "<leader>hq" },
-			syncLocations = { n = "<leader>hs" },
-			syncLine = { n = "<leader>hl" },
 			close = { n = "q" },
-			historyOpen = { n = "<leader>ht" },
-			refresh = { n = "<leader>hr" },
 			gotoLocation = { n = "<cr>" },
 			pickHistoryEntry = { n = "<cr>" },
 		},

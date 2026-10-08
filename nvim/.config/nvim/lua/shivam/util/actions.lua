@@ -36,8 +36,10 @@ end
 function M.map(mode, lhs, name, opts)
 	local action = assert(registry[name], "unknown action: " .. name)
 	opts = opts or {}
-	table.insert(action.keys, lhs)
-	vim.keymap.set(mode, lhs, M.fn(name), { desc = opts.desc or action.desc })
+	if not vim.tbl_contains(action.keys, lhs) then
+		table.insert(action.keys, lhs)
+	end
+	vim.keymap.set(mode, lhs, M.fn(name), { desc = opts.desc or action.desc, buffer = opts.buffer })
 end
 
 function M.list()

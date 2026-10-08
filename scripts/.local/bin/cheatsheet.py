@@ -252,10 +252,10 @@ _NVIM_CMD_DUMP = (
 )
 
 
-def _nvim_leader(root: Path) -> str:
-    init = root / "nvim" / ".config" / "nvim" / "init.lua"
-    m = re.search(r"""vim\.g\.mapleader\s*=\s*(["'])(.*?)\1""", init.read_text())
-    return m.group(2) if m else " "
+def _nvim_leader(init_text: str, var: str = "mapleader", default: str = " ") -> str:
+    pat = r"""vim\.g\.%s\s*=\s*(["'])(.*?)\1""" % var
+    m = re.search(pat, init_text)
+    return m.group(2).replace("\\\\", "\\") if m else default
 
 
 def parse_nvim(root: Path) -> Tool:
@@ -271,7 +271,8 @@ def parse_nvim(root: Path) -> Tool:
         raise ValueError(f"no JSON object in nvim output (stderr: {proc.stderr[:200]})")
     data = json.loads(out[start : end + 1])
 
-    leader = _nvim_leader(root)
+    init_text = (root / "nvim" / ".config" / "nvim" / "init.lua").read_text()
+    leader = _nvim_leader(init_text)
     merged = {}
     for m in data["maps"]:
         lhs = m["lhs"]
@@ -294,9 +295,12 @@ def parse_nvim(root: Path) -> Tool:
     ]
     cmd_rows = sorted((f":{c['name']}", c["desc"], "") for c in data["cmds"])
     sections.append(Section("user commands", cmd_rows))
+    localleader = _nvim_leader(init_text, "maplocalleader")
     leader_name = "Space" if leader == " " else leader
+    localleader_name = "Space" if localleader == " " else localleader
     notes = [
         f"leader: {leader_name}",
+        f"localleader: {localleader_name}  (buffer-local plugin/filetype maps)",
         "Buffer-local LSP maps (gd, K, <leader>ca, ...) attach per-buffer and aren't listed.",
     ]
     return Tool("nvim", sections, notes=notes)
@@ -350,6 +354,9 @@ _PLUGIN_DEFAULTS: List[Tuple[str, List[Row]]] = [
         ("?", "prompted arbitrary left/right pair", ""),
     ]),
     ("markdown.nvim (markdown buffers)", [
+        ("<localleader>l / <localleader>L", "insert list item below / above", "config; buffer-local"),
+        ("<localleader>t", "toggle task checkbox (also on a visual range)", "config; buffer-local"),
+        ("<localleader>n", "renumber ordered list", "config; buffer-local"),
         ("gs{motion}{style}", "toggle emphasis: i=*italic* b=**bold** s=~~strike~~ c=`code` (e.g. gsiwb)", ""),
         ("gss{style}", "toggle emphasis on the whole line (e.g. gssb)", ""),
         ("gsd{style} / gsc{style}", "delete / change emphasis at cursor", "config remaps"),
@@ -360,11 +367,12 @@ _PLUGIN_DEFAULTS: List[Tuple[str, List[Row]]] = [
     ]),
     ("diffview (inside a Diffview tab)", [
         ("<Tab> / <S-Tab>", "open diff for next / previous file", ""),
-        ("<leader>e / <leader>b", "focus / toggle the file panel", ""),
+        ("<localleader>e / <localleader>b", "focus / toggle the file panel", "config remaps"),
         ("s or - (file panel)", "stage/unstage entry;  S = stage all,  U = unstage all", ""),
         ("X (file panel)", "restore entry to left-side state (discard changes)", ""),
         ("i (file panel)", "toggle list vs tree listing", ""),
         ("[x / ]x", "prev / next merge conflict;  2do/3do = take ours/theirs hunk", "3-way merge view"),
+        ("<localleader>c{o,t,b,a}", "conflict: choose ours/theirs/base/all for the hunk;  uppercase = whole file", "config remaps"),
         ("y (file-history panel)", "copy commit hash of entry under cursor", ""),
         ("g?", "per-panel help listing every bind", ""),
     ]),
@@ -380,8 +388,9 @@ _PLUGIN_DEFAULTS: List[Tuple[str, List[Row]]] = [
         ("<Tab> / <S-Tab>", "jump between input fields (search/replace/files...)", ""),
         ("<Down> / <Up>", "open next / previous result location in your last window", ""),
         ("<localleader>i", "preview result location in a float", ""),
-        ("<leader>ha / <leader>hq", "apply replace all / send results to quickfix", "config remaps"),
-        ("<leader>hs / <leader>hl", "sync edited result lines back to files: all / current line", "config remaps"),
+        ("<localleader>r / <localleader>q", "apply replace all / send results to quickfix", ""),
+        ("<localleader>s / <localleader>l", "sync edited result lines back to files: all / current line", ""),
+        ("<localleader>t / <localleader>f", "open history / re-run the search", ""),
         ("g? / q", "help / close", ""),
     ]),
     ("LSP (buffer-local on attach)", [
