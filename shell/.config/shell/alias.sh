@@ -15,3 +15,4 @@ command -v cheatsheet.py >/dev/null 2>&1 && alias cheatsheet="cheatsheet.py"
 alias ec='emacsclient --create-frame --no-wait --alternate-editor=""'
 alias et='emacsclient --tty --alternate-editor=""'
 alias doomreload='brew services restart d12frosted/emacs-plus/emacs-plus@30'
+alias clanker='imc-claude --no-sandbox --no-tracing'
