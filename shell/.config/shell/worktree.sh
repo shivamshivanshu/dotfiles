@@ -10,9 +10,14 @@ _gwt_repo() {
 }
 
 gwt() {
+	local base=""
+	if [ "$1" = "-c" ]; then
+		base="origin/main"
+		shift
+	fi
 	local name="$1"
 	if [ -z "$name" ]; then
-		echo "usage: gwt <name>" >&2
+		echo "usage: gwt [-c] <name>" >&2
 		return 1
 	fi
 	# "path" is off-limits as a name: in zsh it is tied to PATH, and localizing
@@ -24,7 +29,15 @@ gwt() {
 	}
 	wt_path="$LOCAL_WORKTREE_ROOT/$repo/${name//\//-}"
 	if git show-ref --verify --quiet "refs/heads/$name"; then
+		if [ -n "$base" ]; then
+			echo "gwt: branch '$name' already exists; drop -c to check it out" >&2
+			return 1
+		fi
 		git worktree add "$wt_path" "$name" || return 1
+	elif [ -n "$base" ]; then
+		git fetch origin main && git worktree add -b "$name" "$wt_path" "$base" || return 1
+	elif git show-ref --verify --quiet "refs/remotes/origin/$name"; then
+		git worktree add --track -b "$name" "$wt_path" "origin/$name" || return 1
 	else
 		git worktree add -b "$name" "$wt_path" || return 1
 	fi
