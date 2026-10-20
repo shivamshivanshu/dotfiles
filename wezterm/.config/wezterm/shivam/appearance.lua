@@ -23,8 +23,7 @@ function M.apply(config)
 
 	config.window_padding = { left = 8, right = 8, top = 6, bottom = 6 }
 
-	config.default_cursor_style = "BlinkingBlock"
-	config.cursor_blink_rate = 600
+	config.default_cursor_style = "SteadyBlock"
 	config.window_background_opacity = 0.97
 	config.macos_window_background_blur = 20
 end
