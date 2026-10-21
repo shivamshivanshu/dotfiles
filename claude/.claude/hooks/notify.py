@@ -23,6 +23,8 @@ STATE_STYLES = {
     "waiting": "fg=#282828,bg=#cc241d,bold",
 }
 GLYPH_FRAGMENT = "#{?#{@claude_state}, #{@claude_state},}"
+TOAST_VIA_ENV = "CLAUDE_NOTIFY_TOAST_VIA"
+TOAST_VIA_HOOK_OUTPUT = "hook-output"
 
 
 def read_event():
@@ -117,9 +119,13 @@ def main():
     set_tmux_window_state(message or "waiting")
     if message in ("busy", "clear"):
         return
+    toast = format_toast(read_event(), message)
+    if os.environ.get(TOAST_VIA_ENV) == TOAST_VIA_HOOK_OUTPUT:
+        print(json.dumps({"terminalSequence": desktop_toast(toast)}))
+        return
     # Hook stdout is captured by Claude Code, so the toast goes to a tty; the
     # bytes travel through tmux/ssh to the local terminal.
-    emit_toast(format_toast(read_event(), message))
+    emit_toast(toast)
 
 
 if __name__ == "__main__":
