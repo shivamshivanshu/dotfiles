@@ -110,16 +110,10 @@ def main():
         "Session-resume pointers (SessionStart hook; read what's relevant before"
         " non-trivial work):\n- " + "\n- ".join(lines)
     )
-    print(
-        json.dumps(
-            {
-                "hookSpecificOutput": {
-                    "hookEventName": "SessionStart",
-                    "additionalContext": context,
-                }
-            }
-        )
-    )
+    output = {"hookEventName": "SessionStart", "additionalContext": context}
+    if repo_name and branch and payload.get("source") == "startup":
+        output["sessionTitle"] = f"{repo_name}@{branch}"
+    print(json.dumps({"hookSpecificOutput": output}))
 
 
 if __name__ == "__main__":
