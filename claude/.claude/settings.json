@@ -10,6 +10,10 @@
       "~/claude_notes"
     ]
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -46,10 +50,22 @@
     ],
     "Notification": [
       {
+        "matcher": "permission_prompt|elicitation_dialog",
         "hooks": [
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/hooks/notify.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/notify.py\" busy",
             "timeout": 5
           }
         ]
@@ -89,13 +105,21 @@
     "working-with-git@imc-claude-plugins": true,
     "gerrit@imc-claude-plugins": true,
     "sparing-commenting@imc-claude-plugins": true,
-    "teamcity@imc-claude-plugins": true
+    "teamcity@imc-claude-plugins": true,
+    "imc-sandbox@imc-claude-plugins": false,
+    "clio@imc-claude-plugins": true
+  },
+  "outputStyle": "Recall",
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
   },
   "tui": "fullscreen",
+  "cleanupPeriodDays": 365,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "switchModelsOnFlag": false,
-  "teammateMode": "in-process",
-  "outputStyle": "learning",
-  "effortLevel": "high"
+  "teammateMode": "in-process"
 }
