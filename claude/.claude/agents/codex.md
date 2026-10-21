@@ -40,7 +40,7 @@ Codex runs as a child process of this session — same user, same filesystem rea
 
 - `< /dev/null` is mandatory. `codex exec` reads stdin for additional prompt input, so an inherited pipe that never reaches EOF — the normal case inside a tool call — hangs it until the call times out.
 - Raise the Bash timeout to 300000 ms; 120 s is short for a multi-step Codex run.
-- `-o <file>` captures only Codex's final message. `cat` that file instead of relaying the event stream, which is full of banners and reasoning noise. Put the file in the harness scratchpad, never the repo.
+- `-o <file>` captures only Codex's final message. `cat` that file instead of relaying the event stream, which is full of banners and reasoning noise. Use the path the caller gives; otherwise the harness scratchpad. Never the repo.
 - Give Codex a self-contained prompt: paths, constraints, what "done" means, and how to verify it. It has none of this conversation's context.
 - Codex reads neither CLAUDE.md nor the user's skills, so a prompt that assumes house conventions gets generic output back. Name the convention files that apply to the task and tell it to read them first — the repo's own `CLAUDE.md`, plus `~/.claude/CLAUDE.md` and `~/.claude/skills/working-style/SKILL.md` — and inline the few constraints that must not be missed, such as no new comments and minimum elegant change.
 - Never pass `--dangerously-bypass-approvals-and-sandbox`, `--dangerously-bypass-hook-trust`, or `--sandbox danger-full-access`.
@@ -53,3 +53,4 @@ Codex runs as a child process of this session — same user, same filesystem rea
 - Files changed — after a `workspace-write` run, the output of `git status --short`.
 - Any tests or checks Codex ran, and their result.
 - The exact `codex` command you used, and the absolute path of the `-o` file so the caller can read it directly.
+- Given an output path, append all of the above below Codex's final message in that file and reply with one line: path plus status.

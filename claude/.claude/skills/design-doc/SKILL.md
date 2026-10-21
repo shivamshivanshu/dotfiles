@@ -5,7 +5,13 @@ description: 'Use when writing a design doc, RFC, technical proposal, or archite
 
 # Design Doc
 
-Write for a skeptical senior reviewer with ten minutes. Short enough to be read — one to two pages; a doc nobody finishes decides nothing. Pair with [[working-style]].
+The default reader is an LLM agent: complete and exact, no padding, length set by content. Only when the user explicitly asks for a doc to read themselves, write for a skeptical senior reviewer with ten minutes — one to two pages; a doc nobody finishes decides nothing. Pair with [[working-style]].
+
+## Brainstorm first
+- Invoke `superpowers:brainstorming` before drafting, unprompted, to pin down intent, goals and non-goals with the user. Its written design becomes this doc, with three overrides:
+  - Structure and save location come from this skill, not `docs/superpowers/specs/`.
+  - [[doc-reviewer]] replaces its builder check and single question round.
+  - After approval, the next step is the working-style plan gate, not `superpowers:writing-plans`.
 
 ## Structure
 1. **Problem** — what breaks or costs today, with numbers where they exist; why now and not later.

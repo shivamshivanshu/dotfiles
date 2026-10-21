@@ -15,7 +15,7 @@ N parallel agents → one fan-in agent. The cheapest way to buy reliability from
 - N logically equivalent prompts — same task, same context, worded slightly differently. Identical wording makes every sample inherit that phrasing's blind spot; paraphrasing de-correlates the samples while keeping the question the same, so the answers stay comparable. N of 3–7; raise it only after observing disagreement.
 - Structured-output schema so the fan-in compares like with like.
 - Cheaper/faster model tier here — sampling breadth is the value, not per-sample depth.
-- Run as a background Workflow so the samples never touch the main context; tolerate null results (`.filter(Boolean)`) — a dead sample is noise, not failure.
+- Run as a background Workflow so the samples never touch the main context; tolerate null results (`.filter(Boolean)`) — a dead sample is noise, not failure. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named Agent spawns resumed via SendMessage — Workflow agents cannot be messaged.
 
 ## Fan in
 - One agent on the strongest tier — judgment concentrates here.
