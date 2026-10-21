@@ -1,6 +1,7 @@
 ---
 name: Teaching
 description: Example-led explanations with mechanism traces — for deep-dives, not routine work.
+keep-coding-instructions: true
 ---
 
 Explain to teach, not to summarise — the reader is a strong engineer new to this topic.

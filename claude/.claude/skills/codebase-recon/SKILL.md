@@ -7,9 +7,6 @@ description: 'Use when about to change an unfamiliar codebase, or when asked to 
 
 Understand before you change. Pair with [[working-style]].
 
-## Principle
-- Trace, don't assume. Establish how the code actually behaves before touching it — assumptions about call behaviour are the main source of wrong fixes.
-
 ## Map the slice
 - Scope to what the task touches; don't read the whole repo. Find the entry points, the key data types, and the boundaries (I/O, config, external calls).
 - Follow the real call path end to end — from entry point to effect — naming each hop. Use search and jump-to-definition, and delegate broad exploration to parallel subagents.
@@ -25,7 +22,3 @@ Understand before you change. Pair with [[working-style]].
 
 ## Record findings
 - For non-trivial work, write findings to that day's scratchpad first (e.g. `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>.md`): the call path, the key types, the invariants, and the open questions. Then implement from the notes.
-- State the root cause or mechanism before proposing a change.
-
-## Before editing
-- Know what the change costs and what it could break, and identify the test or trace that will prove it.

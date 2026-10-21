@@ -39,6 +39,8 @@ GNU Stow-managed dotfiles for macOS + Linux. One package per tool; the package t
   Its toast goes to tmux's `#{client_tty}`, never `/dev/tty`: hooks can run with no controlling
   terminal, where the `/dev/tty` open failed with ENXIO and was swallowed. Writing to the client
   tty also avoids needing tmux passthrough wrapping.
+  It assumes one Claude session per tmux window: state is a window option, so a second session
+  or a nested `claude -p` in that window overwrites it — accepted.
 - Keybind/plugin swaps claiming parity: verify each key's *behaviour* end to end, including
   tmux/pane crossing — not just that the mapping exists.
 - After any keybind, alias, or shell-function change: `cheatsheet.py --dump`, confirm the change

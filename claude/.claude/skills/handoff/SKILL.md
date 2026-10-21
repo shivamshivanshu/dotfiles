@@ -22,7 +22,7 @@ Preserve **substance completely** — every important finding, decision, and inv
 ## Style
 - High-signal prose and lists; never a verbatim chat log.
 - Concrete over vague: real names, paths, line numbers, numbers, commands.
-- Begin the file with one line stating what it is and how to use it (e.g. "Handoff for resuming <topic>; read fully before acting").
+- Begin the file with frontmatter `repo: <git-root basename>` (`none` outside a repo) between `---` lines — the SessionStart hook surfaces a handoff only in a matching repo — then one line stating what it is and how to use it (e.g. "Handoff for resuming <topic>; read fully before acting").
 
 ## Save
 1. Create today's export dir and capture its absolute path (run via Bash so `$HOME` and the date expand):

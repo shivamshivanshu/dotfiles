@@ -12,12 +12,11 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 - Design doc, RFC or ADR: stops at approval and goes on to the plan gate ([[design-doc]]). An explicit review request outside the gate also stops at approval and reports the doc path, plus `edits.md` if any.
 
 ## Audience
-- The default reader is an LLM agent: optimise for zero-ambiguity execution, not for a human skimming. Exact names, paths and commands; each term defined once and used consistently; no hedging, no narrative.
-- Write for a human reader only when the user explicitly asks for a doc to read themselves; then follow [[design-doc]]'s human style. The review lenses below still apply.
+- Reader per [[design-doc]] — an LLM agent by default: optimise for zero-ambiguity execution, not for a human skimming. Exact names, paths and commands; each term defined once and used consistently; no hedging, no narrative. Only when the user explicitly asks for a doc to read themselves, follow [[design-doc]]'s human style; the lenses still apply.
 
 ## 1. Review panel
 - The main thread creates `<review-dir>` = `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-review/`, `<topic>` being the doc's basename without extension (suffix `-2`, `-3` if it exists), and passes it in every brief.
-- Named Agent spawns (`dr-<role>`), never Workflow agents — the audit resumes them via SendMessage with their context intact. Exception: codex runs `--ephemeral`, so the audit spawns it fresh.
+- Named Agent spawns (`dr-<role>`), never Workflow agents — teammates per [[delegation]], so the audit resumes them via SendMessage with their context intact; TaskStop each reviewer once the doc is approved, the fan-in once the pipeline ends. Exception: codex runs `--ephemeral`, so the audit spawns it fresh.
 - A small doc (one component, ≤ ~60 lines) gets one combined-lens reviewer (`combined`) plus codex; anything larger, or unsure, the full panel:
   - Lenses, mid tier, each given the doc path plus the paths it cites:
     - **Ambiguity/contradiction** — a statement two implementers would read differently; sections that disagree; undefined terms.
@@ -25,12 +24,12 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
     - **Concision** — cut padding, merge duplicates, tighten for the doc's reader; never cut implementation-plan contents (step 4); flag any cut that would lose information.
   - **Blind**, mid tier: the doc text inlined in its prompt; it reads no file and writes only its output file — catches what context assumes away. Blindness is instruction-only, so it records any path it opened anyway.
   - **codex**: self-contained brief per its agent definition, all lenses at once.
-- Reviewers are read-only on the doc. Per working-style's output-file rule, each appends to `<review-dir>/<role>.md` as `N. [lens] [severity] <location> — issue — fix — user-call: yes|no` (or `no findings`), `lens` being ambiguity, loopholes or concision per finding. Codex's `-o` file is `codex.md` there.
+- Reviewers are read-only on the doc. Per [[delegation]]'s output-file rule, each appends to `<review-dir>/<role>.md` as `N. [lens] [severity] <location> — issue — fix — user-call: yes|no` (or `no findings`), `lens` being ambiguity, loopholes or concision per finding. Codex's `-o` file is `codex.md` there.
 - **Fan-in** (`dr-fanin`), strongest tier, kept for the whole pipeline, briefed with `<review-dir>`, the doc path and whether Claude wrote it (created by Claude, any file under `$HOME/claude_notes/scratchpad/`, or the user says so); the only agent that edits the doc — in place when Claude wrote it, else as proposed edits in `edits.md` there for the user to apply. It judges every finding on evidence, not vote count, and appends to `fanin.md` there, one section per round: applied, dropped with reason, open questions. Per finding:
   - wording or concision, or settled by the code (read, not assumed), the doc or a convention → apply;
   - a default that is reversible and within scope → apply, recorded as `default: <value> — <why>`;
   - anything else → a question: an assumption to confirm, or 2–4 options with a recommended default.
-- Supervise per [[working-style]]. A reviewer still dead after one replacement is noted missing; on a codex auth failure skip the leg and tell the user once. With no completed Claude reviewer, stop and ask the user.
+- Supervise per [[delegation]]. A reviewer still dead after one replacement is noted missing; on a codex auth failure skip the leg and tell the user once. With no completed Claude reviewer, stop and ask the user.
 
 ## 2. Q&A loop
 - The main thread asks every question in one go: one AskUserQuestion for ≤4 (recommended option first), else a plain numbered message. Include the worktree offer when the plan edits another repo — after approval nobody asks.
@@ -58,7 +57,7 @@ The author writes the plan to this spec before the panel; the lenses check again
 - Gate: the implementer's verify results all pass — else back to it, at most twice, then the failing command and output go to the user.
 - The main thread commits the paths changed since `<base>` per [[git]]; it asks the user first if they differ from `impl.md`'s list or were dirty at `<base>`.
 - `dr-conformance` (output `conformance.md`), mid tier, fresh, checks the doc against `git diff <base>..HEAD`: planned versus done, gaps, drift, unplanned changes, verify commands re-run. Verdict: `PASS`, or `FAIL` with a list.
-- Small or mechanical diff: it also runs `simplify`/`code-review` itself and applies the fixes — its only edits. Non-trivial: the main thread runs working-style's review fan-out ([[fan-n]]) with it as the plan-conformance leg and re-delegates fixes.
+- Small or mechanical diff: it also runs `simplify`/`code-review` itself and applies the fixes — its only edits. Non-trivial: the main thread runs the [[fan-n]] review fan-out with it as the plan-conformance leg and re-delegates fixes.
 - After fixes, `verifier` re-runs the verify commands — plus a conformance re-check for non-trivial fixes — and once those pass, the verdict is `PASS` and the main thread amends the fixes in. One fix round; any residual goes to the user.
 
 ## Reporting

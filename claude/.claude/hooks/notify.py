@@ -2,9 +2,7 @@
 """Claude Code notification hook.
 
 Keeps a per-window tmux state glyph current (busy/waiting/done, cleared when
-the session ends) and raises a
-WezTerm desktop toast — but only when the user isn't already looking at the
-window, since the glyph covers the watched case."""
+the session ends) and raises a WezTerm desktop toast on waiting and done."""
 import json
 import os
 import shutil
@@ -89,15 +87,6 @@ def emit_toast(toast):
         pass
 
 
-def user_is_watching():
-    pane = tmux_pane()
-    if not pane:
-        return False
-    out = tmux("display", "-p", "-t", pane, "#{window_active} #{session_attached}")
-    parts = out.split()
-    return len(parts) == 2 and parts[0] == "1" and parts[1] != "0"
-
-
 def ensure_glyph_rendered():
     # Self-healing: re-appends whenever a theme (re)load resets the formats,
     # so the conf needs no tpm-ordered append and re-sourcing cannot duplicate.
@@ -126,7 +115,7 @@ def set_tmux_window_state(message):
 def main():
     message = sys.argv[1] if len(sys.argv) > 1 else None
     set_tmux_window_state(message or "waiting")
-    if message in ("busy", "clear") or user_is_watching():
+    if message in ("busy", "clear"):
         return
     # Hook stdout is captured by Claude Code, so the toast goes to a tty; the
     # bytes travel through tmux/ssh to the local terminal.

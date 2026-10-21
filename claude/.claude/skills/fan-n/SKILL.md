@@ -5,17 +5,17 @@ description: 'Use when one sample of a task isn''t trustworthy — fan N agents 
 
 # Fan-N
 
-N parallel agents → one fan-in agent. The cheapest way to buy reliability from a stochastic process. For *diverse* perspectives or debate, use [[stochastic-consensus]]; for splitting implementation work, use [[agent-team]].
+N parallel agents → one fan-in agent. For *diverse* perspectives or debate, use [[stochastic-consensus]]; for splitting implementation work, use [[agent-team]].
 
 ## When
 - The answer varies run to run: broad searches, estimates, reviews, root-cause guesses, "did I miss anything" checks.
 - Not for deterministic lookups (one agent suffices) and not for decomposable work (that's sharding, not sampling).
 
 ## Fan out
-- N logically equivalent prompts — same task, same context, worded slightly differently. Identical wording makes every sample inherit that phrasing's blind spot; paraphrasing de-correlates the samples while keeping the question the same, so the answers stay comparable. N of 3–7; raise it only after observing disagreement.
+- N logically equivalent prompts — same task, same context, worded slightly differently. Identical wording makes every sample inherit that phrasing's blind spot; paraphrasing de-correlates the samples while keeping the question the same, so the answers stay comparable. N=3 by default; raise toward 7 only after observing disagreement.
 - Structured-output schema so the fan-in compares like with like.
 - Cheaper/faster model tier here — sampling breadth is the value, not per-sample depth.
-- Run as a background Workflow so the samples never touch the main context; tolerate null results (`.filter(Boolean)`) — a dead sample is noise, not failure. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named Agent spawns resumed via SendMessage — Workflow agents cannot be messaged.
+- Run as a background Workflow so the samples never touch the main context; tolerate null results (`.filter(Boolean)`) — a dead sample is noise, not failure. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named Agent spawns — teammates ([[delegation]]), resumed via SendMessage and stopped with TaskStop once done; Workflow agents cannot be messaged.
 
 ## Fan in
 - One agent on the strongest tier — judgment concentrates here.
@@ -24,9 +24,9 @@ N parallel agents → one fan-in agent. The cheapest way to buy reliability from
 - Only the fan-in's synthesis returns to the main thread.
 
 ## Review fan-out — varied concerns
-Review and simplify passes go a step further: the prompts differ in what they *emphasise*, not just in wording, because here the goal is coverage of concerns rather than a comparable answer from every sample. It isn't [[stochastic-consensus]] either — no debate round, just one pass and a dedup fan-in. Use it once a change is non-trivial; per [[working-style]] the fan scales to the diff, so a small or mechanical commit gets one reviewer instead:
+Review and simplify passes go a step further: the prompts differ in what they *emphasise*, not just in wording, because here the goal is coverage of concerns rather than a comparable answer from every sample. It isn't [[stochastic-consensus]] either — no debate round, just one pass and a dedup fan-in. Use it once a change is non-trivial; a small or mechanical commit gets one reviewer instead:
 - Most agents get full context, each prompted to emphasise a different concern.
 - Spawn a few with no context at all — inferring purely from the diff and commit messages; blind eyes catch what briefed ones assume away.
 - Give every agent MCP/tool access.
-- Include at least one `codex` leg — a different model family de-correlates errors in a way paraphrasing cannot. Its brief must be self-contained (it sees neither the conversation nor these skills), and the fan-in treats a codex-only finding as an outlier to judge, not to drop.
+- Include at least one `codex` leg — a different model family de-correlates errors in a way paraphrasing cannot; the fan-in treats a codex-only finding as an outlier to judge, not to drop.
 - Fan in through a strongest-tier fan-in agent that dedups, merges findings, and summarises; the main thread only organises the result and decides.

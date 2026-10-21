@@ -20,7 +20,7 @@ MAX_NOTES = 8
 def git(cwd, *args):
     try:
         r = subprocess.run(
-            ["git", "-C", cwd, *args], capture_output=True, text=True, timeout=5
+            ["git", "-C", cwd, *args], capture_output=True, text=True, timeout=3
         )
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -38,13 +38,17 @@ def frontmatter(path):
     return {k.strip(): v.strip() for k, _, v in pairs if v}
 
 
-def newest_fresh_handoff():
+def newest_fresh_handoff(repo_name):
     exports = NOTES / "exports"
     if not exports.is_dir():
         return None
-    newest = max(exports.glob("*/*.md"), key=lambda f: f.stat().st_mtime, default=None)
     cutoff = (datetime.now() - HANDOFF_MAX_AGE).timestamp()
-    return newest if newest and newest.stat().st_mtime > cutoff else None
+    fresh = [
+        f
+        for f in exports.glob("*/*.md")
+        if f.stat().st_mtime > cutoff and frontmatter(f).get("repo") == repo_name
+    ]
+    return max(fresh, key=lambda f: f.stat().st_mtime, default=None)
 
 
 def main():
@@ -75,8 +79,12 @@ def main():
         and fm.get("branch") == branch
     ]
     checkpoint = max(checkpoints, key=lambda f: f.stat().st_mtime, default=None)
-    notes = [f for f in files if not f.name.startswith("wip-")]
-    handoff = newest_fresh_handoff()
+    notes = sorted(
+        (f for f in files if not f.name.startswith("wip-")),
+        key=lambda f: f.stat().st_mtime,
+        reverse=True,
+    )
+    handoff = newest_fresh_handoff(repo_name or "none")
 
     lines = [f"Today's scratchpad dir (plans/notes go here): {days[0]}"]
     if checkpoint:
@@ -87,7 +95,11 @@ def main():
         lines.append(
             "Recent scratchpad notes/plans: " + ", ".join(map(str, notes[:MAX_NOTES]))
         )
-    styles = sorted(p.stem for p in STYLES.glob("*.md")) if STYLES.is_dir() else []
+    styles = (
+        sorted(frontmatter(p).get("name", p.stem) for p in STYLES.glob("*.md"))
+        if STYLES.is_dir()
+        else []
+    )
     if styles:
         lines.append(
             "Output styles installed (switch with /output-style <name>): "

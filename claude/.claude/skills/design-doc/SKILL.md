@@ -19,12 +19,11 @@ The default reader is an LLM agent: complete and exact, no padding, length set b
 3. **Options** — two to four real candidates including do-nothing. Tradeoffs must be concrete (latency, complexity, migration cost, operational burden), never adjectives. A comparison table beats paragraphs.
 4. **Decision** — the pick and the one or two decisive reasons. Name what would change the decision.
 5. **Verification** — how we will know it works: the tests, the metrics to watch, and the rollout/rollback plan.
+6. **Open questions** (if any) — each names who or what resolves it.
 
 ## Discipline
 - State the strongest argument *against* the chosen option yourself; a reviewer finding it first costs the doc its credibility.
 - Every rejected option gets its real reason recorded — the doc's second job is stopping re-litigation.
-- Open questions go in their own section, not buried in prose; each names who or what resolves it.
-- Terse prose, no padding, no restating context the reader already has.
 
 ## Save
 - Deliverable docs go where the repo already keeps them (docs/, adjacent README) if such a place exists; otherwise `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-design.md`. Say which you chose and why.

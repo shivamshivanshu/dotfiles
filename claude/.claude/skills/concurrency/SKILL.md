@@ -1,6 +1,6 @@
 ---
 name: concurrency
-description: 'Use when writing or reviewing multithreaded or lock-free code, shared-memory IPC, or reasoning about memory ordering and data races. Keywords: concurrency, atomics, false sharing, SPSC, MPSC, ring buffer, mutex, happens-before, TSan.'
+description: 'Use when writing or reviewing multithreaded or lock-free C++, shared-memory IPC, or reasoning about memory ordering and data races. Keywords: concurrency, atomics, false sharing, SPSC, MPSC, ring buffer, mutex, happens-before, TSan.'
 ---
 
 # Concurrency
@@ -13,7 +13,7 @@ For multithreaded, lock-free, and shared-memory code. Pair with [[cpp]] and [[pe
 
 ## Atomics and ordering
 - Know the ordering you rely on: default to `seq_cst` for correctness, and relax to `acquire`/`release` only with a clear happens-before argument.
-- A release store publishes the writes before it; an acquire load observes them. Pair them deliberately.
+- An acquire load synchronizes with a release store only when it reads that store's value (or its release sequence); only then are the writes before the release visible. Pair them deliberately.
 - Never race — unsynchronised access to shared non-atomic data is undefined behaviour, not "probably fine".
 
 ## Lock-free patterns

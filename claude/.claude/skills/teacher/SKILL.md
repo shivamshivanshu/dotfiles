@@ -1,16 +1,15 @@
 ---
 name: teacher
-description: 'Use when a task has just completed (never mid-task) to grow the user''s software knowledge — surface a few transferable, worth-knowing concepts that came up, ranked by the learning priorities below, with a one-line agenda each, and offer to deep-dive now or defer. Keywords: teach, study, knowledge base, transferable skill, explain concept, upskill.'
+description: 'Use when the wrap command reaches its teacher step, or the user explicitly asks to learn from finished work — surface up to three transferable concepts from it, ranked by learning priority, with a one-line agenda each, and offer to deep-dive now, defer, or skip. Never mid-task. Keywords: teach, study, knowledge base, transferable skill, explain concept, upskill.'
 ---
 
 # Teacher
 
 Grow the user's transferable software knowledge from real work. Optional, brief, and only once a task is finished.
 
-Normally reached via the `wrap` command — if wrap already ran it this session, don't re-run. When run by a subagent, return the concept list in the report instead of asking the user.
+Normally reached via the `wrap` command.
 
 ## When
-- After a task completes — never interrupt work in progress.
 - Surface only concepts that are **transferable and worth deep knowledge**, not task trivia or one-off facts.
 
 ## Priority (surface higher tiers first)
@@ -29,7 +28,7 @@ Normally reached via the `wrap` command — if wrap already ran it this session,
 7. **Skip.** Drop it — record nothing.
 
 ## Deep-dive writing style
-Write in the teaching output style (offer `/output-style teaching`).
+Follow `~/.claude/output-styles/teaching.md` when writing the file.
 
 ## backlog.md format
 ```markdown
@@ -47,5 +46,4 @@ Write in the teaching output style (offer `/output-style teaching`).
 
 ## Guardrails
 - Keep it minimal — a short pick-list, never a lecture. If nothing is worth surfacing, say so and stop.
-- Keep the skills repo and any generic deep-dive free of work-internal names; domain-specific notes live only in `$HOME/claude_notes/`.
-- Sibling end-of-work skill: [[session-insight]] improves the skill repo; this one grows your knowledge.
+- Keep generic deep-dives free of work-internal names.

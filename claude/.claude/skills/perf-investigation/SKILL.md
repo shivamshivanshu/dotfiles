@@ -5,7 +5,7 @@ description: 'Use when investigating latency, throughput, CPU hotspots, or a per
 
 # Performance Investigation
 
-A playbook for latency and throughput work. Pair with [[cpp]] and [[concurrency]].
+Pair with [[cpp]] and [[concurrency]].
 
 ## Approach
 - Measure before changing; never optimise on a hunch. Form a hypothesis, then confirm it with data.
@@ -15,7 +15,7 @@ A playbook for latency and throughput work. Pair with [[cpp]] and [[concurrency]
 
 ## Tools
 - CPU hotspots: `perf record` / `perf report` and flamegraphs; `perf stat` for IPC, cache misses, and branch misses.
-- Latency accounting: timestamp each stage (hardware/NIC timestamps where available); use TSC/`rdtsc` for cycle-level intervals, but beware unsynchronised or stale TSC across cores.
+- Latency accounting: timestamp each stage (hardware/NIC timestamps where available); for cycle-level intervals use serialized TSC reads (`lfence; rdtsc` or `rdtscp`) on a pinned thread, check invariant TSC, and calibrate to ns — beware unsynchronised or stale TSC across cores.
 - Allocation and heap: heap profilers; watch for allocation on the hot path.
 - Cache and memory: `perf c2c` for false sharing; check the cache-miss rate before blaming the algorithm.
 

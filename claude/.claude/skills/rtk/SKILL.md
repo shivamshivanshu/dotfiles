@@ -1,11 +1,11 @@
 ---
 name: rtk
-description: 'Use when working with rtk (the token-optimising CLI proxy) — its meta commands, install verification, and hook-based command rewriting. Keywords: Rust Token Killer, token savings, rtk gain, rtk discover, rtk proxy.'
+description: 'Use when Bash output looks truncated or grep flags misbehave under the rtk rewrite hook, or when working with rtk (the token-optimising CLI proxy) — its meta commands, install verification, and hook-based command rewriting. Keywords: Rust Token Killer, token savings, rtk gain, rtk discover, rtk proxy.'
 ---
 
 # rtk — Rust Token Killer
 
-Token-optimised CLI proxy (60–90% savings on dev operations). Most commands are auto-rewritten through the Claude Code hook (e.g. `git status` → `rtk git status`), transparently and at zero token overhead.
+Token-optimised CLI proxy. Most commands are auto-rewritten through the Claude Code hook (e.g. `git status` → `rtk git status`).
 
 ## Gotchas
 - rtk may silently truncate long output (e.g. `git log`); when a verification depends on completeness or counting, bypass it: `rtk proxy <cmd>` or `command git …`.
