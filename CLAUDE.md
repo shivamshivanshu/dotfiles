@@ -8,6 +8,19 @@ GNU Stow-managed dotfiles for macOS + Linux. One package per tool; the package t
 - Target dirs are usually tree-folded (one dir symlink into this repo), so in-place edits are
   live immediately; added or deleted files still need a restow.
 
+## tmux from source (Linux)
+Distro tmux is below `MIN_TMUX_VERSION` (EL9 dnf 3.5a, Ubuntu 24.04 3.4), so `auto`/`check` fail
+their tmux check there; build by hand into `~/.local`, which leads PATH:
+- Deps: libevent and ncurses dev packages, autoconf, automake, bison, pkg-config.
+- Build from a git tag: GitHub release tarballs hang from DevEnv boxes, while `git clone` works.
+  `sh autogen.sh && ./configure --prefix=$HOME/.local --disable-debug --enable-optimizations`,
+  then `make -j"$(nproc)" install`.
+- DevEnv quirk: `/usr/lib64/libtinfo.so` points at `libtinfo.so.5.9` while the headers are
+  ncurses 6.2, so a plain configure links v5. Add `LIBTINFO_LIBS="-l:libtinfo.so.6"`; check with
+  `ldd "$(command -v tmux)" | grep tinfo`.
+- Rename the old binary (`mv tmux tmux-<old>`) before installing: a running server keeps the old
+  inode, and a client of the same `PROTOCOL_VERSION` keeps talking to it until `kill-server`.
+
 ## Verify a change before claiming done
 - Shell: `bash -n` and `zsh -n`, then source in a subshell.
 - PATH: snapshot all six modes (`zsh`/`bash` × `-lic`/`-ic`/`-c`) before and after, under

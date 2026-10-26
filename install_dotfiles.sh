@@ -57,7 +57,7 @@ OS="$(uname -s)"
 export PATH="$HOME/.local/bin:$PATH"
 
 MIN_NVIM_VERSION="0.12.0"
-MIN_TMUX_VERSION="3.2.0"
+MIN_TMUX_VERSION="3.7.0"
 
 # Required commands and their package names; Bash 3.2 has no associative arrays.
 SYSTEM_PACKAGES=(
