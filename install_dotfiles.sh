@@ -66,7 +66,6 @@ SYSTEM_PACKAGES=(
 	"git:git"
 	"tmux:tmux"
 	"fzf:fzf"
-	"direnv:direnv"
 	"stow:stow"
 	"wezterm:wezterm"
 	"zsh:zsh"
@@ -93,6 +92,7 @@ CARGO_PACKAGES=(
 
 GO_PACKAGES=(
 	"shfmt:mvdan.cc/sh/v3/cmd/shfmt@latest"
+	"direnv:github.com/direnv/direnv/v2@latest"
 )
 
 # Alacritty is provided by the OS; only its config is linked.
