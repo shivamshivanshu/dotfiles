@@ -164,10 +164,13 @@ fix is a tmux upgrade, not config here — re-check it before enabling.
 ## Conventions
 - Shared shell logic lives in `shell/.config/shell/`, sourced by both bash and zsh — put
   cross-shell code there, never duplicated per shell.
-- `claude/.claude/settings.json` is tracked; machine-local overrides go in untracked
-  `settings.local.json`. Claude Code rewrites `~/.claude/settings.json` at runtime, so it is
-  never stowed: the installer copies the tracked file only when the live one is missing (or is a
-  leftover symlink) and never overwrites it. Sync repo changes by hand.
+- `claude/.claude/settings.json` is tracked but copied, not stowed: Claude Code rewrites
+  `~/.claude/settings.json` at runtime (`/model`, `/effort`, plugin toggles, `rtk init -g`) and
+  writes through a symlink (measured), which would dirty the repo. The installer copies the
+  tracked file only when the live one is missing (or is a leftover symlink) and never overwrites
+  it; sync repo changes by hand. There is no user-scope `settings.local.json`:
+  `~/.claude/settings.local.json` is not loaded (measured), only a project's
+  `.claude/settings.local.json` is.
 - tmux owns panes everywhere; native wezterm splits are unused (LEADER binds only) — don't add
   wezterm-side nav integrations.
 - On macOS `alt-*` belongs to AeroSpace (i3-style, `alt` is `$mod`) and is grabbed system-wide, so

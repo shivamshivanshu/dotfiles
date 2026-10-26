@@ -39,8 +39,9 @@ in only the tracked entries (`CLAUDE.md`, `skills/`, `agents/`, `output-styles/`
 `settings.json` **is** tracked — a universal settings file shared across
 machines — but Claude Code rewrites it at runtime, so the installer copies it
 into place only when `~/.claude/settings.json` is missing and never overwrites
-an existing one; sync repo changes by hand. Machine-local and work-internal
-overrides stay in `settings.local.json` (untracked).
+an existing one; sync repo changes by hand. Machine-local edits live in that
+copy: Claude Code has no user-level `settings.local.json`, only a per-project
+`.claude/settings.local.json`.
 
 ### Cheatsheet
 
