@@ -165,8 +165,9 @@ fix is a tmux upgrade, not config here — re-check it before enabling.
 - Shared shell logic lives in `shell/.config/shell/`, sourced by both bash and zsh — put
   cross-shell code there, never duplicated per shell.
 - `claude/.claude/settings.json` is tracked; machine-local overrides go in untracked
-  `settings.local.json`. Claude Code writes a real `~/.claude/settings.json` at runtime, so the
-  installer removes it (keeping a `.pre-stow` copy if it diverged) to let stow link the tracked one.
+  `settings.local.json`. Claude Code rewrites `~/.claude/settings.json` at runtime, so it is
+  never stowed: the installer copies the tracked file only when the live one is missing (or is a
+  leftover symlink) and never overwrites it. Sync repo changes by hand.
 - tmux owns panes everywhere; native wezterm splits are unused (LEADER binds only) — don't add
   wezterm-side nav integrations.
 - On macOS `alt-*` belongs to AeroSpace (i3-style, `alt` is `$mod`) and is grabbed system-wide, so

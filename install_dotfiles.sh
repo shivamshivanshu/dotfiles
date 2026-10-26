@@ -416,11 +416,12 @@ prepare_ssh() {
 	preserve_pre_stow "$HOME/.ssh/config" "$DOTFILES_DIR/ssh/.ssh/config"
 }
 
-# Claude can replace this symlink with a real settings file.
+# Claude Code rewrites settings.json at runtime, so it is seeded as a copy, never linked.
 prepare_claude() {
 	local live="$HOME/.claude/settings.json"
-	[[ -L "$live" && ! -e "$live" ]] && rm "$live"
-	preserve_pre_stow "$live" "$DOTFILES_DIR/claude/.claude/settings.json"
+	mkdir -p "$HOME/.claude"
+	[[ -L "$live" ]] && rm "$live"
+	[[ -e "$live" ]] || cp "$DOTFILES_DIR/claude/.claude/settings.json" "$live"
 }
 
 # DevEnv boxes ship a hand-written ~/.zshenv.
@@ -442,6 +443,7 @@ stow_packages() {
 		local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
 		# Keep runtime state and secrets outside the repo.
 		[[ "$pkg" == claude || "$pkg" == ssh ]] && flags+=(--no-folding)
+		[[ "$pkg" == claude ]] && flags+=(--ignore='settings\.json')
 		stow "${flags[@]}" "$pkg"
 	done
 }

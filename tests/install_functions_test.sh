@@ -130,6 +130,20 @@ ok "identical .zshenv is dropped outright" "$(exists "$HOME/.zshenv")/$(exists "
 ln -s "$REPO/zsh/.zshenv" "$HOME/.zshenv"
 prepare_zsh >/dev/null
 ok "already-stowed .zshenv is left alone" "$(readlink "$HOME/.zshenv")" "$REPO/zsh/.zshenv"
+
+# prepare_claude seeds settings.json as a copy and never clobbers the live one.
+settings="$HOME/.claude/settings.json"
+prepare_claude
+ok "missing settings.json is copied in" "$(cmp -s "$settings" "$REPO/claude/.claude/settings.json" && echo same)" "same"
+
+rm "$settings"
+ln -s "$REPO/claude/.claude/settings.json" "$settings"
+prepare_claude
+ok "stowed settings.json symlink becomes a copy" "$([[ -L "$settings" ]] && echo link || echo file)" "file"
+
+printf 'machine local\n' >"$settings"
+prepare_claude
+ok "existing settings.json is left alone" "$(cat "$settings")" "machine local"
 HOME="$REAL_HOME"
 
 echo

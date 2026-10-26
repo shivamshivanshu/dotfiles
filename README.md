@@ -30,16 +30,17 @@ claude/.claude/output-styles/    → ~/.claude/output-styles/
 claude/.claude/commands/         → ~/.claude/commands/
 claude/.claude/hooks/            → ~/.claude/hooks/
 claude/.claude/keybindings.json  → ~/.claude/keybindings.json
-claude/.claude/settings.json     → ~/.claude/settings.json
+claude/.claude/settings.json     ⇒ ~/.claude/settings.json (copied, not linked)
 ```
 
 `~/.claude` stays a real directory (credentials, sessions, caches); Stow folds
 in only the tracked entries (`CLAUDE.md`, `skills/`, `agents/`, `output-styles/`,
-`commands/`, `hooks/`, `keybindings.json`, `settings.json`) as symlinks.
+`commands/`, `hooks/`, `keybindings.json`) as symlinks.
 `settings.json` **is** tracked — a universal settings file shared across
-machines. Machine-local and work-internal overrides stay in `settings.local.json`
-(untracked). Note Claude Code writes a real `settings.json` at runtime; the
-installer removes any such file so the tracked one links.
+machines — but Claude Code rewrites it at runtime, so the installer copies it
+into place only when `~/.claude/settings.json` is missing and never overwrites
+an existing one; sync repo changes by hand. Machine-local and work-internal
+overrides stay in `settings.local.json` (untracked).
 
 ### Cheatsheet
 
