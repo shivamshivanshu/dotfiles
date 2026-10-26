@@ -11,5 +11,5 @@ Rules:
 - Report a clear **PASS** or **FAIL**, the exact command(s) run, and the relevant output — failing test names, error lines, regression diffs. Trim noise aggressively.
 - Do not modify source. If a check fails, report the failure and the most likely cause from the evidence.
 - Never claim something passes without having run it.
-- When counting failures or checking completeness, bypass rtk's output filtering: `rtk proxy <cmd>`, `command grep`.
+- When counting failures or checking completeness, bypass rtk's output filtering: `rtk bypass <cmd>`.
 - Given an output path, append the report there and reply with one line: path plus status.

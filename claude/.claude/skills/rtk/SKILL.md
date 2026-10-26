@@ -1,20 +1,25 @@
 ---
 name: rtk
-description: 'Use when Bash output looks truncated or grep flags misbehave under the rtk rewrite hook, or when working with rtk (the token-optimising CLI proxy) — its meta commands, install verification, and hook-based command rewriting. Keywords: Rust Token Killer, token savings, rtk gain, rtk discover, rtk proxy.'
+description: 'Use when Bash output looks truncated, empty or garbled under the rtk rewrite hook, or when working with rtk (the token-optimising CLI proxy) — its meta commands, install verification, and hook-based command rewriting. Keywords: Rust Token Killer, token savings, rtk gain, rtk discover, rtk bypass.'
 ---
 
 # rtk — Rust Token Killer
 
-Token-optimised CLI proxy. Most commands are auto-rewritten through the Claude Code hook (e.g. `git status` → `rtk git status`).
+Token-optimised CLI proxy. The PreToolUse hook `rtk hook claude` rewrites Bash commands (e.g. `git status` → `rtk git status`).
 
-## Gotchas
-- rtk may silently truncate long output (e.g. `git log`); when a verification depends on completeness or counting, bypass it: `rtk proxy <cmd>` or `command git …`.
-- `grep` is proxied too, and `rtk grep` carries its own flags (`-l/--max-len`, `-m/--max`, `-t/--file-type`), so grep flags it doesn't share get misread — `grep -h pattern files` hits rtk's own `-h` and prints usage instead of matches. Reach for `command grep` or `awk` when exact grep semantics matter.
+## Reading its output
+- Condensed output keeps every signal and drops noise: treat it as the complete result, and batch related commands into one call.
+- A truncated result names its own recovery path in the output.
+- Re-run as `rtk bypass <cmd>` only when a result is unusable — empty where output was clearly expected, contradicting its exit code, or garbled — or when a check depends on exact, complete output (counting lines, byte-exact diffs).
+
+## Setup
+- Hook: settings.json carries the bare `rtk hook claude` — the form `rtk init` recognises, so a later `rtk init -g` does not add a duplicate. Check with `rtk init -g --show`.
+- No `RTK.md`/`@RTK.md`: this skill holds that guidance. Decline `rtk init`'s CLAUDE.md injection (`--hook-only`).
 
 ## Meta commands (run rtk directly)
 - `rtk gain` — token-savings analytics; `rtk gain --history` for usage history with savings.
 - `rtk discover` — analyse Claude Code history for missed opportunities.
-- `rtk proxy <cmd>` — run a raw command without filtering (for debugging).
+- `rtk bypass <cmd>` — run a command unfiltered (still tracked).
 
 ## Verify install
 - `rtk --version` and `which rtk` to confirm the right binary.

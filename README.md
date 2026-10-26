@@ -106,7 +106,7 @@ via Stow. Keep these **free of work-internal names** — nothing internal
 |-------|----------|-------------|
 | `working-style` | preferences | start of any task — how work should be done |
 | `git` | preferences | commit / amend / rebase / worktree / review |
-| `rtk` | preferences | rtk proxy — token savings, gain / discover / proxy |
+| `rtk` | preferences | rtk proxy — token savings, gain / discover / bypass |
 | `codebase-recon` | preferences | understand / trace unfamiliar code before changing |
 | `cpp` | insights | writing / building / debugging C++ |
 | `python` | insights | writing / testing Python |
