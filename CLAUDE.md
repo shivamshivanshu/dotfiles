@@ -132,19 +132,18 @@ nothing runs after us.
   selection.
 
 ## tmux floating panes — deliberately unused, and why
-`prefix *` (`new-pane`, 3.7) is left unbound on purpose. Both blockers are upstream, so the fix is
-a tmux upgrade, not config here — re-check both before enabling.
-- **Breaks `@continuum-restore`.** A float adds a `<...>` segment to `window_layout` and
-  `select-layout` rejects the string tmux just emitted (`invalid layout: ...<40x6,4,2,1>`).
-  tmux-resurrect saves and restores via those, so the *whole* window's layout fails, not just the
-  float. Re-test: create a float, save `#{window_layout}`, kill it, feed the string back to
-  `select-layout`; enable only once that round-trips.
-- **Outside our vi navigation model.** `select-pane -L/-D/-U/-R` (what `C-h/j/k/l` run) walks
+`prefix *` (`new-pane`, 3.7) is left unbound on purpose. The remaining blocker is upstream, so the
+fix is a tmux upgrade, not config here — re-check it before enabling.
+- **Fixed in 3.8: `@continuum-restore`.** On 3.7 a float's `<...>` segment in `window_layout` made
+  `select-layout` reject the string tmux just emitted, failing the whole window's restore. 3.8
+  emits JSON layouts that round-trip with floats and still accepts 3.7 strings — but 3.7b rejects
+  a 3.8-saved layout, so resurrect files do not survive a downgrade.
+- **Still blocked on 3.8: outside our vi navigation model.** `select-pane -L/-D/-U/-R` (what `C-h/j/k/l` run) walks
   tiled geometry, which a float is not part of. Measured: directional keys never reach the float,
   and from inside it all four no-op — for a shell (smart-splits' `@pane-is-vim` false) and for
   nvim (guard true, nvim asks tmux, still no-op). Only `prefix o` and `prefix ;` escape, so
   enabling would mean binding one of those or a `#{pane_floating_flag}`-aware nav binding.
-- Lesser limits: mouse-only move/resize, no `resize-pane`, no swap, no float↔tile conversion.
+- 3.8 lifted the lesser limits: `resize-pane`/`move-pane`, swap and float↔tile (`prefix @`) work.
 - Copy mode, vi motions and selection all work *inside* a float — the problem is only focus.
 - `prefix Enter` (`display-popup -E`) already covers throwaway scratch shells with none of this:
   it is a client overlay, not a pane (never in `list-panes`), so resurrect never sees it.
