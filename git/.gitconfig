@@ -67,7 +67,7 @@
     cp = cherry-pick
     sw = switch
     sh = show
-    po = push origin HEAD:refs/for/main
+    po = push origin HEAD:refs/for/main%ready
     pr = pull --rebase
     wt = worktree
     rt = restore
