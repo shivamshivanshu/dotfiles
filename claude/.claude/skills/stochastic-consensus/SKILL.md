@@ -13,12 +13,12 @@ Map the approach space with independent solvers, then let them argue. For varian
 - Keep outliers as first-class output — they map the *different approaches*, and an outlier can win the debate. Never let ranking bury them.
 
 ## Phase 2 — debate
-- Set 2–4 steps up front; extend only while concessions still flow, stop early when a step yields none. Each step, every agent receives the outcome of all other agents and must incorporate it: answer challenges aimed at it, concede when convinced (log every concession), raise a few sharp challenges, and update its stance (champion/support/skeptical/kill).
+- Run 2–4 steps: after each, the next step is the final one if this one logged no concession or the next is step 4. Each step, every agent receives the outcome of all other agents and must incorporate it: answer challenges aimed at it, concede when convinced (log every concession), raise a few sharp challenges, and update its stance (champion/support/skeptical/kill).
 - Verify inside the debate: debaters check load-bearing claims against docs or code, not just argue — consensus without verification amplifies shared wrong assumptions.
 - Bounded positions via schema (~300 words, max 3 challenges per agent per step); pass only the latest round plus the shared ranked list, never full history.
-- Push agents to kill weak items — a good debate prunes. Force convergence in the final step.
+- Push agents to kill weak items — a good debate prunes. Force convergence in the final step, briefed as final.
 
 ## Fan in
-- One fan-in agent on the strongest tier gets the ranked list, final positions, and concession log.
+- One fan-in agent gets the ranked list, final positions, and concession log.
 - Output: adopt / defer with gating question / rejected **with reasons** (prevents re-litigation) / surviving outliers.
 - Each debate step is a barrier by nature; everything else pipelines. Tolerate dead agents — a lost solver still leaves its lens debatable from the shared list.
