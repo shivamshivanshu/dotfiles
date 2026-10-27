@@ -8,18 +8,20 @@ description: 'Use when Bash output looks truncated, empty or garbled under the r
 Token-optimised CLI proxy. The PreToolUse hook `rtk hook claude` rewrites Bash commands (e.g. `git status` → `rtk git status`).
 
 ## Reading its output
-- Condensed output keeps every signal and drops noise: treat it as the complete result, and batch related commands into one call.
-- A truncated result names its own recovery path in the output.
-- Re-run as `rtk bypass <cmd>` only when a result is unusable — empty where output was clearly expected, contradicting its exit code, or garbled — or when a check depends on exact, complete output (counting lines, byte-exact diffs).
+- Condensed output is lossy by design: rely on it for status and pass/fail, but recover the full output whenever omitted detail could change the conclusion — and always when it is marked truncated or filtered (e.g. `(4 filtered)`) or meets a bypass trigger below.
+- A truncated result names its recovery path in the output — follow it (`rtk recall <hash>`, or `rtk recall <hash> --full` for the whole output) before re-running.
+- A "Read of <file> … is blocked" reply is not file content. For full text use the Read tool or `rtk bypass cat <file>`, never `rtk bulk-read` (a lossy summary).
+- Re-run as `rtk bypass <cmd>` (unfiltered, still tracked) when the full output is needed and no recall hint exists, when a result is unusable — empty where output was clearly expected, contradicting its exit code, or garbled — or when a check depends on exact, complete output or on its structure (counting lines, byte-exact diffs; multi-directory `ls` drops the per-directory headers).
+- Batch related commands into one call; the hook rewrites each `&&` segment and can rewrite the left side of a pipe (`git status | head` is), so a count or grep over a piped command may see condensed output — pipe from `rtk bypass <cmd>` instead.
 
 ## Setup
-- Hook: settings.json carries the bare `rtk hook claude` — the form `rtk init` recognises, so a later `rtk init -g` does not add a duplicate. Check with `rtk init -g --show`.
-- No `RTK.md`/`@RTK.md`: this skill holds that guidance. Decline `rtk init`'s CLAUDE.md injection (`--hook-only`).
+- Hook: `~/.claude/settings.json` carries the bare `rtk hook claude` — the form `rtk init` recognises, so a later `rtk init -g` does not add a duplicate. Check with `rtk init -g --show`: it prints `[ok] Hook: rtk hook claude`.
+- Config `~/.config/rtk/config.toml` (tracked on Linux) excludes from rewriting, so these run raw: `git diff`/`show`/`log` (incl. `git -C`), `grep`, `rg`, `find`, `jq`, `ssh`, and `ls` with `-l`, sorting or several paths. Recovery store is sqlite: follow `rtk recall <hash>` hints.
+- No `RTK.md`/`@RTK.md`: this skill holds that guidance. Decline `rtk init`'s CLAUDE.md injection: run `rtk init -g --hook-only`.
 
 ## Meta commands (run rtk directly)
 - `rtk gain` — token-savings analytics; `rtk gain --history` for usage history with savings.
-- `rtk discover` — analyse Claude Code history for missed opportunities.
-- `rtk bypass <cmd>` — run a command unfiltered (still tracked).
+- `rtk discover` — analyse Claude Code history for missed opportunities; turn findings into hook or skill improvements.
 
 ## Verify install
 - `rtk --version` and `which rtk` to confirm the right binary.
