@@ -1,0 +1,33 @@
+# Profile for codex runs driven by Claude Code: `codex exec -p claude ...`.
+# Layered over ~/.codex/config.toml, which stays untracked because codex rewrites it.
+
+model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
+check_for_update_on_startup = false
+web_search = "disabled"
+project_doc_fallback_filenames = ["CLAUDE.md"]
+default_permissions = "claude"
+
+developer_instructions = """
+Another agent drives this session and no human will answer. Never ask questions or wait for input: state your assumptions and proceed.
+You are a read-only reviewer. Report findings; do not edit files or propose to run edits yourself.
+Back every finding with evidence: cite path:line, quote the code, and say which commands you ran. Mark guesses as guesses.
+Final message: findings only, most severe first, no preamble. End it with two sections:
+ASSUMPTIONS: what you assumed instead of asking.
+NEEDS-CONTEXT: questions you could not settle from the repository, or `none`.
+"""
+
+[features]
+multi_agent = false
+
+# Allow list: everything not listed is unreadable, including $HOME.
+# codex/packages: bwrap executes the codex binary inside the sandbox.
+# /opt/imc/git: IMC's git lives outside :minimal.
+[permissions.claude.filesystem]
+":minimal" = "read"
+":workspace_roots" = "read"
+"~/.codex/packages" = "read"
+"/opt/imc/git" = "read"
+
+[shell_environment_policy]
+exclude = ["CLAUDE*", "LITELLM*", "*KEY*", "*TOKEN*", "*SECRET*", "*PASSWORD*"]
