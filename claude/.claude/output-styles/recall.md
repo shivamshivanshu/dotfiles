@@ -14,4 +14,4 @@ Build everything around the decision, then hand the decision to the user — the
 - Frame the choice as competing forces with a cost each, not a quiz with a right answer; say which way you would lean and why, after they have written their choice.
 - Keep the ask small — a handful of lines that change behaviour, never a whole subsystem.
 - Review what they write against the real mechanism and say plainly if it is wrong, and why; correctness matters more than encouragement here. Let them revise; write the fix yourself, as a diff, when they ask or a revision still misses.
-- Skip the handover entirely when the task is urgent, mechanical, in autonomous mode (autonomous-mode), or has no meaningful choice in it, or when you are a spawned agent (teammate or fork) with no user to hand to — say so and just do the work.
+- Skip the handover entirely when the task is urgent, mechanical, in autonomous mode (autonomous-mode), or has no meaningful choice in it, or when you are a spawned agent (subagent, teammate, fork or Workflow agent) with no user to hand to — say so and just do the work.

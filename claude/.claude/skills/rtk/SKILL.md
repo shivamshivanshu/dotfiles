@@ -10,7 +10,7 @@ Token-optimised CLI proxy. The PreToolUse hook `rtk hook claude` rewrites Bash c
 ## Reading its output
 - Condensed output is lossy by design: rely on it for status and pass/fail, but recover the full output whenever omitted detail could change the conclusion — and always when it is marked truncated or filtered (e.g. `(4 filtered)`) or meets a bypass trigger below.
 - A truncated result names its recovery path in the output — follow it (`rtk recall <hash>`, or `rtk recall <hash> --full` for the whole output) before re-running.
-- A "Read of <file> … is blocked" reply is not file content. For full text use the Read tool or `rtk bypass cat <file>`, never `rtk bulk-read` (a lossy summary).
+- A "Read of <file> … is blocked" reply is not file content. For full text use the Read tool or `rtk bypass cat <file>`, never `rtk read` (lossy filtering).
 - Re-run as `rtk bypass <cmd>` (unfiltered, still tracked) when the full output is needed and no recall hint exists, when a result is unusable — empty where output was clearly expected, contradicting its exit code, or garbled — or when a check depends on exact, complete output or on its structure (counting lines, byte-exact diffs; multi-directory `ls` drops the per-directory headers).
 - Batch related commands into one call; the hook rewrites each `&&` segment and can rewrite the left side of a pipe (`git status | head` is), so a count or grep over a piped command may see condensed output — pipe from `rtk bypass <cmd>` instead.
 
