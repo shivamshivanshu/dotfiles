@@ -190,7 +190,7 @@ systems, ticket prefixes) goes here.
 | `codebase-recon` | preferences | understand / trace unfamiliar code before changing |
 | `cpp` | insights | writing / reviewing C++ |
 | `cpp-build` | insights | building / testing / debugging C++ |
-| `bazel` | insights | bazel in worktrees — user.bazelrc, disk-cache seeding, output-base cleanup |
+| `bazel` | insights | worktree create/remove, orphan sweep, host estimate |
 | `python` | insights | writing / testing Python |
 | `perf-investigation` | insights | latency / throughput / CPU profiling |
 | `concurrency` | insights | multithread / lock-free / memory ordering |
