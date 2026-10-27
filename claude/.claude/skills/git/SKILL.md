@@ -8,7 +8,7 @@ description: 'Use when committing, amending, rebasing, squashing fixups, resolvi
 ## Worktrees
 - Worktrees are the user's call: they usually create one and start Claude inside it. Never create one unasked — except in preparation per [[autonomous-mode]].
 - Keep all worktrees under one central root, `$LOCAL_WORKTREE_ROOT` (default `$HOME/worktree`), named `<repo_name>/<worktree_name>`. The `gwt` / `gwts` / `gwtrm` shell helpers create, switch, and remove them following this scheme.
-- `EnterWorktree({name})` hardcodes `<repo>/.claude/worktrees/<name>` with no location knob, so never create with it: create under the root (`gwt`, or `git worktree add "$LOCAL_WORKTREE_ROOT/<repo>/<name>" ...`), then enter with `EnterWorktree({path})` (teammates: [[agent-team]]). Only the first switch from the launch directory accepts a path outside `.claude/worktrees/`; to reach another root worktree after that, start a new session in it. `ExitWorktree` won't remove a path-entered worktree — use `gwtrm` / `git worktree remove`.
+- `EnterWorktree({name})` hardcodes `<repo>/.claude/worktrees/<name>` with no location knob, so never create with it: create under the root (`gwt`, or `git worktree add "$LOCAL_WORKTREE_ROOT/<repo>/<name>" ...`), then enter with `EnterWorktree({path})` (teammates: [[agent-team]]). Only the first switch from the launch directory accepts a path outside `.claude/worktrees/`; to reach another root worktree after that, start a new session in it. `ExitWorktree` won't remove a path-entered worktree — use `gwtrm` / `git worktree remove` (Bazel repo: [[bazel]] first).
 
 ## Commit lifecycle
 - Prefer atomic commits — one logical change each; squash or regroup later, non-interactively as below.

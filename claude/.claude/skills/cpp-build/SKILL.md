@@ -7,7 +7,7 @@ description: 'Use when building, testing or debugging C++, including writing Goo
 
 When editing C++, also load [[cpp]].
 
-- Bazel: the user's `bazelrc` sets the build config. Pass only a named config it defines (`--config=tsan`, `--config=asan`) or `-c opt`, and only when the task needs one.
+- Bazel: the user's `bazelrc` sets the build config. Pass only a named config it defines (`--config=tsan`, `--config=asan`) or `-c opt`, and only when the task needs one. Caches and worktrees: [[bazel]].
 - Treat regression and integration simulations as the primary verification loop: run them, then inspect the output data directly — columns populated, values in range. Bless (overwrite the expected outputs) once a diff of old against new explains every changed field; name the bless in the report and the commit message.
 - GoogleTest: modern matchers (`EXPECT_THAT`/`ASSERT_THAT`) over legacy macros. Mock the component to prove the bug, and follow the nearest existing test for the same error path.
 - Greppable, tagged debug prints are acceptable during investigation; strip them before committing.
