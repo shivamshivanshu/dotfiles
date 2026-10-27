@@ -206,7 +206,7 @@ systems, ticket prefixes) goes here.
 
 **Agents** (`agents/`): `simple-implementer` (simple well-specified subtasks,
 inherits the session model), `verifier` (build / test / regression, reports
-PASS/FAIL with evidence), and `codex` — a haiku bridge to the OpenAI Codex CLI
+PASS/FAIL with evidence), and `codex` — a bridge to the OpenAI Codex CLI
 for independent reads (reviews, exploration, debugging, second opinions) and
 the other-model leg of review and audit fan-outs; not for edits. It runs
 `codex exec -p claude`, which loads the read-only profile from the `codex`
