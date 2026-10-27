@@ -1,0 +1,33 @@
+[tracking]
+enabled = true
+history_days = 90
+
+[telemetry]
+enabled = false
+consent_given = false
+consent_date = "2026-05-06T11:22:05.556445726+00:00"
+
+[hooks]
+exclude_commands = [
+    '^git(\s+(-C\s+\S+|-c\s+\S+|--no-pager|--git-dir=\S+|--work-tree=\S+))*\s+(diff|show|log)(\s|$)',
+    "grep",
+    "rg",
+    "find",
+    "jq",
+    "ssh",
+    '^ls(\s+-\S+)*\s+[^-\s]\S*(\s+-\S+)*\s+[^-\s]',
+    '^ls(\s+\S+)*\s+(-[a-zA-Z]*[tS][a-zA-Z]*|--sort\S*|--time\S*)(\s|$)',
+    '^ls\s+(\S+\s+)*-[a-zA-Z]*l',
+]
+
+[limits]
+grep_max_results = 200
+grep_max_per_file = 200
+status_max_files = 15
+status_max_untracked = 10
+passthrough_max_chars = 30000
+
+[retriever]
+mode = "sqlite"
+max_entries = 2000
+retention_days = 30

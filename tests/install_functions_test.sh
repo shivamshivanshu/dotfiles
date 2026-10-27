@@ -110,6 +110,10 @@ STOW_PACKAGES=(nvim)
 OS=FreeBSD
 register_platform_packages
 ok "unknown OS registers nothing extra" "${SYSTEM_PACKAGES[*]} / ${STOW_PACKAGES[*]}" "git:git / nvim"
+STOW_PACKAGES=(nvim)
+OS=Linux
+register_platform_packages
+ok "Linux registers the rtk stow package" "${STOW_PACKAGES[*]:0:2}" "nvim rtk"
 
 # prepare_zsh runs against a live ~/.zshenv, so it must never destroy a divergent one.
 exists() { [[ -e "$1" ]] && echo yes || echo no; }
@@ -130,6 +134,29 @@ ok "identical .zshenv is dropped outright" "$(exists "$HOME/.zshenv")/$(exists "
 ln -s "$REPO/zsh/.zshenv" "$HOME/.zshenv"
 prepare_zsh >/dev/null
 ok "already-stowed .zshenv is left alone" "$(readlink "$HOME/.zshenv")" "$REPO/zsh/.zshenv"
+
+# prepare_rtk frees ~/.config/rtk/config.toml for stow on Linux only.
+mkdir -p "$HOME/.config/rtk"
+printf 'live rtk\n' >"$HOME/.config/rtk/config.toml"
+OS=Darwin
+prepare_rtk >/dev/null
+ok "macOS leaves the rtk config alone" "$(cat "$HOME/.config/rtk/config.toml")" "live rtk"
+OS=Linux
+prepare_rtk >/dev/null
+ok "divergent rtk config is kept as .pre-stow" "$(cat "$HOME/.config/rtk/config.toml.pre-stow")" "live rtk"
+ok "divergent rtk config frees the stow target" "$(exists "$HOME/.config/rtk/config.toml")" "no"
+
+rm -f "$HOME/.config/rtk/config.toml.pre-stow"
+cp "$REPO/rtk/.config/rtk/config.toml" "$HOME/.config/rtk/config.toml"
+prepare_rtk >/dev/null
+ok "identical rtk config is dropped outright" "$(exists "$HOME/.config/rtk/config.toml")/$(exists "$HOME/.config/rtk/config.toml.pre-stow")" "no/no"
+
+# One missing key voids rtk's whole config, silently re-enabling every exclusion.
+if [[ "$(uname -s)" == Linux ]] && command -v rtk >/dev/null; then
+	mkdir -p "$SANDBOX_HOME/xdg/rtk"
+	cp "$REPO/rtk/.config/rtk/config.toml" "$SANDBOX_HOME/xdg/rtk/"
+	ok "tracked rtk config keeps git diff excluded" "$(XDG_CONFIG_HOME="$SANDBOX_HOME/xdg" rtk rewrite 'git diff')" ""
+fi
 
 # prepare_claude seeds settings.json as a copy and never clobbers the live one.
 settings="$HOME/.claude/settings.json"

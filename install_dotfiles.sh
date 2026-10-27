@@ -96,7 +96,7 @@ GO_PACKAGES=(
 )
 
 # Alacritty is provided by the OS; only its config is linked.
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude shell scripts ssh)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude codex shell scripts ssh)
 
 # Platform-specific requirements. Registering them up front (rather than while
 # installing) keeps 'manual' and 'check' honest about what this host needs.
@@ -107,6 +107,7 @@ register_platform_packages() {
 		STOW_PACKAGES+=(aerospace)
 		;;
 	Linux)
+		STOW_PACKAGES+=(rtk)
 		if [[ -f /etc/fedora-release ]]; then
 			STOW_PACKAGES+=(dnf)
 		fi
@@ -424,6 +425,12 @@ prepare_claude() {
 	[[ -e "$live" ]] || cp "$DOTFILES_DIR/claude/.claude/settings.json" "$live"
 }
 
+# rtk init leaves a real config.toml; macOS reads Application Support instead, so it stays untracked there.
+prepare_rtk() {
+	[[ "$OS" == Linux ]] || return 0
+	preserve_pre_stow "$HOME/.config/rtk/config.toml" "$DOTFILES_DIR/rtk/.config/rtk/config.toml"
+}
+
 # DevEnv boxes ship a hand-written ~/.zshenv.
 prepare_zsh() {
 	preserve_pre_stow "$HOME/.zshenv" "$DOTFILES_DIR/zsh/.zshenv"
@@ -434,15 +441,16 @@ stow_packages() {
 		echo "Error: GNU Stow is not installed. Install it first (e.g. '$0 auto')." >&2
 		exit 1
 	fi
-	mkdir -p "$HOME/.config"
+	mkdir -p "$HOME/.config" "$HOME/.local/bin"
 	prepare_claude
 	prepare_ssh
+	prepare_rtk
 	prepare_zsh
 	for pkg in "${STOW_PACKAGES[@]}"; do
 		echo "→ stow $pkg"
 		local flags=(--restow --target="$HOME" --dir="$DOTFILES_DIR" --ignore='__pycache__')
 		# Keep runtime state and secrets outside the repo.
-		[[ "$pkg" == claude || "$pkg" == ssh ]] && flags+=(--no-folding)
+		[[ "$pkg" == claude || "$pkg" == codex || "$pkg" == rtk || "$pkg" == ssh ]] && flags+=(--no-folding)
 		[[ "$pkg" == claude ]] && flags+=(--ignore='settings\.json')
 		stow "${flags[@]}" "$pkg"
 	done
