@@ -132,5 +132,27 @@
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "switchModelsOnFlag": false,
-  "teammateMode": "in-process"
+  "teammateMode": "in-process",
+  "skillOverrides": {
+    "claude:agent-team": "off",
+    "claude:autonomous-mode": "off",
+    "claude:bazel": "off",
+    "claude:codebase-recon": "off",
+    "claude:concurrency": "off",
+    "claude:cpp": "off",
+    "claude:cpp-build": "off",
+    "claude:delegation": "off",
+    "claude:design-doc": "off",
+    "claude:doc-reviewer": "off",
+    "claude:fan-n": "off",
+    "claude:git": "off",
+    "claude:handoff": "off",
+    "claude:perf-investigation": "off",
+    "claude:python": "off",
+    "claude:rtk": "off",
+    "claude:session-insight": "off",
+    "claude:stochastic-consensus": "off",
+    "claude:teacher": "off",
+    "claude:working-style": "off"
+  }
 }
