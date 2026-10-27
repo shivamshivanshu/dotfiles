@@ -1,6 +1,6 @@
 ---
 name: python
-description: 'Use when writing, reviewing, or testing Python — idioms for pandas, dataclasses/enums, dependency-injection testing, pytest, uv, and datetime/timezone correctness. Keywords: typing, fakeredis, asyncio, GIL.'
+description: 'Load before writing, editing, reviewing or testing any Python, even a single function or a snippet answered in chat, and in every simplify or code-review pass over Python changes — idioms for pandas, dataclasses/enums, dependency-injection testing, pytest, uv, and datetime/timezone correctness. Keywords: typing, fakeredis, asyncio, GIL.'
 ---
 
 # Python Insights

@@ -1,6 +1,6 @@
 ---
 name: cpp
-description: 'Use when writing or reviewing C++ — language idioms, error handling, templates and concepts, ownership and lifetimes, types and initialization. Keywords: std::optional, std::expected, concepts, ranges, CRTP, deducing this, constexpr, string_view, span, unique_ptr, enum class, bit_cast, flat_map.'
+description: 'Load before writing, editing or reviewing any C++, even a single function or a snippet answered in chat, and in every simplify or code-review pass over C++ changes — language idioms, error handling, templates and concepts, ownership and lifetimes, types and initialization. Keywords: std::optional, std::expected, concepts, ranges, CRTP, deducing this, constexpr, string_view, span, unique_ptr, enum class, bit_cast, flat_map.'
 ---
 
 # C++ Insights
