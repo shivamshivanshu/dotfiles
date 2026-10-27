@@ -13,7 +13,8 @@ from pathlib import Path
 
 NOTES = Path.home() / "claude_notes"
 STYLES = Path.home() / ".claude" / "output-styles"
-HANDOFF_MAX_AGE = timedelta(hours=48)
+# 4 days so Friday's handoff or checkpoint still surfaces on Monday.
+RESUME_WINDOW_DAYS = 4
 MAX_NOTES = 8
 
 
@@ -42,7 +43,7 @@ def newest_fresh_handoff(repo_name):
     exports = NOTES / "exports"
     if not exports.is_dir():
         return None
-    cutoff = (datetime.now() - HANDOFF_MAX_AGE).timestamp()
+    cutoff = (datetime.now() - timedelta(days=RESUME_WINDOW_DAYS)).timestamp()
     fresh = [
         f
         for f in exports.glob("*/*.md")
@@ -59,16 +60,16 @@ def main():
     cwd = payload.get("cwd") or "."
 
     now = datetime.now()
-    # 4 days so a Friday checkpoint still surfaces on Monday.
     days = [
         NOTES / "scratchpad" / (now - timedelta(days=n)).strftime("%Y%m%d")
-        for n in range(4)
+        for n in range(RESUME_WINDOW_DAYS)
     ]
     days[0].mkdir(parents=True, exist_ok=True)
 
-    repo = git(cwd, "rev-parse", "--show-toplevel")
-    repo_name = Path(repo).name if repo else None
-    branch = git(cwd, "rev-parse", "--abbrev-ref", "HEAD")
+    worktrees = git(cwd, "worktree", "list", "--porcelain")
+    main_worktree = worktrees.splitlines()[0].removeprefix("worktree ") if worktrees else None
+    repo_name = Path(main_worktree).name if main_worktree else None
+    branch = (git(cwd, "symbolic-ref", "--short", "-q", "HEAD") or "HEAD") if repo_name else None
 
     files = [f for day in days for f in sorted(day.glob("*.md"))]
     checkpoints = [
@@ -78,13 +79,13 @@ def main():
         and (fm := frontmatter(f)).get("repo") == repo_name
         and fm.get("branch") == branch
     ]
-    checkpoint = max(checkpoints, key=lambda f: f.stat().st_mtime, default=None)
+    checkpoint = max(checkpoints, key=lambda f: f.stat().st_mtime, default=None) if repo_name else None
     notes = sorted(
         (f for f in files if not f.name.startswith("wip-")),
         key=lambda f: f.stat().st_mtime,
         reverse=True,
     )
-    handoff = newest_fresh_handoff(repo_name or "none")
+    handoff = newest_fresh_handoff(repo_name) if repo_name else None
 
     lines = [f"Today's scratchpad dir (plans/notes go here): {days[0]}"]
     if checkpoint:
