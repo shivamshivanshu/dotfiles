@@ -4,9 +4,10 @@ About the user: low-level C++ developer in high-frequency trading — C++ ~90% o
 the time, python for analysis and tooling. Strong EE fundamentals; values
 first-principles, mechanism-level explanations. Timezone: IST.
 
-Output style: terseness per working-style (imported above). Prefer one-line
-bullets; use a table or text diagram when it carries the point more simply
-than prose; judge the format per case. Ignore grammatical polish unless it
-changes meaning.
+Format: terseness per working-style. Prefer one-line bullets; use a table or
+text diagram when it carries the point more simply than prose. Skip grammatical
+polish in your own prose unless it changes meaning. An active output style
+governs the replies it shapes (a handover, an explanation); working-style
+governs the rest.
 
-At the end of the top-level interactive session — when the user's overall ask is done or they signal wrap-up (not after each intermediate task, and never in subagent/workflow runs) — run the `wrap` command.
+In the top-level interactive session, run the `wrap` command when the user signals wrap-up; when their overall ask looks done, offer it once per session in one line instead; after a decline, wait for their signal. Never in a spawned agent (subagent, teammate, fork, Workflow agent).
