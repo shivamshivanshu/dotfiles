@@ -41,7 +41,7 @@ Standing preferences for how the user wants Claude to work. These override gener
 - Background any run expected to exceed ~2 minutes (builds, test suites, regressions) and keep working while it runs; check its result before claiming completion.
 
 ## Edit
-- Code as documentation: class, variable and argument names should say what the code does. Comment only what names, code, commit message and ticket cannot carry — a non-obvious *why* or a genuinely complex algorithm; never restate the code.
+- Code as documentation: class, variable and argument names should say what the code does. Comment only what names, code, commit message and ticket cannot carry — a non-obvious *why* or a genuinely complex algorithm; never restate the code. On a small fix or config change the commit message carries the why, so add none, even where the surrounding file comments densely.
 - One function does one thing. One class per file, named after it; util/free functions are exempt. Types may share a file when they belong together logically (one serves the other: its params or result struct, error enum, iterator, impl detail) or are trivially small; once each carries logic of its own, split them.
 - Prefer functional, side-effect-free functions — avoid hidden mutation and shared mutable state, and favour immutable data. Language mechanics: [[cpp]], [[python]]; for a language with no skill of its own, apply the [[cpp]] rules that have an equivalent there (errors as values, strong types, explicit ownership, constrained generics, enforcing what the compiler or type checker can) in that language's idiom, and skip the C++-only mechanics.
 - Make the smallest clean, correct change — no band-aids, no needless cleverness.
