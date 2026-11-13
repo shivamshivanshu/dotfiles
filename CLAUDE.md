@@ -232,9 +232,9 @@ upgrade, not config here — re-check it before building on floats.
   with that resize binding), `alt-w` is accordion (AeroSpace has no tabbed layout), no
   `split h`/`split v` (i3-compat only, and `enable-normalization-flatten-containers` undoes it —
   use `join-with`), no `$mod+d` launcher (cmd-space covers it).
-- An unpinned aerospace workspace attaches to the *main* monitor, not the focused one, so
-  `workspace-to-monitor-force-assignment` is what keeps windows off the laptop screen. Use
-  case-insensitive name substrings with `'main'` as the undocked fallback — never the numeric
-  monitor patterns, which are left-to-right positions and renumber on undock.
+- aerospace has no `workspace-to-monitor-force-assignment` (removed by choice), so a workspace
+  attaches to the *main* monitor, not the focused one. If pinning returns, use case-insensitive
+  name substrings with `'main'` as the undocked fallback — never the numeric monitor patterns,
+  which are left-to-right positions and renumber on undock.
 - smart-splits must stay `lazy = false`: it sets tmux's `@pane-is-vim` at startup, before the
   first nav key arrives. Lazy-loading it breaks `C-h/j/k/l` routing until the plugin loads.

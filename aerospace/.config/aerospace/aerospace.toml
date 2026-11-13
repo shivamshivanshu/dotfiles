@@ -14,20 +14,6 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 inner = { horizontal = 6, vertical = 6 }
 outer = { left = 6, right = 6, top = 6, bottom = 6 }
 
-### ──────────────── Workspaces per monitor ────────────────
-# Numbers increase left to right across the physical layout.
-[workspace-to-monitor-force-assignment]
-1 = ['built-in', 'main'] # laptop
-2 = ['built-in', 'main']
-3 = ['p32p', 'main'] # vertical panel
-4 = ['p32p', 'main']
-5 = ['dell', 'main'] # wide panel
-6 = ['dell', 'main']
-7 = ['dell', 'main']
-8 = ['dell', 'main']
-9 = ['dell', 'main']
-10 = ['dell', 'main']
-
 ### ──────────────── Focus & move ($mod+hjkl) ────────────────
 [mode.main.binding]
 alt-h = 'focus --boundaries all-monitors-outer-frame left'
