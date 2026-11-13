@@ -6,65 +6,18 @@ config-version = 2 # v2 drops inferred persistent-workspaces: a workspace lives 
 
 start-at-login = true
 
-default-root-container-layout = 'tiles'
-default-root-container-orientation = 'auto' # vertical monitors get a vertical split
-accordion-padding = 30
-automatically-unhide-macos-hidden-apps = true            # cmd-h would otherwise drop a window out of the tree
-on-focused-monitor-changed = ['move-mouse monitor-lazy-center'] # cursor follows keyboard focus across monitors
+automatically-unhide-macos-hidden-apps = true # cmd-h would otherwise drop a window out of the tree
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
 ### ──────────────── Gaps ────────────────
 [gaps]
-inner.horizontal = 6
-inner.vertical = 6
-outer.left = 6
-outer.right = 6
-outer.top = 6
-outer.bottom = 6
-
-### ──────────────── Window rules ────────────────
-# Apps land on their home workspace at launch. WezTerm is deliberately absent: alt-enter
-# should open a terminal on whichever screen is in front of you.
-[[on-window-detected]]
-if.app-id = 'com.apple.systempreferences'
-run = 'layout floating' # already floated by the dialog heuristic; explicit beats implicit
-
-[[on-window-detected]]
-if.app-id = 'com.microsoft.Outlook'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.iCal'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.spotify.client'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome'
-run = 'move-node-to-workspace 5'
-
-[[on-window-detected]]
-if.app-id = 'com.brave.Browser'
-run = 'move-node-to-workspace 5'
-
-[[on-window-detected]]
-if.app-id = 'Mattermost.Desktop'
-run = 'move-node-to-workspace 5'
-
-[[on-window-detected]]
-if.app-id = 'md.obsidian'
-run = 'move-node-to-workspace 6'
-
-[[on-window-detected]]
-if.app-id = 'com.openai.codex'
-run = 'move-node-to-workspace 6'
+inner = { horizontal = 6, vertical = 6 }
+outer = { left = 6, right = 6, top = 6, bottom = 6 }
 
 ### ──────────────── Workspaces per monitor ────────────────
-# Numbers increase left to right across the physical layout. Never use the numeric
-# monitor patterns here: they are left-to-right positions and renumber on undock.
+# Numbers increase left to right across the physical layout.
 [workspace-to-monitor-force-assignment]
-1 = ['built-in', 'main'] # laptop; 'main' is the undocked fallback for every entry
+1 = ['built-in', 'main'] # laptop
 2 = ['built-in', 'main']
 3 = ['p32p', 'main'] # vertical panel
 4 = ['p32p', 'main']
@@ -77,7 +30,7 @@ run = 'move-node-to-workspace 6'
 
 ### ──────────────── Focus & move ($mod+hjkl) ────────────────
 [mode.main.binding]
-alt-h = 'focus --boundaries all-monitors-outer-frame left' # boundaries: focus crosses monitors, not just the workspace
+alt-h = 'focus --boundaries all-monitors-outer-frame left'
 alt-j = 'focus --boundaries all-monitors-outer-frame down'
 alt-k = 'focus --boundaries all-monitors-outer-frame up'
 alt-l = 'focus --boundaries all-monitors-outer-frame right'
@@ -87,7 +40,7 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
-alt-semicolon = 'focus-back-and-forth' # last focused window, the window-level alt-tab
+alt-semicolon = 'focus-back-and-forth'
 
 ### ──────────────── Workspaces ────────────────
 alt-1 = 'workspace 1'
@@ -117,13 +70,13 @@ alt-tab = 'workspace-back-and-forth'
 ### ──────────────── Monitors ────────────────
 alt-shift-comma = 'move-workspace-to-monitor --wrap-around prev'  # i3's $mod+shift+< (workspace to output left)
 alt-shift-period = 'move-workspace-to-monitor --wrap-around next' # i3's $mod+shift+> (workspace to output right)
-alt-ctrl-comma = 'move-node-to-monitor --wrap-around prev'        # just this window, to the left panel
-alt-ctrl-period = 'move-node-to-monitor --wrap-around next'       # just this window, to the right panel
+alt-ctrl-comma = 'move-node-to-monitor --wrap-around prev'
+alt-ctrl-period = 'move-node-to-monitor --wrap-around next'
 
 ### ──────────────── Layout ────────────────
 alt-f = 'fullscreen'
-alt-e = 'layout tiles horizontal vertical'     # i3's $mod+e: toggle split orientation
-alt-w = 'layout accordion horizontal vertical' # i3's $mod+w: accordion stands in for tabbed
+alt-e = 'layout tiles horizontal vertical'
+alt-w = 'layout accordion horizontal vertical'
 alt-shift-space = 'layout floating tiling'
 
 ### ──────────────── Windows & config ────────────────
@@ -133,7 +86,7 @@ alt-shift-c = 'reload-config'
 
 ### ──────────────── Modes ────────────────
 alt-r = 'mode resize'
-alt-shift-semicolon = 'mode service' # housekeeping: reload, flatten tree, join containers
+alt-shift-semicolon = 'mode service'
 
 [mode.resize.binding]
 h = 'resize width -50'
@@ -146,9 +99,8 @@ esc = 'mode main'
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main']
-b = ['balance-sizes', 'mode main']              # even out sizes after resize mode
-t = ['enable toggle', 'mode main']              # pause tiling, e.g. while screen sharing
-f = ['layout floating tiling', 'mode main']
+b = ['balance-sizes', 'mode main']
+t = ['enable toggle', 'mode main'] # pause tiling, e.g. while screen sharing
 backspace = ['close-all-windows-but-current', 'mode main']
 h = ['join-with left', 'mode main']
 j = ['join-with down', 'mode main']
