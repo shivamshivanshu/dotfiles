@@ -21,7 +21,7 @@ return {
 		engine = "ripgrep",
 		transient = true,
 		windowCreationCommand = "split",
-		prefills = { flags = "--ignore-case --hidden" },
+		prefills = { flags = "--ignore-case --hidden --glob=!.git/" },
 		history = { maxHistoryLines = 1000 },
 		keymaps = {
 			close = { n = "q" },
