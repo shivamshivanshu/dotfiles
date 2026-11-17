@@ -120,7 +120,6 @@
     "imc-sandbox@imc-claude-plugins": false,
     "clio@imc-claude-plugins": true
   },
-  "outputStyle": "Recall",
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {

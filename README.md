@@ -216,9 +216,8 @@ package. Needs the Codex CLI and `codex login`, and spends OpenAI quota.
 `Teaching` — example-led explanations with mechanism traces, for deep-dives
 rather than routine work. `Recall` (`recall.md`) — active recall: Claude
 builds the scaffolding and hands over the deciding code, for upskilling rather
-than shipping. The seeded `settings.json` makes `Recall` the default; switch
-with `/output-style Recall` (not `learning`, which is Claude Code's built-in
-Learning style).
+than shipping. Neither is the default; opt in with `/output-style Recall`
+(not `learning`, which is Claude Code's built-in Learning style).
 
 **Commands** (`commands/`): `/wrap` closes a session (optional handoff, then
 session-insight and teacher); `/wip` summarises uncommitted work and writes a
