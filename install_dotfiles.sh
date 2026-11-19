@@ -96,7 +96,7 @@ GO_PACKAGES=(
 )
 
 # Alacritty is provided by the OS; only its config is linked.
-STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh claude codex shell scripts ssh)
+STOW_PACKAGES=(nvim tmux git alacritty wezterm bash zsh agents claude codex shell scripts ssh)
 
 # Platform-specific requirements. Registering them up front (rather than while
 # installing) keeps 'manual' and 'check' honest about what this host needs.
@@ -425,6 +425,11 @@ prepare_claude() {
 	[[ -e "$live" ]] || cp "$DOTFILES_DIR/claude/.claude/settings.json" "$live"
 }
 
+# A real ~/.agents/skills makes stow link each skill dir, not all of ~/.agents, which tools write into.
+prepare_agents() {
+	mkdir -p "$HOME/.agents/skills"
+}
+
 prepare_codex() {
 	local live="$HOME/.codex/config.toml"
 	mkdir -p "$HOME/.codex"
@@ -448,6 +453,7 @@ stow_packages() {
 		exit 1
 	fi
 	mkdir -p "$HOME/.config" "$HOME/.local/bin"
+	prepare_agents
 	prepare_claude
 	prepare_codex
 	prepare_ssh

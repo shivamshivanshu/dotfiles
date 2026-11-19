@@ -5,13 +5,13 @@ description: 'Use when writing a design doc, RFC, technical proposal, or archite
 
 # Design Doc
 
-The default reader is an LLM agent: complete and exact, no padding, length set by content. When the user asks for a doc to read themselves, or it is for the team, a human design review, or to be posted or shared (the [[doc-reviewer]] pass does not count), write for a skeptical senior reviewer with ten minutes — one to two pages; a doc nobody finishes decides nothing. Pair with [[working-style]].
+The default reader is an LLM agent: complete and exact, no padding, length set by content. When the user asks for a doc to read themselves, or it is for the team, a human design review, or to be posted or shared (the [[doc-reviewer]] pass does not count), write for a skeptical senior reviewer with ten minutes — one to two pages; a doc nobody finishes decides nothing. Pair with `~/.agents/AGENTS.md`.
 
 ## Brainstorm first
 - Invoke `superpowers:brainstorming` before drafting, unprompted, to pin down intent, goals and non-goals with the user — unless the user already stated all three; then confirm them in one line and skip it. Its written design becomes this doc, with three overrides:
   - Structure and save location come from this skill, not `docs/superpowers/specs/`, and the doc is not committed (see Save).
   - [[doc-reviewer]] replaces its builder check (a fresh subagent reading the spec) and the single question round that check produces.
-  - After approval, the next step is the working-style plan gate at step 3, not `superpowers:writing-plans`; the approved design stands as steps 1–2, so ask only what it left open.
+  - After approval, the next step is the `~/.agents/AGENTS.md` plan gate at step 3, not `superpowers:writing-plans`; the approved design stands as steps 1–2, so ask only what it left open.
 
 ## Structure
 1. **Problem** — what breaks or costs today, with numbers where they exist; why now and not later.
@@ -26,4 +26,4 @@ The default reader is an LLM agent: complete and exact, no padding, length set b
 - Every rejected option gets its real reason recorded — the doc's second job is stopping re-litigation.
 
 ## Save
-- Always `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-design.md`. Copy it into the repo's docs (and commit it) only when the user asks.
+- Always `<notes-root>/scratchpad/<YYYYMMDD>/<topic>-design.md`. Copy it into the repo's docs (and commit it) only when the user asks.

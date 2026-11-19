@@ -5,7 +5,7 @@ description: 'Load before writing, editing, reviewing or testing any Python, eve
 
 # Python Insights
 
-Idioms and preferences for Python. Pair with [[working-style]].
+Idioms and preferences for Python. Pair with `~/.agents/AGENTS.md`.
 
 ## Design
 - Write idiomatic Python — express intent with comprehensions, context managers, unpacking, and the standard library rather than manual loops and boilerplate.

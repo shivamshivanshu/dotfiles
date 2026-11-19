@@ -5,7 +5,7 @@ description: 'Load before writing, editing or reviewing any C++, even a single f
 
 # C++ Insights
 
-Use the standard the build targets (`-std`/`cxxopt` in the bazelrc or toolchain); C++20 only when nothing pins one. Assume Linux x86-64 as the execution target unless the repo says otherwise — development often happens on macOS; don't tune for it. When building, testing or debugging C++, also load [[cpp-build]]. Pair with [[working-style]]; for measurement discipline and the usual culprits (hot-path work, false sharing, locality), [[perf-investigation]]; for threaded code, [[concurrency]].
+Use the standard the build targets (`-std`/`cxxopt` in the bazelrc or toolchain); C++20 only when nothing pins one. Assume Linux x86-64 as the execution target unless the repo says otherwise — development often happens on macOS; don't tune for it. When building, testing or debugging C++, also load [[cpp-build]]. Pair with `~/.agents/AGENTS.md`; for measurement discipline and the usual culprits (hot-path work, false sharing, locality), [[perf-investigation]]; for threaded code, [[concurrency]].
 
 ## Idioms
 - Enforce what the compiler can: `const` locals and member functions, `[[nodiscard]]` results, `noexcept` where it is the contract. `const` data members only in types never assigned or moved — they delete assignment and turn moves into copies. Pass small types (trivially copyable and ≤16 bytes — a heuristic for SysV register passing; check the asm where it matters) and sinks by value, the rest by `const&`.

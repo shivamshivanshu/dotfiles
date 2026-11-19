@@ -5,7 +5,7 @@ description: 'Use when the user says "autonomous mode" or "kick off autonomous",
 
 # Autonomous mode
 
-- Trigger: only the user's explicit "autonomous mode" / "kick off autonomous". Auto permission mode and plan approval are not triggers; without it, the [[working-style]] gate's stop-and-ask holds.
+- Trigger: only the user's explicit "autonomous mode" / "kick off autonomous". Auto permission mode and plan approval are not triggers; without it, the `~/.agents/AGENTS.md` gate's stop-and-ask holds.
 - Requires a plan approved per the gate; if none exists yet, finish the gate with the user present first.
 - Preparation, right after the trigger and with the user present, in order:
   1. On any branch, use a worktree per [[git]] when unrelated edits or another agent share the tree, or when the main checkout is live (stowed dotfiles: `~` links into it); otherwise, if on the default branch, create a branch and switch to it.
@@ -21,4 +21,4 @@ description: 'Use when the user says "autonomous mode" or "kick off autonomous",
   - change anything outside the run's worktree (the repo, when step 1 made only a branch) — installs, `sudo`, `$HOME` or system config, restowing. Exempt: `$HOME/claude_notes/`, scratch and temp dirs, and the caches and build outputs tools write as a side effect (`~/.cache`, build output bases).
 - A user message mid-run is the latest instruction: act on it and stay in autonomous mode unless it says to stop — then append the `ended` line (below) and give the final report. Work it adds outside the approved plan goes through the gate with the user while they are there; the run continues meanwhile.
 - Ends when the plan's last step is verified, or when no runnable work remains (only `BLOCKED:`/`PENDING:` rows): commit, append `autonomous: ended <ISO>` to the header, leave the branch or worktree unmerged for review, then give the final report. Later requests go through the gate again.
-- Reporting: one line per milestone (`implementer done`, `tests pass`, `2 fixes applied`); the final report ends with the decisions-file path and lists every `PENDING:` and `BLOCKED:` row. A status request gets a few lines; keep the why in the plan and decisions file. This overrides [[working-style]]'s why-first and ~10-call status rules.
+- Reporting: one line per milestone (`implementer done`, `tests pass`, `2 fixes applied`); the final report ends with the decisions-file path and lists every `PENDING:` and `BLOCKED:` row. A status request gets a few lines; keep the why in the plan and decisions file. This overrides `~/.agents/AGENTS.md`'s why-first and ~10-call status rules.

@@ -172,6 +172,9 @@ printf 'machine local\n' >"$settings"
 prepare_claude
 ok "existing settings.json is left alone" "$(cat "$settings")" "machine local"
 
+prepare_agents
+ok "prepare_agents leaves ~/.agents/skills a real dir" "$([[ -d "$HOME/.agents/skills" && ! -L "$HOME/.agents/skills" ]] && echo dir)" "dir"
+
 codex_config="$HOME/.codex/config.toml"
 prepare_codex
 ok "missing codex config.toml is copied in" "$(cmp -s "$codex_config" "$REPO/codex/.codex/config.toml" && echo same)" "same"

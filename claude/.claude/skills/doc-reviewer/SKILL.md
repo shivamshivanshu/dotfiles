@@ -5,7 +5,7 @@ description: 'Use when a plan, design, or implementation doc is written (working
 
 # Doc Reviewer
 
-Turn a draft doc into one an agent can execute without asking. It is the review in the plan gate of [[working-style]]:
+Turn a draft doc into one an agent can execute without asking. It is the review in the plan gate (`~/.agents/AGENTS.md` Plan and scope; step 4 per [[working-style]]):
 - Trivial plan: skip it.
 - Any doc: panel, Q&A loop, audit.
 - Implementation plan in the gate: continues to implement and conformance once approved. A pending `edits.md` blocks approval until the user applies it and the fan-in confirms the doc matches; otherwise the plan stops unapproved.
@@ -31,7 +31,7 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 - Supervise per [[delegation]]. A reviewer still dead after one replacement is noted missing. With no completed reviewer, stop and ask the user.
 
 ## 2. Q&A loop
-- The main thread asks every question in one go: one AskUserQuestion for ≤4 (recommended option first), else a plain numbered message. Include the worktree offer ([[working-style]] Git and safety) when the plan edits another repo — §5 starts without asking.
+- The main thread asks every question in one go: one AskUserQuestion for ≤4 (recommended option first), else a plain numbered message. Include the worktree offer (`~/.agents/AGENTS.md` Git and safety) when the plan edits another repo — §5 starts without asking.
 - It forwards the answers verbatim to the fan-in, which records them as choice + why (design doc: **Decision**, rejected options' reasons under **Options**; else **Decisions**, created if absent), rechecks the doc, and returns follow-ups. "You pick" or unanswered → the recommended default, recorded as `default (user deferred)`. An answer contradicting a recorded decision goes back to the user as a conflict. Repeat until none remain.
 
 ## 3. Audit
@@ -40,13 +40,7 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 - Cap: three Q&A rounds, and the audit plus two re-audits; then list what remains with its defaults and ask once whether to proceed on them — a no means the user decides each, and here silence is not a default. Only explicit acceptance or a decision on every item approves the doc, as the one exception to the rule above: no further re-audit, any residual named in the approval line. Otherwise it stops unapproved.
 
 ## 4. Implementation-plan contents
-The author writes the plan to this spec before the panel; the lenses check against it. It carries what was already learned so the implementer skips broad discovery — it still reads the files it edits and checks any fact correctness rests on:
-- Decisions with rationale; non-goals.
-- Interfaces: signatures, class and file names, data flow, ownership, error handling. No implementation bodies — pseudocode only for a genuinely complex algorithm.
-- Context map: files to edit; files and symbols to read (line ranges as hints only), and what to take from each; established facts (call paths, invariants) stated outright.
-- Skills to follow, as `~/.claude/skills/<name>/SKILL.md` paths the implementer reads first — `simple-implementer` has no Skill tool, and working-style already reaches it via CLAUDE.md. List the language skills ([[cpp]], [[cpp-build]], [[python]], …) and any domain one ([[concurrency]], [[perf-investigation]]) that applies.
-- Verify commands per change: build, tests, regression.
-- Sizeable separable work: slices with a dependency tree and a verify command each, per [[agent-team]].
+The author writes the plan per `~/.agents/AGENTS.md` Implementation-plan contents before the panel; the lenses check against it. Skills to follow are `~/.claude/skills/<name>/SKILL.md` paths — `simple-implementer` has no Skill tool, and AGENTS.md and working-style already reach it via CLAUDE.md.
 
 ## 5. Implement
 - If the user gave the autonomous-mode trigger, run [[autonomous-mode]] preparation now, then take `<base>` below inside its branch or worktree.

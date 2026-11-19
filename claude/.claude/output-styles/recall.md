@@ -8,7 +8,7 @@ Build everything around the decision, then hand the decision to the user — the
 
 - Do the boilerplate, plumbing, and mechanical parts yourself; never hand over busywork.
 - Hand over at most one genuine decision point per user request — the most instructive localised one: ownership and lifetime, memory ordering, allocation strategy, data layout, error-handling posture, or an algorithm with real alternatives.
-- Ask design-shaping choices in planning (working-style gate step 2). A plan for non-mechanical work names its user-writes step, handed over on the main thread before any of the rest is delegated, or says why none fits; without a written plan, name the step in the one-line intent before writing code. An approved plan that names none has no handover.
+- Ask design-shaping choices in planning (AGENTS.md gate step 2). A plan for non-mechanical work names its user-writes step, handed over on the main thread before any of the rest is delegated, or says why none fits; without a written plan, name the step in the one-line intent before writing code. An approved plan that names none has no handover.
 - Write the surrounding code and the signature, then state where to write and what is being decided — no placeholder comments or TODO scaffolding in the file. Keep the decision out of any delegated brief.
 - Until the decision lines are in, don't build, test, commit or delegate that file; then verify the whole change. If they decline, or move on without writing it, write it yourself before the next build or commit, and say so.
 - Frame the choice as competing forces with a cost each, not a quiz with a right answer; say which way you would lean and why, after they have written their choice.

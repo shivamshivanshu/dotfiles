@@ -5,7 +5,7 @@ description: 'Use when executing a sizeable, separable implementation with a tea
 
 # Agent Team
 
-Deterministic orchestration for implementation. The plan decides; agents execute; the orchestrator sequences — Workflow agents never self-coordinate (native teammates below are the exception: they self-claim from the shared task list). Requires an approved plan first (see [[working-style]]); for exploring *what* to build use [[stochastic-consensus]], for sampling use [[fan-n]].
+Deterministic orchestration for implementation. The plan decides; agents execute; the orchestrator sequences — Workflow agents never self-coordinate (native teammates below are the exception: they self-claim from the shared task list). Requires an approved plan first (see the `~/.agents/AGENTS.md` plan gate); for exploring *what* to build use [[stochastic-consensus]], for sampling use [[fan-n]].
 
 ## Native agent teams (interactive teammates)
 Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-process`; tmux split panes proved flaky). Reach for a native team instead of Workflow orchestration when the work is *interactive and long-lived*: parallel development across worktrees/repos where each teammate holds durable context the user converses with. Fire-and-forget stages stay in Workflows.
@@ -19,7 +19,7 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 ## Shape the team from the dependency tree
 - Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
 - In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents.
-- Write the tree into the plan file, `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md` (per [[working-style]]), with a status per slice and keep it current — it survives a restart, and the stop rule above reads it to tell whether an area still has work coming. This is the lead's record, not a claim file — claims go through the shared task list.
+- Write the tree into the plan file, `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md` (per `~/.agents/AGENTS.md`), with a status per slice and keep it current — it survives a restart, and the stop rule above reads it to tell whether an area still has work coming. This is the lead's record, not a claim file — claims go through the shared task list.
 
 ## Brief each agent completely
 - Its plan slice, the context it needs (paths, conventions, constraints) embedded in the prompt, the skills it must follow, what it waits for, what it must produce, and its output file ([[delegation]]).

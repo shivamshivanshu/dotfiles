@@ -5,7 +5,7 @@ description: 'Use when about to change an unfamiliar codebase, or when asked to 
 
 # Codebase Recon
 
-Understand before you change. Pair with [[working-style]].
+Understand before you change. Pair with `~/.agents/AGENTS.md`.
 
 ## Map the slice
 - Scope to what the task touches; don't read the whole repo. Find the entry points, the key data types, and the boundaries (I/O, config, external calls).
@@ -21,4 +21,4 @@ Understand before you change. Pair with [[working-style]].
 - For bugs: reproduce deterministically before fixing — when a race or a one-off production crash makes that infeasible, preserve the crash evidence, build the smallest stress reproducer, and state what evidence the fix rests on; one falsifiable hypothesis per experiment, one variable changed at a time; when a regression window exists, let `git bisect run` do the search.
 
 ## Record findings
-- For non-trivial work (per the [[working-style]] plan gate), write findings to `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-recon.md` first: the call path, the key types, the invariants, and the open questions. Carry them into the plan gate from step 2 on; for an audit or how-does-this-work question, the notes are the deliverable — answer in the reply and give the path.
+- For non-trivial work (per the `~/.agents/AGENTS.md` plan gate), write findings to `<notes-root>/scratchpad/<YYYYMMDD>/<topic>-recon.md` first: the call path, the key types, the invariants, and the open questions. Carry them into the plan gate from step 2 on; for an audit or how-does-this-work question, the notes are the deliverable — answer in the reply and give the path.
