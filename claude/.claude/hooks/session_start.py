@@ -5,13 +5,16 @@ Emits additionalContext pointing at scratchpad notes, a fresh handoff, any
 /wip checkpoint matching the current repo+branch, and the installed output
 styles — state and capabilities the native --resume index never surfaces.
 """
+import argparse
 import json
 import subprocess
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-NOTES = Path.home() / "claude_notes"
+CLAUDE = "claude"
+CODEX = "codex"
+NOTES_ROOTS = {CLAUDE: Path.home() / "claude_notes", CODEX: Path.home() / "codex_notes"}
 STYLES = Path.home() / ".claude" / "output-styles"
 # 4 days so Friday's handoff or checkpoint still surfaces on Monday.
 RESUME_WINDOW_DAYS = 4
@@ -39,8 +42,8 @@ def frontmatter(path):
     return {k.strip(): v.strip() for k, _, v in pairs if v}
 
 
-def newest_fresh_handoff(repo_name):
-    exports = NOTES / "exports"
+def newest_fresh_handoff(notes, repo_name):
+    exports = notes / "exports"
     if not exports.is_dir():
         return None
     cutoff = (datetime.now() - timedelta(days=RESUME_WINDOW_DAYS)).timestamp()
@@ -52,7 +55,15 @@ def newest_fresh_handoff(repo_name):
     return max(fresh, key=lambda f: f.stat().st_mtime, default=None)
 
 
+def parse_agent():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--agent", choices=NOTES_ROOTS, default=CLAUDE)
+    return parser.parse_args().agent
+
+
 def main():
+    agent = parse_agent()
+    notes_root = NOTES_ROOTS[agent]
     try:
         payload = json.load(sys.stdin)
     except ValueError:
@@ -61,7 +72,7 @@ def main():
 
     now = datetime.now()
     days = [
-        NOTES / "scratchpad" / (now - timedelta(days=n)).strftime("%Y%m%d")
+        notes_root / "scratchpad" / (now - timedelta(days=n)).strftime("%Y%m%d")
         for n in range(RESUME_WINDOW_DAYS)
     ]
     days[0].mkdir(parents=True, exist_ok=True)
@@ -85,7 +96,7 @@ def main():
         key=lambda f: f.stat().st_mtime,
         reverse=True,
     )
-    handoff = newest_fresh_handoff(repo_name) if repo_name else None
+    handoff = newest_fresh_handoff(notes_root, repo_name) if repo_name else None
 
     lines = [f"Today's scratchpad dir (plans/notes go here): {days[0]}"]
     if checkpoint:
@@ -98,7 +109,7 @@ def main():
         )
     styles = (
         sorted(frontmatter(p).get("name", p.stem) for p in STYLES.glob("*.md"))
-        if STYLES.is_dir()
+        if agent == CLAUDE and STYLES.is_dir()
         else []
     )
     if styles:
@@ -112,7 +123,7 @@ def main():
         " non-trivial work):\n- " + "\n- ".join(lines)
     )
     output = {"hookEventName": "SessionStart", "additionalContext": context}
-    if repo_name and branch and payload.get("source") == "startup":
+    if agent == CLAUDE and repo_name and branch and payload.get("source") == "startup":
         output["sessionTitle"] = f"{repo_name}@{branch}"
     print(json.dumps({"hookSpecificOutput": output}))
 

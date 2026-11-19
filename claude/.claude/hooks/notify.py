@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Claude Code notification hook.
+"""Claude Code / Codex notification hook.
 
 Keeps a per-window tmux state glyph current (busy/waiting/done, cleared when
 the session ends) and raises a WezTerm desktop toast on waiting and done."""
+import argparse
 import json
 import os
 import shutil
@@ -25,6 +26,9 @@ STATE_STYLES = {
 GLYPH_FRAGMENT = "#{?#{@claude_state}, #{@claude_state},}"
 TOAST_VIA_ENV = "CLAUDE_NOTIFY_TOAST_VIA"
 TOAST_VIA_HOOK_OUTPUT = "hook-output"
+CLAUDE = "claude"
+CODEX = "codex"
+TOAST_TITLES = {CLAUDE: "Claude", CODEX: "Codex"}
 
 
 def read_event():
@@ -34,10 +38,11 @@ def read_event():
         return {}
 
 
-def format_toast(event, message):
+def format_toast(event, message, agent):
     label = os.path.basename(event.get("cwd") or "")
     text = message or event.get("message") or DEFAULT_MESSAGE
-    title = f"Claude [{label}]" if label else "Claude"
+    name = TOAST_TITLES[agent]
+    title = f"{name} [{label}]" if label else name
     return f"{title}: {text}"
 
 
@@ -114,16 +119,24 @@ def set_tmux_window_state(message):
         tmux("set-option", "-w", "-t", pane, "window-status-current-style", style)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--agent", choices=TOAST_TITLES, default=CLAUDE)
+    parser.add_argument("message", nargs="?", help="busy, done or clear; absent means waiting")
+    return parser.parse_args()
+
+
 def main():
-    message = sys.argv[1] if len(sys.argv) > 1 else None
+    args = parse_args()
+    message = args.message
     set_tmux_window_state(message or "waiting")
     if message in ("busy", "clear"):
         return
-    toast = format_toast(read_event(), message)
+    toast = format_toast(read_event(), message, args.agent)
     if os.environ.get(TOAST_VIA_ENV) == TOAST_VIA_HOOK_OUTPUT:
         print(json.dumps({"terminalSequence": desktop_toast(toast)}))
         return
-    # Hook stdout is captured by Claude Code, so the toast goes to a tty; the
+    # Hook stdout is captured by the harness, so the toast goes to a tty; the
     # bytes travel through tmux/ssh to the local terminal.
     emit_toast(toast)
 

@@ -19,3 +19,7 @@
   pane that is not visible (`man tmux`), which is when a toast matters. Adopting it needs
   `allow-passthrough all` (any hidden pane can then pass raw escapes to the terminal) plus the
   visual check locally, over ssh+tmux and after a re-attach; otherwise delete the flag branch.
+
+- Unverified: the codex `PermissionRequest` hook (tmux `◐` waiting state). imc-codex rejects
+  `-a untrusted` ("Cannot use -a untrusted while sandboxed; sandbox escalation is disabled"), so
+  no approval prompt could be raised to measure it; check on the next real codex approval.
