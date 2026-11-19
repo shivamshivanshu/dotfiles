@@ -23,3 +23,11 @@
 - Unverified: the codex `PermissionRequest` hook (tmux `◐` waiting state). imc-codex rejects
   `-a untrusted` ("Cannot use -a untrusted while sandboxed; sandbox escalation is disabled"), so
   no approval prompt could be raised to measure it; check on the next real codex approval.
+
+- Codex reads `~/.claude/agents/{verifier,simple-implementer}.md` as role briefs (AGENTS.md
+  Harness mechanics, `agent role`), so it depends on the claude package being stowed. Move both
+  into `agents/.agents/agents/` with tracked symlinks back from `claude/.claude/agents/`.
+
+- README's One-time migration snippet is run by hand on each host after skills move to
+  `agents/`. Have `prepare_claude` (install_dotfiles.sh) remove old per-file skill dirs whose
+  only entry is a `SKILL.md` link, and prune dangling links into the repo, then drop the snippet.

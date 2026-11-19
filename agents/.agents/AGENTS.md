@@ -97,8 +97,8 @@ Skills name the neutral term in the first column; each harness uses its own colu
 | spawn an agent | Agent tool | `spawn_agent` (`message`, `fork_turns:"none"`, self-contained brief) |
 | named agent (resumable) | named Agent spawn (teammate) | `spawn_agent` with `task_name` (lowercase, digits, `_`) |
 | resume an agent | SendMessage | `followup_task` (`send_message` only queues; it does not start a turn). A finished agent still in `list_agents` resumes; once it has dropped out (unmeasured), spawn a fresh one briefed with its output file |
-| agent result | completion notification / reply | `FINAL_ANSWER` mailbox message; `wait_agent` blocks but returns no content; the `list_agents` status carries the last answer |
-| stop an agent | TaskStop | `interrupt_agent`. The agent stays live until session end (there is no kill), so send it no more work |
+| agent result | completion notification / reply | the agent's `FINAL_ANSWER` mailbox message; `wait_agent` returns no content, and `list_agents` shows the last answer only while the agent is still listed |
+| stop an agent | TaskStop | `interrupt_agent` ends its current turn. There is no kill, so send it no more work. Like a finished agent, it can drop out of `list_agents`; in the one probe an interrupt freed a slot (agent cap) |
 | supervision timer | background `sleep <cutoff>` | `wait_agent` with `timeout_ms` = the cutoff (max 1 h; re-arm for a longer cutoff). It blocks the lead and returns at the first mailbox update, so do inline work before waiting |
 | background run | Bash `run_in_background` | exec cell yield, then `wait` on its `cell_id` (unmeasured) |
 | scripted fan-out | Workflow tool (opt-in: `ultracode` / explicit ask) | none: spawn the legs, then a fan-in agent |
@@ -108,4 +108,5 @@ Skills name the neutral term in the first column; each harness uses its own colu
 | simplify | the built-in `simplify` skill | the 4 lenses per [[fan-n]] Review fan-out. Small or mechanical commit: one agent briefed with the diff and all 4 lenses. Non-trivial: 4 lens agents, each briefed with the diff and one lens, in waves (agent cap), plus fan-n's blind leg and fan-in. The main thread applies the fixes |
 | code-review | the built-in `code-review` skill | the codex CLI's `review` subcommand (runs the built-in `review-agent` skill; unmeasured inside a session). Fallback: one agent briefed defect-first |
 | spawn batch | ≤3 Agent calls per message (lock error) | ≤3 `spawn_agent` per turn (unmeasured) |
+| agent cap | none | `agents.max_concurrent_threads_per_session` running children at once: 6 where configured (the dotfiles seed sets it), else the default 3. The root thread does not count; a finished agent frees its slot, and a resume takes a slot too. A spawn past it fails `agent thread limit reached`: run wider fan-outs in waves ([[delegation]]) |
 | permission mode | auto / accept-edits modes | approval policy `-a never`, or `--dangerously-bypass-approvals-and-sandbox` |
