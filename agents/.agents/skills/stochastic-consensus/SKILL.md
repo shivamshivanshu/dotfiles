@@ -5,7 +5,7 @@ description: 'Use when exploring an open problem with a subagent team — indepe
 
 # Stochastic Consensus & Debate
 
-Map the approach space with independent solvers, then let them argue. For variance sampling over equivalent prompts see [[fan-n]]; for executing the winning plan see [[agent-team]]. Run the whole pipeline as a background Workflow — only the final synthesis returns to the main context. The main thread scouts context inline first and embeds it in every prompt; only phase-1 agents explore the repo; later phases work from passed text and may read, never edit, the repo only to check a load-bearing claim.
+Map the approach space with independent solvers, then let them argue. For variance sampling over equivalent prompts see [[fan-n]]; for executing the winning plan see [[agent-team]]. Run the whole pipeline as a background scripted fan-out — only the final synthesis returns to the main context. The main thread scouts context inline first and embeds it in every prompt; only phase-1 agents explore the repo; later phases work from passed text and may read, never edit, the repo only to check a load-bearing claim.
 
 ## Phase 1 — independent solutions
 - Each agent solves the problem alone, blind to the others. Distinct lenses when perspectives should differ; equivalent prompts, varied only in wording, when the spread should come from the model rather than the framing.

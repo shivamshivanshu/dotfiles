@@ -14,7 +14,7 @@ N parallel agents → one fan-in agent. For *diverse* perspectives or debate, us
 ## Fan out
 - N logically equivalent prompts — same task, same context, worded slightly differently. Identical wording makes every sample inherit that phrasing's blind spot; paraphrasing de-correlates the samples while keeping the question the same, so the answers stay comparable. N=3 by default; raise toward 7 only after observing disagreement.
 - Structured-output schema so the fan-in compares like with like.
-- Run as a background Workflow so the samples never touch the main context; tolerate null results (`.filter(Boolean)`) — a dead sample is noise, not failure. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named Agent spawns — teammates ([[delegation]]), resumed via SendMessage and stopped with TaskStop once done; Workflow agents cannot be messaged.
+- Run as a background scripted fan-out so the samples never touch the main context; tolerate null results ((Claude) `.filter(Boolean)`) — a dead sample is noise, not failure. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named agents ([[delegation]]), resumed and stopped once done; (Claude) Workflow agents cannot be messaged.
 
 ## Fan in
 - One agent — judgment concentrates here.
@@ -25,6 +25,7 @@ N parallel agents → one fan-in agent. For *diverse* perspectives or debate, us
 ## Review fan-out — varied concerns
 Review and simplify passes go a step further: the prompts differ in what they *emphasise*, not just in wording, because here the goal is coverage of concerns rather than a comparable answer from every sample. It isn't [[stochastic-consensus]] either — no debate round, just one pass and a dedup fan-in. Use it once a change is non-trivial; a small or mechanical commit gets one reviewer instead:
 - Most agents get full context, each prompted to emphasise a different concern. A skill that fans out its own lenses (`simplify`, `code-review`) supplies these legs: run it once as is and add only the blind leg and the fan-in.
+- The 4 simplify lenses: reuse (an existing utility the diff reinvents), simplification (needless code, branches or indirection), efficiency (wasted work on hot or repeated paths), altitude (logic at the wrong layer; a downstream band-aid for an upstream defect).
 - Spawn at least one with no context at all — inferring purely from the diff and commit messages; blind eyes catch what briefed ones assume away.
 - Give every agent MCP/tool access.
 - Fan in through a fan-in agent that dedups, merges findings, and summarises; the main thread only organises the result and decides.

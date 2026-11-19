@@ -75,3 +75,24 @@ The plan carries what was already learned so the implementer skips broad discove
 - Claiming "done" without having exercised the change.
 - Writing a band-aid, or gold-plating a simple fix.
 - Reinventing a utility that likely already exists.
+
+## Harness mechanics
+Skills name the neutral term in the first column; each harness uses its own column.
+
+| Term | Claude Code | codex (0.170) |
+|---|---|---|
+| spawn an agent | Agent tool | `spawn_agent` (`message`, `fork_turns:"none"`, self-contained brief) |
+| named agent (resumable) | named Agent spawn (teammate) | `spawn_agent` with `task_name` (lowercase, digits, `_`) |
+| resume an agent | SendMessage | `followup_task` (`send_message` only queues; it does not start a turn). A finished agent still in `list_agents` resumes; once it has dropped out (unmeasured), spawn a fresh one briefed with its output file |
+| agent result | completion notification / reply | `FINAL_ANSWER` mailbox message; `wait_agent` blocks but returns no content; the `list_agents` status carries the last answer |
+| stop an agent | TaskStop | `interrupt_agent`. The agent stays live until session end (there is no kill), so send it no more work |
+| supervision timer | background `sleep <cutoff>` | `wait_agent` with `timeout_ms` = the cutoff (max 1 h; re-arm for a longer cutoff). It blocks the lead and returns at the first mailbox update, so do inline work before waiting |
+| background run | Bash `run_in_background` | exec cell yield, then `wait` on its `cell_id` (unmeasured) |
+| scripted fan-out | Workflow tool (opt-in: `ultracode` / explicit ask) | none: spawn the legs, then a fan-in agent |
+| agent role | agent type (`subagent_type`) | one generic agent. The brief states the role, the tool limits and the verify duty. For `verifier` / `simple-implementer`, the brief tells the agent to first read `~/.claude/agents/<name>.md` |
+| worktree isolation | `isolation: "worktree"` / EnterWorktree, per [[git]] | `git worktree add` by command, per [[git]] |
+| ask the user | AskUserQuestion for ≤4 questions, else a plain numbered message; recommended option first | a plain numbered message, recommended option first |
+| simplify | the built-in `simplify` skill | the 4 lenses per [[fan-n]] Review fan-out. Small or mechanical commit: one agent briefed with the diff and all 4 lenses. Non-trivial: 4 lens agents, each briefed with the diff and one lens, in waves (agent cap), plus fan-n's blind leg and fan-in. The main thread applies the fixes |
+| code-review | the built-in `code-review` skill | the codex CLI's `review` subcommand (runs the built-in `review-agent` skill; unmeasured inside a session). Fallback: one agent briefed defect-first |
+| spawn batch | ≤3 Agent calls per message (lock error) | ≤3 `spawn_agent` per turn (unmeasured) |
+| permission mode | auto / accept-edits modes | approval policy `-a never`, or `--dangerously-bypass-approvals-and-sandbox` |

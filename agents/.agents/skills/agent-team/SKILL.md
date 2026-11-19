@@ -5,9 +5,9 @@ description: 'Use when executing a sizeable, separable implementation with a tea
 
 # Agent Team
 
-Deterministic orchestration for implementation. The plan decides; agents execute; the orchestrator sequences — Workflow agents never self-coordinate (native teammates below are the exception: they self-claim from the shared task list). Requires an approved plan first (see the `~/.agents/AGENTS.md` plan gate); for exploring *what* to build use [[stochastic-consensus]], for sampling use [[fan-n]].
+Deterministic orchestration for implementation. The plan decides; agents execute; the orchestrator sequences — scripted-fan-out and spawned agents never self-coordinate (native teammates below are the exception: they self-claim from the shared task list). Requires an approved plan first (see the `~/.agents/AGENTS.md` plan gate); for exploring *what* to build use [[stochastic-consensus]], for sampling use [[fan-n]].
 
-## Native agent teams (interactive teammates)
+## Native agent teams (Claude only)
 Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-process`; tmux split panes proved flaky). Reach for a native team instead of Workflow orchestration when the work is *interactive and long-lived*: parallel development across worktrees/repos where each teammate holds durable context the user converses with. Fire-and-forget stages stay in Workflows.
 - Teams provide no filesystem isolation — when teammates would edit the same tree concurrently, ask the user whether to give each its own worktree (`gwt`, per [[git]]); a teammate works there by absolute path, since from a teammate `EnterWorktree` only enters `.claude/worktrees/`. In a Bazel repo, create and remove each teammate's worktree per [[bazel]].
 - Coordinate through the shared task list with dependencies; let teammates self-claim; message by name (SendMessage). Keep it stocked and dependency-ordered so members unblock incrementally — an empty or fully-blocked list idles every teammate at once, and each one then notifies.
@@ -18,8 +18,9 @@ Enabled via settings (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode: in-
 
 ## Shape the team from the dependency tree
 - Build the tree before spawning anything: files/modules that don't consume each other's output are independent nodes → concurrent agents; dependents run only after their prerequisites land.
-- In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents.
-- Write the tree into the plan file, `$HOME/claude_notes/scratchpad/<YYYYMMDD>/<topic>-plan.md` (per `~/.agents/AGENTS.md`), with a status per slice and keep it current — it survives a restart, and the stop rule above reads it to tell whether an area still has work coming. This is the lead's record, not a claim file — claims go through the shared task list.
+- (Claude) In a Workflow script: `parallel()` for independent nodes, `pipeline()` to sequence dependents. (codex) Independent spawns run concurrently, then the lead waits.
+- (codex) The lead assigns each slice to a named agent and resumes it with the next one.
+- Write the tree into the plan file, `<notes-root>/scratchpad/<YYYYMMDD>/<topic>-plan.md` (per `~/.agents/AGENTS.md`), with a status per slice and keep it current — it survives a restart, and the stop rule above reads it to tell whether an area still has work coming. This is the lead's record, not a claim file — claims go through a native team's shared task list.
 
 ## Brief each agent completely
 - Its plan slice, the context it needs (paths, conventions, constraints) embedded in the prompt, the skills it must follow, what it waits for, what it must produce, and its output file ([[delegation]]).
