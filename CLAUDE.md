@@ -229,7 +229,7 @@ upgrade, not config here — re-check it before building on floats.
   `config.toml` there is a seed, not stowed: imc-codex rewrites `~/.codex/config.toml` (plugins,
   `hooks.state`), so `prepare_codex` copies the seed only when the live file is missing and never
   overwrites it. `AGENTS.md` links to the shared rules. `hooks.json` reuses the claude hook scripts
-  with `--agent codex`; codex runs a hook only once trusted via `/hooks`, and any edit of
+  with `--agent codex`, plus `rtk hook codex` on PreToolUse `Bash`; codex runs a hook only once trusted via `/hooks`, and any edit of
   `hooks.json` changes its hash and needs re-trust.
 - `rtk/` (Linux only) tracks `config.toml` alone, `--no-folding`: rtk keeps `llm-proxy/`, `plugins/`
   and pipeline files in `~/.config/rtk`. Unknown keys are ignored, and a present `[tracking]`,

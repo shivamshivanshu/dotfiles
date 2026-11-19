@@ -1,6 +1,7 @@
 {
   "hooks": {
     "SessionStart": [{"hooks": [{"type": "command", "command": "python3 \"$HOME/.claude/hooks/session_start.py\" --agent codex", "timeout": 10}]}],
+    "PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "rtk hook codex"}]}],
     "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "python3 \"$HOME/.claude/hooks/notify.py\" --agent codex busy", "timeout": 5}]}],
     "PostToolUse": [{"hooks": [{"type": "command", "command": "python3 \"$HOME/.claude/hooks/notify.py\" --agent codex busy", "timeout": 5}]}],
     "PermissionRequest": [{"hooks": [{"type": "command", "command": "python3 \"$HOME/.claude/hooks/notify.py\" --agent codex", "timeout": 5}]}],

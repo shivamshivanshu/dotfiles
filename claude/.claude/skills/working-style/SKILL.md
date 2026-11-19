@@ -11,7 +11,6 @@ Claude-harness rules on top of `~/.agents/AGENTS.md`, which CLAUDE.md also loads
 ## Plan and scope
 - Gate step 4 (AGENTS.md Plan and scope): review the plan with [[doc-reviewer]].
 - Auto permission mode does not waive this gate: it removes permission prompts, not the stop-and-ask. Exception: Autonomous mode below.
-- Gate step 3 also exempts [[teacher]] and [[session-insight]] (`$HOME/claude_notes/proposed_skills/`), which place their own files.
 
 ## Autonomous mode
 - Only the user's explicit "autonomous mode" / "kick off autonomous" starts it; auto permission mode and plan approval do not. On the trigger load [[autonomous-mode]]; after compaction reload it while `<topic>-decisions.md` has a `kicked off` and no `ended` line.

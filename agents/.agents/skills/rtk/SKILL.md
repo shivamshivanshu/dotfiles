@@ -5,7 +5,7 @@ description: 'Use when Bash output looks truncated, empty or garbled under the r
 
 # rtk — Rust Token Killer
 
-Token-optimised CLI proxy. The PreToolUse hook `rtk hook claude` rewrites Bash commands (e.g. `git status` → `rtk git status`).
+Token-optimised CLI proxy. A PreToolUse hook rewrites Bash commands (e.g. `git status` → `rtk git status`).
 
 ## Reading its output
 - Condensed output is lossy by design: rely on it for status and pass/fail, but recover the full output whenever omitted detail could change the conclusion — and always when it is marked truncated or filtered (e.g. `(4 filtered)`) or meets a bypass trigger below.
@@ -15,9 +15,10 @@ Token-optimised CLI proxy. The PreToolUse hook `rtk hook claude` rewrites Bash c
 - Batch related commands into one call; the hook rewrites each `&&` segment and can rewrite the left side of a pipe (`git status | head` is), so a count or grep over a piped command may see condensed output — pipe from `rtk bypass <cmd>` instead.
 
 ## Setup
-- Hook: `~/.claude/settings.json` carries the bare `rtk hook claude` — the form `rtk init` recognises, so a later `rtk init -g` does not add a duplicate. Check with `rtk init -g --show`: it prints `[ok] Hook: rtk hook claude`.
+- Claude hook: `~/.claude/settings.json` carries the bare `rtk hook claude` — the form `rtk init` recognises, so a later `rtk init -g` does not add a duplicate. Check with `rtk init -g --show`: it prints `[ok] Hook: rtk hook claude`.
+- Codex hook: the tracked `~/.codex/hooks.json` carries `rtk hook codex`. Unlike the Claude hook it auto-allows each rewritten command, skipping codex's approval prompt; another hook's deny still blocks it.
 - Config `~/.config/rtk/config.toml` (tracked on Linux) excludes from rewriting, so these run raw: `git diff`/`show`/`log` (incl. `git -C`), `grep`, `rg`, `find`, `jq`, `ssh`, and `ls` with `-l`, sorting or several paths. Recovery store is sqlite: follow `rtk recall <hash>` hints.
-- No `RTK.md`/`@RTK.md`: this skill holds that guidance. Decline `rtk init`'s CLAUDE.md injection: run `rtk init -g --hook-only`.
+- No `RTK.md`/`@RTK.md`: this skill holds that guidance. Decline `rtk init`'s CLAUDE.md injection: run `rtk init -g --hook-only`. Never `rtk init` for codex — its hook is tracked.
 
 ## Meta commands (run rtk directly)
 - `rtk gain` — token-savings analytics; `rtk gain --history` for usage history with savings.

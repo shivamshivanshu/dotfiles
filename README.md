@@ -197,7 +197,7 @@ through a tracked relative symlink in `claude/.claude/skills/`. To add a shared 
 | `working-style` | preferences | claude | start of any task — how work should be done |
 | `autonomous-mode` | preferences | claude | "autonomous mode" / "kick off autonomous" — unattended run of an approved plan |
 | `git` | preferences | shared | commit / amend / rebase / worktree / review |
-| `rtk` | preferences | claude | rtk proxy — token savings, gain / discover / bypass |
+| `rtk` | preferences | shared | rtk proxy — token savings, gain / discover / bypass |
 | `codebase-recon` | preferences | shared | understand / trace unfamiliar code before changing |
 | `cpp` | insights | shared | writing / reviewing C++ |
 | `cpp-build` | insights | shared | building / testing / debugging C++ |
@@ -212,7 +212,7 @@ through a tracked relative symlink in `claude/.claude/skills/`. To add a shared 
 | `design-doc` | meta | shared | writing a design doc / RFC / ADR — structure and tradeoff discipline |
 | `doc-reviewer` | meta | claude | plan / design doc written — multi-agent review, Q&A loop, audit |
 | `session-insight` | meta | claude | `/wrap` insight step, or an explicit retro request |
-| `teacher` | meta | claude | `/wrap` teacher step, or an explicit ask to learn from finished work |
+| `teacher` | meta | shared | `/wrap` teacher step, or an explicit ask to learn from finished work |
 | `handoff` | meta | shared | `/handoff [name]` or `/wrap` with unfinished work — save a resumable context handoff |
 | `wip` | meta | shared | `/wip` (codex: `$wip`), user-invoked only — summarise uncommitted work, write a crash-safe checkpoint |
 
@@ -234,7 +234,8 @@ session-insight and teacher).
 the dated scratchpad and surfaces handoffs, `/wip` checkpoints and output
 styles; `notify.py` keeps a per-window tmux state glyph and raises a WezTerm
 toast when Claude waits or finishes. Codex runs the same scripts with `--agent codex`
-from `codex/.codex/hooks.json` (notes root `~/codex_notes`, toast titled `Codex`). Codex
+from `codex/.codex/hooks.json` (notes root `~/codex_notes`, toast titled `Codex`), plus
+`rtk hook codex` on PreToolUse. Codex
 runs a hook only once trusted: after the first install, and after any edit of `hooks.json`
 (which changes its hash), launch `imc-codex` and trust them via `/hooks`.
 

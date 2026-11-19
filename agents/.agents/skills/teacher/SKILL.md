@@ -14,12 +14,12 @@ Grow the user's transferable software knowledge from real work. Optional and bri
 4. Everything else.
 
 ## Steps
-1. **Housekeep.** Open `$HOME/claude_notes/backlog.md`; if absent, create it with the format's headings only, not its example lines. Remove every line already checked `[x]` — done means gone, so the file stays small.
+1. **Housekeep.** Open `<notes-root>/backlog.md`; if absent, create it with the format's headings only, not its example lines. Remove every line already checked `[x]` — done means gone, so the file stays small.
 2. **Select.** From the session's finished tasks and settled findings — even if the overall task continues — pick at most **three** concepts that are transferable and worth deep knowledge, not task trivia or one-off facts, ranked by the tiers above.
 3. **Agenda.** Present them as a bare-minimum list: one line each — the concept and, in a few words, the payoff of diving deep. Tag each with its tier. Nothing more.
 4. **Ask** which to dive into now, which to defer, and which to skip.
-5. **Deep-dive (now).** Write a clear, intuitive, example-led explanation to `$HOME/claude_notes/<slug>.md` (`<slug>` never `backlog` or `tickets`), following `~/.claude/output-styles/teaching.md`; if the file exists, read and extend it, never overwrite. For currency-sensitive topics (new toolchain releases, stdlib changes, ecosystem shifts), search the web for the current state instead of answering from model knowledge. If the concept is on the backlog, delete its line.
-6. **Defer.** Append a single `[ ]` one-liner under its tier heading in `$HOME/claude_notes/backlog.md`, unless the concept is already listed.
+5. **Deep-dive (now).** Write a clear, intuitive, example-led explanation to `<notes-root>/<slug>.md` (`<slug>` never `backlog` or `tickets`), following `~/.claude/output-styles/teaching.md`; if the file exists, read and extend it, never overwrite. For currency-sensitive topics (new toolchain releases, stdlib changes, ecosystem shifts), search the web for the current state instead of answering from model knowledge. If the concept is on the backlog, delete its line.
+6. **Defer.** Append a single `[ ]` one-liner under its tier heading in `<notes-root>/backlog.md`, unless the concept is already listed.
 7. **Skip.** Drop it — record nothing.
 
 ## backlog.md format
