@@ -171,6 +171,14 @@ ok "stowed settings.json symlink becomes a copy" "$([[ -L "$settings" ]] && echo
 printf 'machine local\n' >"$settings"
 prepare_claude
 ok "existing settings.json is left alone" "$(cat "$settings")" "machine local"
+
+codex_config="$HOME/.codex/config.toml"
+prepare_codex
+ok "missing codex config.toml is copied in" "$(cmp -s "$codex_config" "$REPO/codex/.codex/config.toml" && echo same)" "same"
+
+printf 'machine local\n' >"$codex_config"
+prepare_codex
+ok "existing codex config.toml is left alone" "$(cat "$codex_config")" "machine local"
 HOME="$REAL_HOME"
 
 echo

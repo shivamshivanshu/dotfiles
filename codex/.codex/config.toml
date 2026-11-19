@@ -1,0 +1,33 @@
+# Seed for ~/.codex/config.toml: install_dotfiles.sh copies it only when the live file is
+# missing and never overwrites it. imc-codex owns the rest (projects, plugins, hooks.state).
+
+# Response style
+personality = "pragmatic"
+
+# Default model
+model = "gpt-6.2-sol"
+
+# Prioritize correctness over latency.
+# Options: minimal | low | medium | high | xhigh
+model_reasoning_effort = "high"
+
+# Keep responses concise.
+# Options: low | medium | high
+model_verbosity = "low"
+
+[tui]
+# Preserve output in your terminal scrollback after exiting Codex.
+alternate_screen = "never"
+
+# Configure via `/statusline` if your Codex version doesn't support
+# this directly.
+status_line = [
+  "model-with-reasoning",
+  "context-remaining",
+  "total-input-tokens",
+  "total-output-tokens",
+  "five-hour-limit",
+  "weekly-limit",
+  "git-branch",
+]
+screen_reader_detection_done = true

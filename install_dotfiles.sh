@@ -425,6 +425,12 @@ prepare_claude() {
 	[[ -e "$live" ]] || cp "$DOTFILES_DIR/claude/.claude/settings.json" "$live"
 }
 
+prepare_codex() {
+	local live="$HOME/.codex/config.toml"
+	mkdir -p "$HOME/.codex"
+	[[ -e "$live" ]] || cp "$DOTFILES_DIR/codex/.codex/config.toml" "$live"
+}
+
 # rtk init leaves a real config.toml; macOS reads Application Support instead, so it stays untracked there.
 prepare_rtk() {
 	[[ "$OS" == Linux ]] || return 0
@@ -443,6 +449,7 @@ stow_packages() {
 	fi
 	mkdir -p "$HOME/.config" "$HOME/.local/bin"
 	prepare_claude
+	prepare_codex
 	prepare_ssh
 	prepare_rtk
 	prepare_zsh
@@ -452,6 +459,7 @@ stow_packages() {
 		# Keep runtime state and secrets outside the repo.
 		[[ "$pkg" == claude || "$pkg" == codex || "$pkg" == rtk || "$pkg" == ssh ]] && flags+=(--no-folding)
 		[[ "$pkg" == claude ]] && flags+=(--ignore='settings\.json')
+		[[ "$pkg" == codex ]] && flags+=(--ignore='config\.toml')
 		stow "${flags[@]}" "$pkg"
 	done
 }
