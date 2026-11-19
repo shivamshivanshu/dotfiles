@@ -184,8 +184,7 @@ Personal, project-agnostic skills, auto-discovered from `~/.claude/skills/`.
 Keep these **free of work-internal names** — nothing internal (hostnames,
 systems, ticket prefixes) goes here.
 
-`~/.claude/CLAUDE.md` imports `~/.agents/AGENTS.md` (shared with codex) and
-`working-style`, so both are always loaded.
+`~/.claude/CLAUDE.md` imports `~/.agents/AGENTS.md` (shared with codex), so it is always loaded.
 
 Shared skills live in `agents/.agents/skills/`, which codex scans natively; Claude sees each
 through a tracked relative symlink in `claude/.claude/skills/`. To add a shared skill, create
@@ -194,8 +193,7 @@ through a tracked relative symlink in `claude/.claude/skills/`. To add a shared 
 
 | Skill | Category | Harness | Triggers on |
 |-------|----------|---------|-------------|
-| `working-style` | preferences | claude | start of any task — how work should be done |
-| `autonomous-mode` | preferences | claude | "autonomous mode" / "kick off autonomous" — unattended run of an approved plan |
+| `autonomous-mode` | preferences | shared | "autonomous mode" / "kick off autonomous" — unattended run of an approved plan |
 | `git` | preferences | shared | commit / amend / rebase / worktree / review |
 | `rtk` | preferences | shared | rtk proxy — token savings, gain / discover / bypass |
 | `codebase-recon` | preferences | shared | understand / trace unfamiliar code before changing |
@@ -205,12 +203,12 @@ through a tracked relative symlink in `claude/.claude/skills/`. To add a shared 
 | `python` | insights | shared | writing / testing Python |
 | `perf-investigation` | insights | shared | latency / throughput / CPU profiling |
 | `concurrency` | insights | shared | multithread / lock-free / memory ordering |
-| `delegation` | meta | claude | before spawning any subagent, teammate or workflow |
-| `agent-team` | meta | claude | sizeable, separable implementation — dependency-tree delegation across subagents |
-| `fan-n` | meta | claude | one sample isn't trustworthy — fan N agents over the same prompt, fan-in ranks consensus |
-| `stochastic-consensus` | meta | claude | open problem exploration — independent solutions ranked, then cross-examined in debate rounds |
+| `delegation` | meta | shared | before spawning any subagent, named agent or scripted fan-out |
+| `agent-team` | meta | shared | sizeable, separable implementation — dependency-tree delegation across subagents |
+| `fan-n` | meta | shared | one sample isn't trustworthy — fan N agents over the same prompt, fan-in ranks consensus |
+| `stochastic-consensus` | meta | shared | open problem exploration — independent solutions ranked, then cross-examined in debate rounds |
 | `design-doc` | meta | shared | writing a design doc / RFC / ADR — structure and tradeoff discipline |
-| `doc-reviewer` | meta | claude | plan / design doc written — multi-agent review, Q&A loop, audit |
+| `doc-reviewer` | meta | shared | plan / design doc written — multi-agent review, Q&A loop, audit |
 | `session-insight` | meta | claude | `/wrap` insight step, or an explicit retro request |
 | `teacher` | meta | shared | `/wrap` teacher step, or an explicit ask to learn from finished work |
 | `handoff` | meta | shared | `/handoff [name]` or `/wrap` with unfinished work — save a resumable context handoff |
@@ -243,7 +241,7 @@ runs a hook only once trusted: after the first install, and after any edit of `h
 remove the old per-file skill dirs, then restow and drop dangling links:
 
 ```bash
-for s in bazel codebase-recon concurrency cpp cpp-build design-doc git handoff perf-investigation python; do d="$HOME/.claude/skills/$s"; [[ -d $d && ! -L $d && -L $d/SKILL.md && "$(ls -A "$d")" == SKILL.md ]] && rm "$d/SKILL.md" && rmdir "$d"; done
+for s in bazel codebase-recon concurrency cpp cpp-build design-doc git handoff perf-investigation python rtk teacher delegation fan-n stochastic-consensus agent-team doc-reviewer autonomous-mode; do d="$HOME/.claude/skills/$s"; [[ -d $d && ! -L $d && -L $d/SKILL.md && "$(ls -A "$d")" == SKILL.md ]] && rm "$d/SKILL.md" && rmdir "$d"; done
 ./install_dotfiles.sh link
 find ~/.claude ~/.codex ~/.agents -maxdepth 3 -type l ! -exec test -e {} \; -print   # remove what it lists
 ```

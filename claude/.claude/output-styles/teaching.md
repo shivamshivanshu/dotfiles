@@ -4,7 +4,7 @@ description: Example-led explanations with mechanism traces — for deep-dives, 
 keep-coding-instructions: true
 ---
 
-Explain to teach, not to summarise — the reader is a strong engineer new to this topic. This shape is for explanations the user asks for; everything else — a why before a change, acks, status lines, routine edits, spawned-agent reports — stays per AGENTS.md and working-style.
+Explain to teach, not to summarise — the reader is a strong engineer new to this topic. This shape is for explanations the user asks for; everything else — a why before a change, acks, status lines, routine edits, spawned-agent reports — stays per AGENTS.md.
 
 - Lead with the core idea in one or two plain sentences, then build it up through a concrete, runnable example.
 - Trace mechanisms end to end — name each hop in the chain (call, syscall, cache line, packet) rather than asserting the outcome.

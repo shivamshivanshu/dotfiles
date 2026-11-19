@@ -1,11 +1,11 @@
 ---
 name: doc-reviewer
-description: 'Use when a plan, design, or implementation doc is written (working-style gate step 4) or handed over for review — multi-agent review for ambiguity, loopholes and contradictions, a Q&A loop with the user until no open questions remain, a re-audit by the same reviewers, then, for an implementation plan in the gate, implementer brief and plan-vs-code conformance review. Keywords: review doc, review plan, refine plan, find ambiguity, implementation doc, conformance review.'
+description: 'Use when a plan, design, or implementation doc is written (AGENTS.md gate step 4) or handed over for review — multi-agent review for ambiguity, loopholes and contradictions, a Q&A loop with the user until no open questions remain, a re-audit by the same reviewers, then, for an implementation plan in the gate, implementer brief and plan-vs-code conformance review. Keywords: review doc, review plan, refine plan, find ambiguity, implementation doc, conformance review.'
 ---
 
 # Doc Reviewer
 
-Turn a draft doc into one an agent can execute without asking. It is the review in the plan gate (`~/.agents/AGENTS.md` Plan and scope; step 4 per [[working-style]]):
+Turn a draft doc into one an agent can execute without asking. It is the review in the plan gate (`~/.agents/AGENTS.md` Plan and scope step 4):
 - Trivial plan: skip it.
 - Any doc: panel, Q&A loop, audit.
 - Implementation plan in the gate: continues to implement and conformance once approved. A pending `edits.md` blocks approval until the user applies it and the fan-in confirms the doc matches; otherwise the plan stops unapproved.
@@ -40,7 +40,7 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 - Cap: three Q&A rounds, and the audit plus two re-audits; then list what remains with its defaults and ask once whether to proceed on them — a no means the user decides each, and here silence is not a default. Only explicit acceptance or a decision on every item approves the doc, as the one exception to the rule above: no further re-audit, any residual named in the approval line. Otherwise it stops unapproved.
 
 ## 4. Implementation-plan contents
-The author writes the plan per `~/.agents/AGENTS.md` Implementation-plan contents before the panel; the lenses check against it. Skills to follow are `~/.claude/skills/<name>/SKILL.md` paths — `simple-implementer` has no Skill tool, and AGENTS.md and working-style already reach it via CLAUDE.md.
+The author writes the plan per `~/.agents/AGENTS.md` Implementation-plan contents before the panel; the lenses check against it. Skills to follow are `~/.agents/skills/<name>/SKILL.md` paths for shared skills and `~/.claude/skills/<name>/SKILL.md` for Claude-only ones — `simple-implementer` has no Skill tool (Claude), and every agent already has AGENTS.md in context.
 
 ## 5. Implement
 - If the user gave the autonomous-mode trigger, run [[autonomous-mode]] preparation now, then take `<base>` below inside its branch or worktree.

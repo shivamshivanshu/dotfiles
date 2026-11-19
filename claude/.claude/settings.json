@@ -151,7 +151,6 @@
     "claude:rtk": "off",
     "claude:session-insight": "off",
     "claude:stochastic-consensus": "off",
-    "claude:teacher": "off",
-    "claude:working-style": "off"
+    "claude:teacher": "off"
   }
 }

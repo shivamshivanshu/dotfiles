@@ -27,8 +27,9 @@ polish in your own prose unless it changes meaning.
   1. If the request is ambiguous, first confirm intent with a sharpened restatement, before spawning agents or starting any real work. Then investigate and state the root cause or mechanism.
   2. Surface every design question and clarification, and ask them — wait for the answers.
   3. Write the implementation plan — contents per Implementation-plan contents below — to `<notes-root>/scratchpad/<YYYYMMDD>/<topic>-plan.md`, `<YYYYMMDD>` being the day it is first written; revise it in place on later days. Other durable task notes (designs, recon) go in the same dated folder — never `/tmp` or the harness session scratchpad, which are for ephemeral tool output only. Location and contents come from this gate, not a plugin's planning skill (e.g. `superpowers:writing-plans`). Exempt: a skill that places its own files (e.g. [[handoff]], [[teacher]]).
-  4. Review the plan with your harness's review procedure, if it has one.
+  4. Review the plan with [[doc-reviewer]].
   5. Only then implement.
+- A permission mode that skips prompts (Harness mechanics: permission mode) does not waive this gate's stop-and-ask. Exception: Autonomous mode below.
 - While implementing, track steps in a todo list.
 - Estimate the size of a change before starting it.
 - Expect frequent interrupts and course-corrections; keep steps small and checkable, and follow the latest instruction.
@@ -69,12 +70,24 @@ The plan carries what was already learned so the implementer skips broad discove
 - Commit each coherent unit of work once verified, unasked, on the current branch, the default branch included — unless the repo's changes land through review (Gerrit, GitLab MRs, GitHub PRs); then follow that workflow's branching. Push only when asked. Deploy or push to production only on explicit approval, after a dry-run.
 - Commit messages: [[git]].
 - Never open issues in a tracker; record follow-up work in repo-local `TODO.md` (project) or `<notes-root>/tickets.md` (cross-project). Delete entries when done.
+- After a non-trivial commit — a small change per the gate included —, run simplify (Harness mechanics), re-run the plan's verify commands for it (plan-less: the build and tests covering the touched files), and amend the fixes in before moving on — subject to [[git]]'s pushed-history check. Skip it for a commit out of [[doc-reviewer]] conformance, which already ran it. The amend needs no separate approval; the push rule above still holds.
+
+## Autonomous mode
+- Only the user's explicit "autonomous mode" / "kick off autonomous" starts it; neither a prompt-skipping permission mode nor plan approval does. On the trigger load [[autonomous-mode]]; after compaction reload it while `<topic>-decisions.md` has a `kicked off` and no `ended` line.
+
+## Delegation
+- Before deciding whether to delegate, or spawning any agent or scripted fan-out, load [[delegation]].
+
+## Tools
+- `rtk` rewrites Bash commands through a hook ([[rtk]]). If you spot a concrete improvement to it, make or propose it so future runs use it better.
 
 ## Red flags — stop
 - Adding a comment that fails the Edit bar above.
 - Claiming "done" without having exercised the change.
 - Writing a band-aid, or gold-plating a simple fix.
 - Reinventing a utility that likely already exists.
+- Spawning an agent for a focused edit to files already in the main context.
+- Pulling bulk raw output (files you won't edit, long logs, full diffs, broad search results) into the main context instead of delegating it.
 
 ## Harness mechanics
 Skills name the neutral term in the first column; each harness uses its own column.
