@@ -24,8 +24,7 @@ N parallel agents → one fan-in agent. For *diverse* perspectives or debate, us
 
 ## Review fan-out — varied concerns
 Review and simplify passes go a step further: the prompts differ in what they *emphasise*, not just in wording, because here the goal is coverage of concerns rather than a comparable answer from every sample. It isn't [[stochastic-consensus]] either — no debate round, just one pass and a dedup fan-in. Use it once a change is non-trivial; a small or mechanical commit gets one reviewer instead:
-- Most agents get full context, each prompted to emphasise a different concern. A skill that fans out its own lenses (`simplify`, `code-review`) supplies these legs: run it once as is and add only the blind leg, the codex leg and the fan-in.
+- Most agents get full context, each prompted to emphasise a different concern. A skill that fans out its own lenses (`simplify`, `code-review`) supplies these legs: run it once as is and add only the blind leg and the fan-in.
 - Spawn at least one with no context at all — inferring purely from the diff and commit messages; blind eyes catch what briefed ones assume away.
-- Give every Claude agent MCP/tool access.
-- Include at least one `codex` leg — a different model family de-correlates errors in a way paraphrasing cannot; the fan-in treats a codex-only finding as an outlier to judge, not to drop.
+- Give every agent MCP/tool access.
 - Fan in through a fan-in agent that dedups, merges findings, and summarises; the main thread only organises the result and decides.

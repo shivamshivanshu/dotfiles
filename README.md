@@ -33,7 +33,6 @@ claude/.claude/commands/         → ~/.claude/commands/
 claude/.claude/hooks/            → ~/.claude/hooks/
 claude/.claude/keybindings.json  → ~/.claude/keybindings.json
 claude/.claude/settings.json     ⇒ ~/.claude/settings.json (copied, not linked)
-codex/.codex/claude.config.toml  → ~/.codex/claude.config.toml  (codex profile for Claude-driven runs)
 rtk/.config/rtk/config.toml      → ~/.config/rtk/config.toml  (Linux only; macOS rtk reads Application Support)
 ```
 
@@ -194,7 +193,7 @@ systems, ticket prefixes) goes here.
 | `python` | insights | writing / testing Python |
 | `perf-investigation` | insights | latency / throughput / CPU profiling |
 | `concurrency` | insights | multithread / lock-free / memory ordering |
-| `delegation` | meta | before spawning any subagent, teammate, codex leg or workflow |
+| `delegation` | meta | before spawning any subagent, teammate or workflow |
 | `agent-team` | meta | sizeable, separable implementation — dependency-tree delegation across subagents |
 | `fan-n` | meta | one sample isn't trustworthy — fan N agents over the same prompt, fan-in ranks consensus |
 | `stochastic-consensus` | meta | open problem exploration — independent solutions ranked, then cross-examined in debate rounds |
@@ -205,12 +204,8 @@ systems, ticket prefixes) goes here.
 | `handoff` | meta | `/handoff [name]` or `/wrap` with unfinished work — save a resumable context handoff |
 
 **Agents** (`agents/`): `simple-implementer` (simple well-specified subtasks,
-inherits the session model), `verifier` (build / test / regression, reports
-PASS/FAIL with evidence), and `codex` — a bridge to the OpenAI Codex CLI
-for independent reads (reviews, exploration, debugging, second opinions) and
-the other-model leg of review and audit fan-outs; not for edits. It runs
-`codex exec -p claude`, which loads the read-only profile from the `codex`
-package. Needs the Codex CLI and `codex login`, and spends OpenAI quota.
+inherits the session model) and `verifier` (build / test / regression, reports
+PASS/FAIL with evidence).
 
 **Output styles** (`output-styles/`, named by their `name:` field):
 `Teaching` — example-led explanations with mechanism traces, for deep-dives

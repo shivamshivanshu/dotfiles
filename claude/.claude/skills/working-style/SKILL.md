@@ -61,7 +61,7 @@ Standing preferences for how the user wants Claude to work. These override gener
 - Never open issues in a tracker; record follow-up work in repo-local `TODO.md` (project) or `$HOME/claude_notes/tickets.md` (cross-project). Delete entries when done.
 
 ## Delegation
-- Before deciding whether to delegate, or spawning any subagent, teammate, codex leg or Workflow, load [[delegation]].
+- Before deciding whether to delegate, or spawning any subagent, teammate or Workflow, load [[delegation]].
 
 ## Tools
 - `rtk` rewrites Bash commands through a hook ([[rtk]]). If you spot a concrete improvement to it, make or propose it so future runs use it better.

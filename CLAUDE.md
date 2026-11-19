@@ -79,8 +79,6 @@ system dirs on PATH:
   in notify.py).
   It assumes one Claude session per tmux window: state is a window option, so a second session
   or a nested `claude -p` in that window overwrites it — accepted.
-- codex profile: `codex -p claude debug prompt-input x </dev/null` parses it (rejects bad TOML and
-  bad value types) and renders what codex is told, offline. Unknown keys pass silently there.
 - Keybind/plugin swaps claiming parity: verify each key's *behaviour* end to end, including
   tmux/pane crossing — not just that the mapping exists.
 - After any keybind, alias, or shell-function change: `scripts/.local/bin/cheatsheet.py --dump`,
@@ -213,8 +211,6 @@ upgrade, not config here — re-check it before building on floats.
   `~/.claude/settings.local.json` is not loaded (measured), only a project's
   `.claude/settings.local.json` is.
 - `codex/` is stowed `--no-folding`: a folded `~/.codex` would land `auth.json` in the repo.
-  `~/.codex/config.toml` stays untracked (codex rewrites it); settings for Claude-driven runs live
-  only in `codex/.codex/claude.config.toml` (`codex exec -p claude`), used by the `codex` agent.
 - `rtk/` (Linux only) tracks `config.toml` alone, `--no-folding`: rtk keeps `llm-proxy/`, `plugins/`
   and pipeline files in `~/.config/rtk`. Unknown keys are ignored, and a present `[tracking]`,
   `[display]`, `[filters]` or `[limits]` section missing any key (or `[telemetry]` without
