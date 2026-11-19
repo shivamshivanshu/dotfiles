@@ -25,6 +25,8 @@ zsh/.zshrc.d/                    → ~/.zshrc.d/
 shell/.config/shell/             → ~/.config/shell/
 scripts/.local/bin/              → ~/.local/bin/  (cheatsheet.py — keybind cheatsheet)
 ssh/.ssh/config                  → ~/.ssh/config  (work/machine hosts: untracked ~/.ssh/config.local)
+agents/.agents/AGENTS.md         → ~/.agents/AGENTS.md  (global rules shared by Claude Code and codex)
+agents/.agents/skills/<name>/    → ~/.agents/skills/<name>/  (shared skills, one dir link each)
 claude/.claude/CLAUDE.md         → ~/.claude/CLAUDE.md
 claude/.claude/skills/           → ~/.claude/skills/
 claude/.claude/agents/           → ~/.claude/agents/
@@ -33,12 +35,16 @@ claude/.claude/commands/         → ~/.claude/commands/
 claude/.claude/hooks/            → ~/.claude/hooks/
 claude/.claude/keybindings.json  → ~/.claude/keybindings.json
 claude/.claude/settings.json     ⇒ ~/.claude/settings.json (copied, not linked)
+codex/.codex/AGENTS.md           → ~/.codex/AGENTS.md  (link to agents/.agents/AGENTS.md)
+codex/.codex/hooks.json          → ~/.codex/hooks.json  (codex hooks, reusing claude/.claude/hooks)
+codex/.codex/config.toml         ⇒ ~/.codex/config.toml (seed, copied only when missing)
 rtk/.config/rtk/config.toml      → ~/.config/rtk/config.toml  (Linux only; macOS rtk reads Application Support)
 ```
 
 `claude`, `codex`, `rtk` and `ssh` are stowed with `--no-folding`, so `~/.claude`,
 `~/.codex`, `~/.config/rtk`, `~/.ssh` and every directory under them stay real (credentials,
-sessions, keys) and each tracked file is linked individually.
+sessions, keys) and each tracked file is linked individually, except the tracked dir symlinks
+`claude/.claude/skills/<shared>`, each linked as one.
 
 `settings.json` is tracked, but Claude Code rewrites it at runtime, so `link`
 copies it into place only when `~/.claude/settings.json` is missing (or is a
@@ -155,7 +161,7 @@ Installer regression test (stubs brew/cargo/go/sudo):
 ## Managing symlinks manually
 
 Run from the repo root, and only for plain packages (nvim, tmux, git,
-wezterm, …). `claude`, `codex`, `rtk`, `ssh` and `zsh` need `link`'s flags or
+wezterm, …). `agents`, `claude`, `codex`, `rtk`, `ssh` and `zsh` need `link`'s flags or
 pre-stow handling — a bare `stow claude` would link `settings.json`. Run
 `link` once first, or `mkdir -p ~/.config ~/.local/bin`, so Stow does not fold
 those directories into the repo.
@@ -178,30 +184,37 @@ Personal, project-agnostic skills, auto-discovered from `~/.claude/skills/`.
 Keep these **free of work-internal names** — nothing internal (hostnames,
 systems, ticket prefixes) goes here.
 
-`~/.claude/CLAUDE.md` imports `working-style` so it is always loaded.
+`~/.claude/CLAUDE.md` imports `~/.agents/AGENTS.md` (shared with codex) and
+`working-style`, so both are always loaded.
 
-| Skill | Category | Triggers on |
-|-------|----------|-------------|
-| `working-style` | preferences | start of any task — how work should be done |
-| `autonomous-mode` | preferences | "autonomous mode" / "kick off autonomous" — unattended run of an approved plan |
-| `git` | preferences | commit / amend / rebase / worktree / review |
-| `rtk` | preferences | rtk proxy — token savings, gain / discover / bypass |
-| `codebase-recon` | preferences | understand / trace unfamiliar code before changing |
-| `cpp` | insights | writing / reviewing C++ |
-| `cpp-build` | insights | building / testing / debugging C++ |
-| `bazel` | insights | worktree create/remove, orphan sweep, host estimate |
-| `python` | insights | writing / testing Python |
-| `perf-investigation` | insights | latency / throughput / CPU profiling |
-| `concurrency` | insights | multithread / lock-free / memory ordering |
-| `delegation` | meta | before spawning any subagent, teammate or workflow |
-| `agent-team` | meta | sizeable, separable implementation — dependency-tree delegation across subagents |
-| `fan-n` | meta | one sample isn't trustworthy — fan N agents over the same prompt, fan-in ranks consensus |
-| `stochastic-consensus` | meta | open problem exploration — independent solutions ranked, then cross-examined in debate rounds |
-| `design-doc` | meta | writing a design doc / RFC / ADR — structure and tradeoff discipline |
-| `doc-reviewer` | meta | plan / design doc written — multi-agent review, Q&A loop, audit |
-| `session-insight` | meta | `/wrap` insight step, or an explicit retro request |
-| `teacher` | meta | `/wrap` teacher step, or an explicit ask to learn from finished work |
-| `handoff` | meta | `/handoff [name]` or `/wrap` with unfinished work — save a resumable context handoff |
+Shared skills live in `agents/.agents/skills/`, which codex scans natively; Claude sees each
+through a tracked relative symlink in `claude/.claude/skills/`. To add a shared skill, create
+`agents/.agents/skills/<name>/SKILL.md` and
+`ln -s ../../../agents/.agents/skills/<name> claude/.claude/skills/<name>`, then `link`.
+
+| Skill | Category | Harness | Triggers on |
+|-------|----------|---------|-------------|
+| `working-style` | preferences | claude | start of any task — how work should be done |
+| `autonomous-mode` | preferences | claude | "autonomous mode" / "kick off autonomous" — unattended run of an approved plan |
+| `git` | preferences | shared | commit / amend / rebase / worktree / review |
+| `rtk` | preferences | claude | rtk proxy — token savings, gain / discover / bypass |
+| `codebase-recon` | preferences | shared | understand / trace unfamiliar code before changing |
+| `cpp` | insights | shared | writing / reviewing C++ |
+| `cpp-build` | insights | shared | building / testing / debugging C++ |
+| `bazel` | insights | shared | worktree create/remove, orphan sweep, host estimate |
+| `python` | insights | shared | writing / testing Python |
+| `perf-investigation` | insights | shared | latency / throughput / CPU profiling |
+| `concurrency` | insights | shared | multithread / lock-free / memory ordering |
+| `delegation` | meta | claude | before spawning any subagent, teammate or workflow |
+| `agent-team` | meta | claude | sizeable, separable implementation — dependency-tree delegation across subagents |
+| `fan-n` | meta | claude | one sample isn't trustworthy — fan N agents over the same prompt, fan-in ranks consensus |
+| `stochastic-consensus` | meta | claude | open problem exploration — independent solutions ranked, then cross-examined in debate rounds |
+| `design-doc` | meta | shared | writing a design doc / RFC / ADR — structure and tradeoff discipline |
+| `doc-reviewer` | meta | claude | plan / design doc written — multi-agent review, Q&A loop, audit |
+| `session-insight` | meta | claude | `/wrap` insight step, or an explicit retro request |
+| `teacher` | meta | claude | `/wrap` teacher step, or an explicit ask to learn from finished work |
+| `handoff` | meta | shared | `/handoff [name]` or `/wrap` with unfinished work — save a resumable context handoff |
+| `wip` | meta | shared | `/wip` (codex: `$wip`), user-invoked only — summarise uncommitted work, write a crash-safe checkpoint |
 
 **Agents** (`agents/`): `simple-implementer` (simple well-specified subtasks,
 inherits the session model) and `verifier` (build / test / regression, reports
@@ -215,13 +228,24 @@ than shipping. Neither is the default; opt in with `/output-style Recall`
 (not `learning`, which is Claude Code's built-in Learning style).
 
 **Commands** (`commands/`): `/wrap` closes a session (optional handoff, then
-session-insight and teacher); `/wip` summarises uncommitted work and writes a
-crash-safe checkpoint.
+session-insight and teacher).
 
 **Hooks** (`hooks/`, wired in `settings.json`): `session_start.py` provisions
 the dated scratchpad and surfaces handoffs, `/wip` checkpoints and output
 styles; `notify.py` keeps a per-window tmux state glyph and raises a WezTerm
-toast when Claude waits or finishes.
+toast when Claude waits or finishes. Codex runs the same scripts with `--agent codex`
+from `codex/.codex/hooks.json` (notes root `~/codex_notes`, toast titled `Codex`). Codex
+runs a hook only once trusted: after the first install, and after any edit of `hooks.json`
+(which changes its hash), launch `imc-codex` and trust them via `/hooks`.
+
+**One-time migration** (a host stowed before skills moved to `agents/`, e.g. after a pull):
+remove the old per-file skill dirs, then restow and drop dangling links:
+
+```bash
+for s in bazel codebase-recon concurrency cpp cpp-build design-doc git handoff perf-investigation python; do d="$HOME/.claude/skills/$s"; [[ -d $d && ! -L $d && -L $d/SKILL.md && "$(ls -A "$d")" == SKILL.md ]] && rm "$d/SKILL.md" && rmdir "$d"; done
+./install_dotfiles.sh link
+find ~/.claude ~/.codex ~/.agents -maxdepth 3 -type l ! -exec test -e {} \; -print   # remove what it lists
+```
 
 ## Shell
 

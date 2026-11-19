@@ -8,8 +8,9 @@ GNU Stow-managed dotfiles for macOS + Linux. One package per tool; the package t
   Before stowing, `link` moves a divergent real `~/.ssh/config`, `~/.zshenv` or (Linux)
   `~/.config/rtk/config.toml` to `<name>.pre-stow`; an identical one is deleted.
 - Target dirs are tree-folded (one dir symlink into this repo), except in the `--no-folding`
-  packages `claude`, `codex`, `rtk`, `ssh`, where each file is its own link. Either way in-place
-  edits are live immediately; added or deleted files need a restow.
+  packages `claude`, `codex`, `rtk`, `ssh`, where each file is its own link (tracked dir symlinks
+  such as `claude/.claude/skills/<shared>` are linked as one). Either way in-place edits are live
+  immediately; added or deleted files need a restow.
 
 ## tmux from source (Linux)
 Distro tmux is below `MIN_TMUX_VERSION` (EL9 dnf 3.2a, 3.5a on DevEnv; Ubuntu 24.04 3.4), so
@@ -79,6 +80,13 @@ system dirs on PATH:
   in notify.py).
   It assumes one Claude session per tmux window: state is a window option, so a second session
   or a nested `claude -p` in that window overwrites it — accepted.
+  Both scripts take `--agent {claude,codex}` (default `claude`); codex's `hooks.json` passes
+  `--agent codex`, so check that variant too.
+- codex: `imc-codex debug prompt-input x </dev/null` renders what codex is told offline
+  (AGENTS.md text, skill list) and runs no hooks. Hooks: an interactive
+  `imc-codex --dangerously-bypass-hook-trust` in a scratch tmux server
+  (`tmux -f /dev/null -L cx`), reading `@claude_state` there — Claude's own pane state is
+  repainted by Claude's hooks.
 - Keybind/plugin swaps claiming parity: verify each key's *behaviour* end to end, including
   tmux/pane crossing — not just that the mapping exists.
 - After any keybind, alias, or shell-function change: `scripts/.local/bin/cheatsheet.py --dump`,
@@ -210,7 +218,19 @@ upgrade, not config here — re-check it before building on floats.
   it; sync repo changes by hand. There is no user-scope `settings.local.json`:
   `~/.claude/settings.local.json` is not loaded (measured), only a project's
   `.claude/settings.local.json` is.
+- `agents/` is the harness-neutral package: `~/.agents/AGENTS.md` (global rules; Claude imports it
+  from `~/.claude/CLAUDE.md`, codex reads it through the tracked `codex/.codex/AGENTS.md` link) and
+  the shared skills in `~/.agents/skills/<name>/`. `prepare_agents` pre-creates a real
+  `~/.agents/skills`, so stow links each skill dir rather than folding `~/.agents`, which tools
+  write into (imc-sandbox grants it write). Each must be a *dir* link: codex discovers a symlinked
+  skill dir but not a symlinked `SKILL.md` (measured). Claude reaches a shared skill through a
+  tracked relative dir symlink `claude/.claude/skills/<name> -> ../../../agents/.agents/skills/<name>`.
 - `codex/` is stowed `--no-folding`: a folded `~/.codex` would land `auth.json` in the repo.
+  `config.toml` there is a seed, not stowed: imc-codex rewrites `~/.codex/config.toml` (plugins,
+  `hooks.state`), so `prepare_codex` copies the seed only when the live file is missing and never
+  overwrites it. `AGENTS.md` links to the shared rules. `hooks.json` reuses the claude hook scripts
+  with `--agent codex`; codex runs a hook only once trusted via `/hooks`, and any edit of
+  `hooks.json` changes its hash and needs re-trust.
 - `rtk/` (Linux only) tracks `config.toml` alone, `--no-folding`: rtk keeps `llm-proxy/`, `plugins/`
   and pipeline files in `~/.config/rtk`. Unknown keys are ignored, and a present `[tracking]`,
   `[display]`, `[filters]` or `[limits]` section missing any key (or `[telemetry]` without
