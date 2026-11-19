@@ -17,7 +17,7 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 ## 1. Review panel
 - The main thread creates `<review-dir>` = `<notes-root>/scratchpad/<YYYYMMDD>/<topic>-review/`, `<topic>` being the doc's basename without extension (suffix `-2`, `-3` if it exists), and passes it in every brief.
 - Named agents (`dr_<role>`), never scripted-fan-out agents — per [[delegation]], so the audit resumes them with their context intact; stop each reviewer once the doc is approved, the fan-in once the pipeline ends.
-- Every doc gets the full panel, unless the user names a smaller one for the run:
+- The main thread picks the panel and states it with its reason in the doc (to the user, for a doc it did not write); a user override wins. The **light panel** is ambiguity, loopholes and blind, the fan-in doing concision itself — for a doc whose misses are cheap to catch later. Otherwise the **full panel**:
   - Lenses, each given the doc path plus the paths it cites:
     - **Ambiguity/contradiction** — a statement two implementers would read differently; sections that disagree; undefined terms.
     - **Loopholes** — missing cases, failure and error paths, unstated assumptions, steps with no verify command, scope that can creep.
@@ -27,6 +27,7 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 - **Fan-in** (`dr_fanin`), kept for the whole pipeline, briefed with `<review-dir>`, the doc path and whether this harness wrote it (created by this harness's agents, any file under `<notes-root>/scratchpad/`, or the user says so); the only agent that edits the doc — in place when this harness wrote it, else as proposed edits in `edits.md` there for the user to apply. It judges every finding on evidence, not vote count, and appends to `fanin.md` there, one section per round: applied, dropped with reason, open questions. Per finding:
   - wording or concision, or settled by the code (read, not assumed), the doc or a convention → apply;
   - a default that is reversible and within scope → apply, recorded as `default: <value> — <why>`;
+  - re-argues a recorded decision without new evidence → drop, naming the decision;
   - anything else → a question: an assumption to confirm, or 2–4 options with a recommended default.
 - Supervise per [[delegation]]. A reviewer still dead after one replacement is noted missing. With no completed reviewer, stop and ask the user.
 
@@ -35,12 +36,13 @@ Turn a draft doc into one an agent can execute without asking. It is the review 
 - It forwards the answers verbatim to the fan-in, which records them as choice + why (design doc: **Decision**, rejected options' reasons under **Options**; else **Decisions**, created if absent), rechecks the doc, and returns follow-ups. "You pick" or unanswered → the recommended default, recorded as `default (user deferred)`. An answer contradicting a recorded decision goes back to the user as a conflict. Repeat until none remain.
 
 ## 3. Audit
+- First, before resuming the reviewers, the fan-in condenses an implementation plan, verbatim old/new edit text not counted, to ~3× the expected diff it states, merging and cutting repetition; §4's Implementation-plan contents are the floor. The reviewers audit the condensed doc, so this is not a change in the audit.
 - Resume each reviewer with the doc path, `fanin.md` and any `edits.md` ((codex) one that has dropped out of `list_agents`, unmeasured: a fresh reviewer briefed with its `<role>.md` and `fanin.md`); for the blind one, `cat` them into `<review-dir>/blind-audit-input.md` and pass only that path. Never retype an input through the main thread. Each checks its findings were resolved and the doc for new gaps, writing to `<role>-audit.md`, never over a first-pass file; a dropped or defaulted item is re-raised only with new evidence.
 - Fan-in merges. The doc is approved when no finding is unresolved and no user call is open — no separate approval gate. A user call → the Q&A loop. Any doc change in the audit → a re-audit by only the reviewers whose findings touch the changed sections.
-- Cap: three Q&A rounds, and the audit plus two re-audits; then list what remains with its defaults and ask once whether to proceed on them — a no means the user decides each, and here silence is not a default. Only explicit acceptance or a decision on every item approves the doc, as the one exception to the rule above: no further re-audit, any residual named in the approval line. Otherwise it stops unapproved.
+- Cap: three Q&A rounds, and the audit plus two re-audits (light panel: one); then list what remains with its defaults and ask once whether to proceed on them — a no means the user decides each, and here silence is not a default. Only explicit acceptance or a decision on every item approves the doc, as the one exception to the rule above: no further re-audit, any residual named in the approval line. Otherwise it stops unapproved.
 
 ## 4. Implementation-plan contents
-The author writes the plan per `~/.agents/AGENTS.md` Implementation-plan contents before the panel; the lenses check against it. Skills to follow are `~/.agents/skills/<name>/SKILL.md` paths for shared skills and `~/.claude/skills/<name>/SKILL.md` for Claude-only ones — `simple-implementer` has no Skill tool (Claude), and every agent already has AGENTS.md in context.
+The author writes the plan per `~/.agents/AGENTS.md` Implementation-plan contents before the panel; the lenses check against it. Skills to follow are `~/.agents/skills/<name>/SKILL.md` paths for shared skills and `~/.claude/skills/<name>/SKILL.md` for Claude-only ones — `simple-implementer` has no Skill tool (Claude), and every agent already has AGENTS.md in context. The plan states its expected diff in changed lines. Whoever writes or edits a verify command runs it once on the unchanged tree, unless it writes tracked files or is a build or test suite, and fixes one that cannot run (syntax, missing path, shell quoting); a count that is off only because the change is absent is expected. That catches broken commands, not checks that can never pass, so each post-change grep or count check names an exact string the edit inserts.
 
 ## 5. Implement
 - If the user gave the autonomous-mode trigger, run [[autonomous-mode]] preparation now, then take `<base>` below inside its branch or worktree.

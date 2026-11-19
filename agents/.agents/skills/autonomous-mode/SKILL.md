@@ -1,11 +1,11 @@
 ---
 name: autonomous-mode
-description: 'Use when the user says "autonomous mode" or "kick off autonomous", or when resuming a run whose decisions file has a `kicked off` line and no `ended` line — preparation, decision logging, the never-autonomous list, reporting. Keywords: autonomous mode, kick off autonomous, unattended run, decisions file, BLOCKED, PENDING.'
+description: 'Use when the user says "autonomous mode" or "kick off autonomous" or yes to its one-line offer, or when resuming a run whose decisions file has a `kicked off` line and no `ended` line — preparation, decision logging, the never-autonomous list, reporting. Keywords: autonomous mode, kick off autonomous, unattended run, decisions file, BLOCKED, PENDING.'
 ---
 
 # Autonomous mode
 
-- Trigger: only the user's explicit "autonomous mode" / "kick off autonomous". Neither a prompt-skipping permission mode nor plan approval is a trigger; without it, the `~/.agents/AGENTS.md` gate's stop-and-ask holds.
+- Trigger: only the user's explicit "autonomous mode" / "kick off autonomous", or their "yes" to the one-line offer (`~/.agents/AGENTS.md` Autonomous mode), whose preparation runs at [[doc-reviewer]] §5 instead of right after the yes. Neither a prompt-skipping permission mode nor plan approval is a trigger; without it, the `~/.agents/AGENTS.md` gate's stop-and-ask holds.
 - Requires a plan approved per the gate; if none exists yet, finish the gate with the user present first.
 - Preparation, right after the trigger and with the user present, in order:
   1. On any branch, use a worktree per [[git]] when unrelated edits or another agent share the tree, or when the main checkout is live (stowed dotfiles: `~` links into it); otherwise, if on the default branch, create a branch and switch to it.

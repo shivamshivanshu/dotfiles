@@ -193,7 +193,7 @@ through a tracked relative symlink in `claude/.claude/skills/`. To add a shared 
 
 | Skill | Category | Harness | Triggers on |
 |-------|----------|---------|-------------|
-| `autonomous-mode` | preferences | shared | "autonomous mode" / "kick off autonomous" — unattended run of an approved plan |
+| `autonomous-mode` | preferences | shared | "autonomous mode" / "kick off autonomous" / yes to its offer — unattended run of an approved plan |
 | `git` | preferences | shared | commit / amend / rebase / worktree / review |
 | `rtk` | preferences | shared | rtk proxy — token savings, gain / discover / bypass |
 | `codebase-recon` | preferences | shared | understand / trace unfamiliar code before changing |

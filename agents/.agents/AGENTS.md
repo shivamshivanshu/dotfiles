@@ -19,6 +19,7 @@ polish in your own prose unless it changes meaning.
 - Explain the *why* before any non-trivial change, and justify tradeoffs concretely rather than asserting them. Expect to be asked "why?".
 - When asked, explain the mechanism — trace the exact chain of calls. The aim is understanding the system, not just producing a diff.
 - Give a crisp status when asked, before starting non-trivial work, and after ~10 tool calls without one.
+- While agents run, report only at phase boundaries (a result the user acts on, e.g. [[doc-reviewer]]'s review done, questions, approved, implemented, verified) or when the user is needed, never per agent message; this replaces the ~10-tool-call status meanwhile.
 - Concede readily. When a fix is challenged as possibly wrong, verify and correct course without defensiveness.
 - Prefer output quality over token cost: spend effort wherever it buys correctness or clarity; cut only spend that buys nothing (redundant reads, duplicate agents). Quality means a better result, not more machinery — keep designs simple.
 
@@ -50,7 +51,7 @@ The plan carries what was already learned so the implementer skips broad discove
 - Write tests that prove the behaviour or bug, not tests for ceremony. When touching behaviour, add one if test infrastructure already exists or the setup is light plumbing; skip only when the cost clearly outweighs the value, and say so.
 - After a refactor or conflict resolution, audit that behaviour is unchanged against the original intent.
 - When evidence is a human observation, pin down exactly which artifact was seen and isolate one signal per test before hypothesizing.
-- Background any run expected to exceed ~2 minutes (builds, test suites, regressions) and keep working while it runs; check its result before claiming completion.
+- Background any run expected to exceed ~2 minutes (builds, test suites, regressions) and keep working while it runs; check its result before claiming completion. A spawned agent with nothing left to do meanwhile never ends its turn to wait for the exit notice: it runs the command in the foreground within the per-call limit (Claude: Bash `timeout` ≤ 600000 ms), or past it backgrounds `{ <cmd>; echo exit=$?; } ><log> 2>&1` (Harness mechanics: background run) and waits in foreground calls of `timeout 590 bash -c 'until grep -q ^exit= <log>; do sleep 15; done'` (Claude: Bash `timeout` 600000 ms; measured). First it logs `running <cmd>, started <ISO>, timeout <N>s` to its output file; supervision counts that line as progress until its deadline, past [[delegation]]'s 3× ceiling.
 
 ## Edit
 - Code as documentation: class, variable and argument names should say what the code does. Comment only what names, code, commit message and ticket cannot carry — a non-obvious *why* or a genuinely complex algorithm; never restate the code. On a small fix or config change the commit message carries the why, so add none, even where the surrounding file comments densely.
@@ -73,7 +74,7 @@ The plan carries what was already learned so the implementer skips broad discove
 - After a non-trivial commit — a small change per the gate included —, run simplify (Harness mechanics), re-run the plan's verify commands for it (plan-less: the build and tests covering the touched files), and amend the fixes in before moving on — subject to [[git]]'s pushed-history check. Skip it for a commit out of [[doc-reviewer]] conformance, which already ran it. The amend needs no separate approval; the push rule above still holds.
 
 ## Autonomous mode
-- Only the user's explicit "autonomous mode" / "kick off autonomous" starts it; neither a prompt-skipping permission mode nor plan approval does. On the trigger load [[autonomous-mode]]; after compaction reload it while `<topic>-decisions.md` has a `kicked off` and no `ended` line.
+- Only the user's explicit "autonomous mode" / "kick off autonomous", or their "yes" to the offer below, starts it; neither a prompt-skipping permission mode nor plan approval does. On the trigger load [[autonomous-mode]]; after compaction reload it while `<topic>-decisions.md` has a `kicked off` and no `ended` line. Once a plan's step-2 questions are answered and its implementation is multi-step and multi-agent, offer it once per plan, in one line, as the only question in its message, saying its preparation still asks questions at [[doc-reviewer]] §5.
 
 ## Delegation
 - Before deciding whether to delegate, or spawning any agent or scripted fan-out, load [[delegation]].

@@ -14,7 +14,7 @@ N parallel agents → one fan-in agent. For *diverse* perspectives or debate, us
 ## Fan out
 - N logically equivalent prompts — same task, same context, worded slightly differently. Identical wording makes every sample inherit that phrasing's blind spot; paraphrasing de-correlates the samples while keeping the question the same, so the answers stay comparable. N=3 by default; raise toward 7 only after observing disagreement.
 - Structured-output schema so the fan-in compares like with like.
-- Run as a background scripted fan-out so the samples never touch the main context; tolerate null results ((Claude) `.filter(Boolean)`) — a dead sample is noise, not failure. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named agents ([[delegation]]), resumed and stopped once done; (Claude) Workflow agents cannot be messaged.
+- Run as a background scripted fan-out so the samples never touch the main context; tolerate null results ((Claude) `.filter(Boolean)`) — a dead sample is noise, not failure. Without a scripted fan-out, each leg is a subagent. Exception: a panel that must be re-consulted later (e.g. [[doc-reviewer]]'s audit) uses named agents ([[delegation]]), resumed and stopped once done; (Claude) Workflow agents cannot be messaged.
 
 ## Fan in
 - One agent — judgment concentrates here.
@@ -28,4 +28,5 @@ Review and simplify passes go a step further: the prompts differ in what they *e
 - The 4 simplify lenses: reuse (an existing utility the diff reinvents), simplification (needless code, branches or indirection), efficiency (wasted work on hot or repeated paths), altitude (logic at the wrong layer; a downstream band-aid for an upstream defect).
 - Spawn at least one with no context at all — inferring purely from the diff and commit messages; blind eyes catch what briefed ones assume away.
 - Give every agent MCP/tool access.
+- Every leg the main thread briefs, except the blind one, carries the plan's **Decisions** (or the user's recorded choices), and so does the fan-in's brief. The fan-in drops a finding from any leg that re-argues one without new evidence, naming the Decision.
 - Fan in through a fan-in agent that dedups, merges findings, and summarises; the main thread only organises the result and decides.
