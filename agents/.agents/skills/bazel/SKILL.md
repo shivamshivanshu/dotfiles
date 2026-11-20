@@ -1,6 +1,6 @@
 ---
 name: bazel
-description: 'Use before any local Bazel build or test wider than a few targets (sizing --jobs and the target set), and when creating, entering or removing a git worktree of a Bazel repo, cleaning orphaned output bases, estimating how many Bazel servers or builds the host can run, or suspecting a bad cache hit. Keywords: --jobs, OOM, devenv crash, output base, user.bazelrc, DO_NOT_BUILD_HERE, bazel shutdown, remote cache.'
+description: 'Use before any local Bazel build, test or run (choosing the debug --config from user.bazelrc, sizing --jobs and the target set), and when creating, entering or removing a git worktree of a Bazel repo, cleaning orphaned output bases, estimating how many Bazel servers or builds the host can run, or suspecting a bad cache hit. Keywords: --jobs, OOM, devenv crash, output base, user.bazelrc, DO_NOT_BUILD_HERE, bazel shutdown, remote cache.'
 ---
 
 # Bazel across worktrees (Linux; macOS paths differ and are not covered)
@@ -40,6 +40,15 @@ Each Bash call is a fresh shell: carry the printed paths into later commands lit
 - Per server: RSS of a live server (`ps -eo rss=,args= | grep '[A]-server.jar'`; 6–10G measured). Per build: cpu and memory from `grep -rhE -- '--local_(resources|cpu_resources|ram_resources)' /etc/bazel.bazelrc /etc/bazel .bazelrc user.bazelrc ~/.bazelrc 2>/dev/null` (no globs: an unmatched glob aborts the command in zsh); with none set, Bazel takes all cores and ~67% of RAM per build.
 - Report idle servers ≈ free RAM / per server, and full-parallel builds ≈ min(cores / cpu per build, free RAM / (memory per build + per server)).
 - Cap parallel worktree builds at the server figure, which assumes mostly cache hits; when builds will compile locally (cold base commit, remote off), cap at max(1, the build figure). Tell the user before exceeding the build figure.
+
+## Build config: debug by default
+For every local build, test or build check, use a debug config unless the user's prompt explicitly asks for release.
+- Reference: the active `build --config=` lines in the main checkout's `user.bazelrc` (gitignored; a worktree may lack it): `sed -n 's/^[[:space:]]*build[[:space:]]\{1,\}--config=\([^[:space:]]*\).*/\1/p' user.bazelrc`.
+- Available debug configs: `grep -rhoE --include='*bazelrc' '^(build|common):[A-Za-z0-9_]*Debug\b' . | sed 's/^[a-z]*://' | sort -u`. Skip `_`-prefixed ones (internal mixins).
+- Choose: release only when the prompt asks for it. Otherwise use `user.bazelrc`'s config if its name contains `Debug`. Failing that, use the repo's project-level `*FastDebug` config if there is one (e.g. `CfClangFastDebug`), then a plain `*Debug` one. If none matches, ask.
+- Pass `--config=<chosen>` explicitly on every `build`, `test`, `run`, `coverage`, `cquery` and `aquery`, even when `user.bazelrc` already sets it. The repeat only triggers a harmless "expanded more than once" warning. Never pass it to `query`, `info`, `shutdown` or `fetch`: `query` rejects a `build:`-only config (measured).
+- Keep one config for the whole session, since switching configs throws away the server's analysis cache. Name the config in your first status, and put it in the brief of any agent you delegate a Bazel command to.
+- A name says nothing about optimization: `CfClangFastDebug` is `-c opt` with debug info, so size `--jobs` per the next section.
 
 ## Size a local build or test before running it
 Default `--jobs` is the core count (128 on a DevEnv container's cpu quota), and Bazel's RAM budget does not hold back C++ compiles. Measured 2026-11-20 on rr-cuttlefish: 80 concurrent `clang++ -O3` at up to 5.4G each took the container from 197G to 371G of its 384G `memory.max` in ~90 s, and the previous identical run hung and restarted the DevEnv.
