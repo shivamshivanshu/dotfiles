@@ -1,6 +1,6 @@
 ---
 name: bazel
-description: 'Use when creating, entering or removing a git worktree of a Bazel repo, running Bazel builds or tests in a worktree, cleaning orphaned output bases, estimating how many Bazel servers or builds the host can run, or suspecting a bad cache hit. Keywords: output base, user.bazelrc, DO_NOT_BUILD_HERE, bazel shutdown, remote cache.'
+description: 'Use before any local Bazel build or test wider than a few targets (sizing --jobs and the target set), and when creating, entering or removing a git worktree of a Bazel repo, cleaning orphaned output bases, estimating how many Bazel servers or builds the host can run, or suspecting a bad cache hit. Keywords: --jobs, OOM, devenv crash, output base, user.bazelrc, DO_NOT_BUILD_HERE, bazel shutdown, remote cache.'
 ---
 
 # Bazel across worktrees (Linux; macOS paths differ and are not covered)
@@ -40,6 +40,12 @@ Each Bash call is a fresh shell: carry the printed paths into later commands lit
 - Per server: RSS of a live server (`ps -eo rss=,args= | grep '[A]-server.jar'`; 6–10G measured). Per build: cpu and memory from `grep -rhE -- '--local_(resources|cpu_resources|ram_resources)' /etc/bazel.bazelrc /etc/bazel .bazelrc user.bazelrc ~/.bazelrc 2>/dev/null` (no globs: an unmatched glob aborts the command in zsh); with none set, Bazel takes all cores and ~67% of RAM per build.
 - Report idle servers ≈ free RAM / per server, and full-parallel builds ≈ min(cores / cpu per build, free RAM / (memory per build + per server)).
 - Cap parallel worktree builds at the server figure, which assumes mostly cache hits; when builds will compile locally (cold base commit, remote off), cap at max(1, the build figure). Tell the user before exceeding the build figure.
+
+## Size a local build or test before running it
+Default `--jobs` is the core count (128 on a DevEnv container's cpu quota), and Bazel's RAM budget does not hold back C++ compiles. Measured 2026-11-20 on rr-cuttlefish: 80 concurrent `clang++ -O3` at up to 5.4G each took the container from 197G to 371G of its 384G `memory.max` in ~90 s, and the previous identical run hung and restarted the DevEnv.
+- Narrow first: build or test only the targets the change reaches, named explicitly. Don't add wide `//pkg/...` patterns or an `rdeps(//repo/..., ...)` query result on top; that is how a check grows to 126 tests and 51k actions. Widen in stages only once the narrow set passes.
+- Anything wider than a few targets, or any local C++ compile at `-O3`: pass `--jobs=N`, N = min(cores, (free RAM − server RSS) / per-action peak), using free RAM and cores from Estimate. Per-action peak: during an earlier build, `ps -C clang++ -o rss= | sort -n | tail -1`; with nothing measured, assume 6G. For 384G that gives `--jobs≈60`. `--local_test_jobs` defaults to `--jobs`.
+- While it runs, sample `memory.current` against `memory.max` of the limiting cgroup (Estimate). Above ~90%, SIGINT the bazel client: the build stops cleanly, and the server and its cache survive. Then rerun with a smaller N.
 
 ## Suspected bad cache hit
 An in-place rebuild is short-circuited by the local action cache, so rebuild in a throwaway base with no cache at all (`--remote_cache=` also stops it uploading to the shared cache) and the suspect build's own flags:
